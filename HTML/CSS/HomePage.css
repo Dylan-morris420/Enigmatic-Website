@@ -37,6 +37,10 @@ body, html {
   text-align: center;
   font-size: 20px;
 }
+.sidebar.hidden {
+  display: none;
+}
+
 
 .nav-link {
   text-decoration: none;
