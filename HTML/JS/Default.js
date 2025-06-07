@@ -17,10 +17,14 @@ document.addEventListener("DOMContentLoaded", () => {
       if (arrow) arrow.textContent = isOpen ? "▼" : "▲";
     });
   });
-});
-const toggleBtn = document.getElementById('toggleSidebarBtn');
+
+  // Sidebar toggle logic
+  const toggleBtn = document.getElementById('toggleSidebarBtn');
   const sidebar = document.querySelector('.sidebar');
 
-  toggleBtn.addEventListener('click', () => {
-    sidebar.classList.toggle('hidden');
-  });
+  if (toggleBtn && sidebar) {
+    toggleBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('hidden');
+    });
+  }
+});
