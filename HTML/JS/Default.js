@@ -203,7 +203,7 @@ function drawVisualizer() {
 
   const centerX = canvas.width / 2;
   const centerY = canvas.height / 2;
-  const radius = 60; // Radius of the circle
+  const radius = 30; // Radius of the circle
   const bars = bufferLength;
   const angleStep = (Math.PI * 2) / bars;
 
