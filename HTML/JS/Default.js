@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
       [headerText, footerText].forEach(el => {
         if (!el) return;
         el.classList.remove('animate-indent', 'animate-indent-back');
-        void el.offsetWidth;
+        void el.offsetWidth; // trigger reflow for restart animation
         el.classList.add(sidebarIsHidden ? 'animate-indent-back' : 'animate-indent');
       });
     });
@@ -175,72 +175,68 @@ document.addEventListener("DOMContentLoaded", () => {
       applyDarkMode(!content?.classList.contains("dark-mode"));
     });
   }
+
   // --- Music Visualizer Setup ---
-const canvas = document.getElementById("music-visualizer");
-const ctx = canvas.getContext("2d");
+  const canvas = document.getElementById("music-visualizer");
+  if (!canvas) return; // safeguard
+  const ctx = canvas.getContext("2d");
 
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-const analyser = audioCtx.createAnalyser();
-const source = audioCtx.createMediaElementSource(audio);
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const analyser = audioCtx.createAnalyser();
+  const source = audioCtx.createMediaElementSource(audio);
 
-source.connect(analyser);
-analyser.connect(audioCtx.destination);
+  source.connect(analyser);
+  analyser.connect(audioCtx.destination);
 
-// Use a low fftSize for simple data, still need at least 32 for decent range
-analyser.fftSize = 64;
-const fullBufferLength = analyser.frequencyBinCount;
-const dataArray = new Uint8Array(fullBufferLength);
+  analyser.fftSize = 64;
+  const fullBufferLength = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(fullBufferLength);
 
-// Use only 10 bars spaced out across frequency data
-const barCount = 10;
-const barIndexes = Array.from({ length: barCount }, (_, i) =>
-  Math.floor((i / barCount) * fullBufferLength)
-);
+  const barCount = 10;
+  const barIndexes = Array.from({ length: barCount }, (_, i) =>
+    Math.floor((i / barCount) * fullBufferLength)
+  );
 
-// Draw visualizer
-function drawVisualizer() {
-  requestAnimationFrame(drawVisualizer);
+  function drawVisualizer() {
+    requestAnimationFrame(drawVisualizer);
 
-  analyser.getByteFrequencyData(dataArray);
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+    analyser.getByteFrequencyData(dataArray);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  const centerX = canvas.width / 2;
-  const centerY = canvas.height / 2;
-  const radius = 10; // Smaller radius
-  const angleStep = (Math.PI * 2) / barCount;
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = 10;
+    const angleStep = (Math.PI * 2) / barCount;
 
-  for (let i = 0; i < barCount; i++) {
-    const index = barIndexes[i];
-    const value = dataArray[index];
-    const barLength = value * 0.05; // Adjust bar size
+    for (let i = 0; i < barCount; i++) {
+      const index = barIndexes[i];
+      const value = dataArray[index];
+      const barLength = value * 0.05;
 
-    const angle = i * angleStep;
+      const angle = i * angleStep;
 
-    const x1 = centerX + Math.cos(angle) * radius;
-    const y1 = centerY + Math.sin(angle) * radius;
-    const x2 = centerX + Math.cos(angle) * (radius + barLength);
-    const y2 = centerY + Math.sin(angle) * (radius + barLength);
+      const x1 = centerX + Math.cos(angle) * radius;
+      const y1 = centerY + Math.sin(angle) * radius;
+      const x2 = centerX + Math.cos(angle) * (radius + barLength);
+      const y2 = centerY + Math.sin(angle) * (radius + barLength);
 
-    ctx.strokeStyle = `rgba(100, 100, 255, 0.7)`;
-    ctx.lineWidth = 1;
+      ctx.strokeStyle = `rgba(100, 100, 255, 0.7)`;
+      ctx.lineWidth = 1;
 
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+    }
   }
-}
+  drawVisualizer();
 
-
-drawVisualizer();
-
-// Resume AudioContext on user interaction
-document.addEventListener("click", () => {
-  if (audioCtx.state === "suspended") {
-    audioCtx.resume();
-  }
-}, { once: true });
-
+  // Resume AudioContext on user interaction
+  document.addEventListener("click", () => {
+    if (audioCtx.state === "suspended") {
+      audioCtx.resume();
+    }
+  }, { once: true });
 });
 
 // --- Audio Guide Dismiss ---
