@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  const audio = new Audio(/Enigmatic Website/MEDIA/${musicFile});
+  const audio = new Audio('/Enigmatic Website/MEDIA/${musicFile}');
   const toggleMusicBtn = document.getElementById("toggleMusicBtn");
   const storageKey = audioPos:${pageName};
   let isMuted = localStorage.getItem("musicMuted") === "true";
