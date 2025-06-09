@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- Last Modified Display ---
   const display = document.getElementById("last-modified");
-  if display.textContent = `Last updated: ${document.lastModified}`;
+  if display.textContent = Last updated: 
 
   // --- Back to Top Button ---
   const mybutton = document.getElementById("myBtn");
