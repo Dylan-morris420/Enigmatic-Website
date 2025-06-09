@@ -175,60 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
       applyDarkMode(!content?.classList.contains("dark-mode"));
     });
   }
-  // --- Music Visualizer Setup ---
-const canvas = document.getElementById("music-visualizer");
-const ctx = canvas.getContext("2d");
-
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-const analyser = audioCtx.createAnalyser();
-const source = audioCtx.createMediaElementSource(audio);
-
-source.connect(analyser);
-analyser.connect(audioCtx.destination);
-
-analyser.fftSize = 256; // Lower for simpler waveform
-const bufferLength = analyser.frequencyBinCount;
-const dataArray = new Uint8Array(bufferLength);
-
-// Draw waveform
-function drawVisualizer() {
-  requestAnimationFrame(drawVisualizer);
-
-  // Ensure fixed 60x60 canvas size
-  canvas.width = 200;
-  canvas.height = 200;
-
-  analyser.getByteFrequencyData(dataArray);
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  const centerX = 30;
-  const centerY = 30;
-  const radius = 15; // Leave room for bars to extend outward
-  const bars = bufferLength;
-  const angleStep = (Math.PI * 2) / bars;
-
-  for (let i = 0; i < bars; i++) {
-    const value = dataArray[i];
-    const barLength = value * 0.1; // Shorter bars for small canvas
-    const angle = i * angleStep;
-
-    const x1 = centerX + Math.cos(angle) * radius;
-    const y1 = centerY + Math.sin(angle) * radius;
-    const x2 = centerX + Math.cos(angle) * (radius + barLength);
-    const y2 = centerY + Math.sin(angle) * (radius + barLength);
-
-    ctx.strokeStyle = `rgba(100, 100, 255, 0.6)`;
-    ctx.lineWidth = 1;
-
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
-  }
-}
-vizual
-
-drawVisualizer();
+ 
 
 // Resume AudioContext on user interaction
 document.addEventListener("click", () => {
@@ -236,6 +183,93 @@ document.addEventListener("click", () => {
     audioCtx.resume();
   }
 }, { once: true });
+
+function createCircularVisualizer({ elementId, audio, barCount = 64, intensity = 1 }) {
+  const container = document.getElementById(elementId);
+  if (!container) {
+    console.warn(`Element with id '${elementId}' not found`);
+    return;
+  }
+
+  // Create canvas inside container
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  container.innerHTML = ''; // Clear container
+  container.appendChild(canvas);
+
+  // Set canvas size to container size
+  const resize = () => {
+    canvas.width = container.clientWidth;
+    canvas.height = container.clientHeight;
+  };
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Setup Web Audio API analyser
+  const audioCtx = audio.context || new AudioContext();
+  let source;
+  if (audio instanceof AudioNode) {
+    source = audio;
+  } else if (audio instanceof HTMLAudioElement) {
+    source = audioCtx.createMediaElementSource(audio);
+  } else {
+    console.error('Unsupported audio input');
+    return;
+  }
+  const analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 2048;
+  source.connect(analyser);
+  analyser.connect(audioCtx.destination);
+
+  const bufferLength = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
+
+  function draw() {
+    requestAnimationFrame(draw);
+
+    analyser.getByteFrequencyData(dataArray);
+
+    const width = canvas.width;
+    const height = canvas.height;
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const radius = Math.min(centerX, centerY) * 0.6;
+
+    ctx.clearRect(0, 0, width, height);
+
+    ctx.save();
+    ctx.translate(centerX, centerY);
+
+    const sliceAngle = (Math.PI * 2) / barCount;
+
+    for (let i = 0; i < barCount; i++) {
+      const freqIndex = Math.floor((i / barCount) * bufferLength);
+      const value = dataArray[freqIndex];
+      const barHeight = value * intensity;
+
+      const angle = sliceAngle * i;
+
+      // Calculate bar start and end points
+      const xStart = Math.cos(angle) * radius;
+      const yStart = Math.sin(angle) * radius;
+
+      const xEnd = Math.cos(angle) * (radius + barHeight);
+      const yEnd = Math.sin(angle) * (radius + barHeight);
+
+      // Draw bar line
+      ctx.strokeStyle = `hsl(${(i / barCount) * 360}, 100%, 50%)`;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(xStart, yStart);
+      ctx.lineTo(xEnd, yEnd);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  }
+
+  draw();
+}
 
 });
 
