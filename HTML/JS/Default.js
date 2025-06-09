@@ -1,11 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Set page title
+  // --- Title and Page Name ---
   const fullFileName = decodeURIComponent(window.location.pathname.split("/").pop());
   const pageName = fullFileName.split(".")[0] || "home";
   document.title = `Enigmatic Website – ${pageName}`;
   document.querySelectorAll(".page-name").forEach(el => el.textContent = pageName);
 
-  // Dropdown click buttons
+  // --- Dropdown Click ---
   document.querySelectorAll(".dropdown-btn").forEach(btn => {
     const arrow = btn.querySelector(".arrow");
     const content = btn.nextElementSibling;
@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Dropdown hover logic
+  // --- Dropdown Hover ---
   const sidebar = document.querySelector(".sidebar");
   document.querySelectorAll(".dropdown-h").forEach(dropdownH => {
     const contentH = dropdownH.querySelector(".dropdown-content");
@@ -39,22 +39,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Last modified display
+  // --- Last Modified Display ---
   const display = document.getElementById("last-modified");
   if (display) display.textContent = `Last updated: ${document.lastModified}`;
 
-  // Back to top button
+  // --- Back to Top Button ---
   const mybutton = document.getElementById("myBtn");
-  window.onscroll = function () {
+  window.onscroll = () => {
     if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-      mybutton.classList.add("show");
+      mybutton?.classList.add("show");
     } else {
-      mybutton.classList.remove("show");
+      mybutton?.classList.remove("show");
     }
   };
 
-  // Sidebar toggle
-  const toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
+  // --- Sidebar Toggle ---
+  const toggleSidebarBtn = document.getElementById("toggleSidebarBtn");
   const headerText = document.querySelector('.header h2');
   const footerText = document.querySelector('.footer *');
   if (toggleSidebarBtn && sidebar) {
@@ -70,30 +70,30 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Music setup
+  // --- Music Setup ---
   const musicFile = window.pageMusicFile || null;
   if (!musicFile) {
     console.warn("No music file specified for this page.");
     return;
   }
 
-  const storageKey = `music-position-${musicFile}`;
   const audio = new Audio(`/Enigmatic Website/MEDIA/${musicFile}`);
+  const toggleMusicBtn = document.getElementById("toggleMusicBtn");
+  const storageKey = `audioPos:${pageName}`;
+  let isMuted = localStorage.getItem("musicMuted") === "true";
+
   audio.loop = true;
-  audio.volume = 0.3;
-
-  const storedMuted = localStorage.getItem("musicMuted");
-audio.muted = storedMuted !== "false";
-
+  audio.volume = isMuted ? 0 : 0.3;
+  audio.muted = false;
 
   const savedPosition = parseFloat(localStorage.getItem(storageKey));
   if (!isNaN(savedPosition)) {
     audio.currentTime = savedPosition;
   }
 
-  audio.play().catch(() => {
-    // Wait for user interaction
-  });
+  if (!isMuted) {
+    audio.play().catch(() => {});
+  }
 
   audio.addEventListener("timeupdate", () => {
     const now = Date.now();
@@ -107,71 +107,119 @@ audio.muted = storedMuted !== "false";
     localStorage.setItem(storageKey, audio.currentTime);
   });
 
-  // One-time unmute on user interaction
-  function unmuteOnce() {
-    if (!audio.muted) return;
-    audio.muted = false;
-    localStorage.setItem("musicMuted", "false");
-    audio.play().catch(e => {
-      console.warn("Audio still blocked:", e);
-    });
-  }
-  document.addEventListener("click", unmuteOnce, { once: true });
-  document.addEventListener("keydown", unmuteOnce, { once: true });
+  // --- Music Toggle Button ---
+  function fadeVolume(targetVolume, duration = 100, onComplete) {
+    const stepTime = 50;
+    const steps = duration / stepTime;
+    const volumeDiff = targetVolume - audio.volume;
+    let currentStep = 0;
 
-  // Toggle music button
-  const toggleMusicBtn = document.getElementById("toggleMusicBtn");
+    const fadeInterval = setInterval(() => {
+      currentStep++;
+      audio.volume = Math.max(0, Math.min(1, audio.volume + volumeDiff / steps));
+      if (currentStep >= steps) {
+        clearInterval(fadeInterval);
+        audio.volume = targetVolume;
+        if (onComplete) onComplete();
+      }
+    }, stepTime);
+  }
+
   if (toggleMusicBtn) {
-    toggleMusicBtn.textContent = audio.muted ? "🔇" : "🔊";
+    toggleMusicBtn.textContent = isMuted ? "🔇" : "🔊";
     toggleMusicBtn.addEventListener("click", () => {
-      audio.muted = !audio.muted;
-      toggleMusicBtn.textContent = audio.muted ? "🔇" : "🔊";
-      localStorage.setItem("musicMuted", audio.muted);
+      isMuted = !isMuted;
+      localStorage.setItem("musicMuted", isMuted);
+      toggleMusicBtn.textContent = isMuted ? "🔇" : "🔊";
+
+      if (isMuted) {
+        fadeVolume(0, 100, () => audio.pause());
+      } else {
+        audio.play().then(() => fadeVolume(0.3));
+      }
     });
   }
 
-  // Audio guide popup
-  const dismissed = localStorage.getItem("audioGuideDismissed");
+  // --- Audio Guide Modal ---
   const modal = document.getElementById("audioGuideModal");
-  if (!dismissed && modal) {
+  if (!localStorage.getItem("audioGuideDismissed") && modal) {
     modal.style.display = "flex";
   }
+
   let audioStarted = false;
+  function startAudio() {
+    if (audioStarted || isMuted) return;
+    audioStarted = true;
+    audio.play().catch(e => console.warn("Playback failed after interaction:", e));
+  }
+  document.addEventListener("click", startAudio, { once: true });
+  document.addEventListener("keydown", startAudio, { once: true });
 
-function startAudio() {
-  if (audioStarted) return;
-  audioStarted = true;
+  // --- Dark Mode ---
+  const darkModeBtn = document.getElementById("toggleDarkModeBtn");
+  const content = document.querySelector(".content");
+  const bg = document.querySelector(".background");
 
-  audio.play().catch(e => {
-    console.warn("Playback failed even after interaction:", e);
-  });
-}
-
-document.addEventListener("click", startAudio, { once: true });
-document.addEventListener("keydown", startAudio, { once: true });
-
-const darkModeBtn = document.getElementById("toggleDarkModeBtn");
-const content = document.querySelector(".content");
-
-if (localStorage.getItem("contentDarkMode") === "true") {
-  content?.classList.add("dark-mode");
-}
-
-if (darkModeBtn && content) {
-  darkModeBtn.textContent = content.classList.contains("dark-mode") ? "🌙" : "☀️";
-
-  darkModeBtn.addEventListener("click", () => {
-    content.classList.toggle("dark-mode");
-    const isDark = content.classList.contains("dark-mode");
+  function applyDarkMode(isDark) {
+    content?.classList.toggle("dark-mode", isDark);
+    bg?.classList.toggle("dark-mode", isDark);
     localStorage.setItem("contentDarkMode", isDark);
-    darkModeBtn.textContent = isDark ? "🌙" : "☀️";
-  });
+    if (darkModeBtn) darkModeBtn.textContent = isDark ? "🌙" : "☀️";
+  }
+
+  const isDarkInitial = localStorage.getItem("contentDarkMode") === "true";
+  applyDarkMode(isDarkInitial);
+
+  if (darkModeBtn) {
+    darkModeBtn.addEventListener("click", () => {
+      applyDarkMode(!content?.classList.contains("dark-mode"));
+    });
+  }
+  // --- Music Visualizer Setup ---
+const canvas = document.getElementById("music-visualizer");
+const ctx = canvas.getContext("2d");
+
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const analyser = audioCtx.createAnalyser();
+const source = audioCtx.createMediaElementSource(audio);
+
+source.connect(analyser);
+analyser.connect(audioCtx.destination);
+
+analyser.fftSize = 256; // Lower for simpler waveform
+const bufferLength = analyser.frequencyBinCount;
+const dataArray = new Uint8Array(bufferLength);
+
+// Draw waveform
+function drawVisualizer() {
+  requestAnimationFrame(drawVisualizer);
+
+  analyser.getByteFrequencyData(dataArray);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const barWidth = (canvas.width / bufferLength) * 1.5;
+  let x = 0;
+
+  for (let i = 0; i < bufferLength; i++) {
+    const barHeight = dataArray[i] / 2;
+    ctx.fillStyle = `rgb(${barHeight + 100}, 50, 200)`;
+    ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+    x += barWidth + 1;
+  }
 }
 
+drawVisualizer();
+
+// Resume AudioContext on user interaction
+document.addEventListener("click", () => {
+  if (audioCtx.state === "suspended") {
+    audioCtx.resume();
+  }
+}, { once: true });
 
 });
 
-// Audio guide close logic
+// --- Audio Guide Dismiss ---
 function dismissAudioGuide(dontAskAgain) {
   const modal = document.getElementById("audioGuideModal");
   if (modal) modal.style.display = "none";
@@ -180,7 +228,7 @@ function dismissAudioGuide(dontAskAgain) {
   }
 }
 
-// Scroll to top
+// --- Scroll to Top ---
 function topFunction() {
   document.body.scrollTop = 0;
   document.documentElement.scrollTop = 0;

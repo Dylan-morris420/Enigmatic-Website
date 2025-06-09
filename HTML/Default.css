@@ -10,6 +10,40 @@ body, html {
   text-align: center;
   scroll-behavior: smooth;
 }
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(255,255,255,0.05), transparent 70%);
+  z-index: 9999;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.1) 1px,
+    transparent 2px,
+    transparent 4px
+  );
+  animation: vhsLinesMove 0.2s linear infinite;
+  opacity: 0.5;
+}
+@keyframes vhsLinesMove {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 4px;
+  }
+}
+
 .content.dark-mode {
   background-color: #121212;
   color: #ffffff;
@@ -134,7 +168,7 @@ body, html {
   box-shadow: 0 4px 16px -4px #bfbfbf;
   background-color: #bfbfbf;
   color: white;
-  z-index: 6;
+  z-index: 102;
   border: 1px solid black;
 }
 
@@ -154,6 +188,7 @@ body.sidebar-hidden .footer-stuff {
   max-width: 1000px;
   margin: auto;
   flex: 1;
+  z-index: 101;
   padding: 30px;
   word-wrap: break-word;
   background-color: white;
@@ -240,20 +275,44 @@ body.sidebar-hidden .footer-stuff {
 }
 
 /* Background */
+@keyframes zoomRotate {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.05) rotate(1deg);
+  }
+  50% {
+    transform: scale(1.10) rotate(0deg);
+  }
+  75% {
+    transform: scale(1.05) rotate(-1deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
 .background {
+  animation: zoomRotate 40s infinite;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   background-image: url('/Enigmatic Website/MEDIA/Default.ico');
+  background-color: transparent;
+  background-blend-mode: multiply; /* or overlay, darken, etc */
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
   filter: blur(10px);
-  transform: scale(1.05);
   z-index: -1;
 }
+.background.dark-mode {
+  background-color: darkslategray;
+}
+
 
 /* Scroll to top button */
 #myBtn {

@@ -137,6 +137,23 @@ body, html {
   font-size: 14px;
 }
 
+.background {
+  animation: zoomRotate 40s infinite;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+  background-color: white;
+  filter: blur(10px);
+  z-index: -1;
+}
+.background.dark-mode {
+  background-color: darkgray;
+  background: darkgray;
+}
+
 .show {display:block;}
 
 .dropdown-h:hover .dropdown-content {display: block;}
