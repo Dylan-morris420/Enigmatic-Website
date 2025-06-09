@@ -194,22 +194,22 @@ const dataArray = new Uint8Array(bufferLength);
 function drawVisualizer() {
   requestAnimationFrame(drawVisualizer);
 
-  // Resize canvas if necessary
-  canvas.width = canvas.clientWidth;
-  canvas.height = canvas.clientHeight;
+  // Ensure fixed 60x60 canvas size
+  canvas.width = 60;
+  canvas.height = 60;
 
   analyser.getByteFrequencyData(dataArray);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  const centerX = canvas.width / 6;
-  const centerY = canvas.height / 6;
-  const radius = 30; // Radius of the circle
+  const centerX = 30;
+  const centerY = 30;
+  const radius = 15; // Leave room for bars to extend outward
   const bars = bufferLength;
   const angleStep = (Math.PI * 2) / bars;
 
   for (let i = 0; i < bars; i++) {
     const value = dataArray[i];
-    const barLength = value * 0.4; // Adjust for less intensity
+    const barLength = value * 0.1; // Shorter bars for small canvas
     const angle = i * angleStep;
 
     const x1 = centerX + Math.cos(angle) * radius;
@@ -217,8 +217,8 @@ function drawVisualizer() {
     const x2 = centerX + Math.cos(angle) * (radius + barLength);
     const y2 = centerY + Math.sin(angle) * (radius + barLength);
 
-    ctx.strokeStyle = `rgba(100, 100, 255, 0.6)`; // Softer color
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = `rgba(100, 100, 255, 0.6)`;
+    ctx.lineWidth = 1;
 
     ctx.beginPath();
     ctx.moveTo(x1, y1);
@@ -226,7 +226,6 @@ function drawVisualizer() {
     ctx.stroke();
   }
 }
-
 
 drawVisualizer();
 
