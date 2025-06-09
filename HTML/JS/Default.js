@@ -179,7 +179,6 @@ document.addEventListener("DOMContentLoaded", () => {
 const canvas = document.getElementById("music-visualizer");
 const ctx = canvas.getContext("2d");
 
-const audio = document.getElementById("audio");
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 const analyser = audioCtx.createAnalyser();
 const source = audioCtx.createMediaElementSource(audio);
@@ -236,6 +235,7 @@ function drawVisualizer() {
     ctx.stroke();
   }
 }
+
 
 drawVisualizer();
 
