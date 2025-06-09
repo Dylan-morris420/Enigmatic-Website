@@ -195,8 +195,8 @@ function drawVisualizer() {
   requestAnimationFrame(drawVisualizer);
 
   // Ensure fixed 60x60 canvas size
-  canvas.width = 60;
-  canvas.height = 60;
+  canvas.width = 200;
+  canvas.height = 200;
 
   analyser.getByteFrequencyData(dataArray);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
