@@ -175,51 +175,47 @@ document.addEventListener("DOMContentLoaded", () => {
       applyDarkMode(!content?.classList.contains("dark-mode"));
     });
   }
-  // --- Music Visualizer Setup ---
+  /* JavaScript (put this after your analyser / audio setup) */
 const canvas = document.getElementById("music-visualizer");
-const ctx = canvas.getContext("2d");
+const ctx     = canvas.getContext("2d");
 
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-const analyser = audioCtx.createAnalyser();
-const source = audioCtx.createMediaElementSource(audio);
+analyser.fftSize = 256;                       // keep it light-weight
+const dataArray  = new Uint8Array(analyser.frequencyBinCount);
 
-source.connect(analyser);
-analyser.connect(audioCtx.destination);
+const BAR_COUNT  = 10;                        // only 10 spokes
+const radius     = 25;                        // small centre ring
+const angleStep  = (Math.PI * 2) / BAR_COUNT;
+const binsPerBar = Math.floor(dataArray.length / BAR_COUNT);
 
-analyser.fftSize = 256; // Lower for simpler waveform
-const bufferLength = analyser.frequencyBinCount;
-const dataArray = new Uint8Array(bufferLength);
-
-// Draw waveform
 function drawVisualizer() {
   requestAnimationFrame(drawVisualizer);
 
-  // Ensure fixed 60x60 canvas size
-  canvas.width = 60;
-  canvas.height = 60;
-
+  // fixed 120 × 120 canvas
   analyser.getByteFrequencyData(dataArray);
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, 120, 120);
 
-  const centerX = 30;
-  const centerY = 30;
-  const radius = 15; // Leave room for bars to extend outward
-  const bars = bufferLength;
-  const angleStep = (Math.PI * 2) / bars;
+  const cx = 60;                              // centre (120 / 2)
+  const cy = 60;
 
-  for (let i = 0; i < bars; i++) {
-    const value = dataArray[i];
-    const barLength = value * 0.1; // Shorter bars for small canvas
-    const angle = i * angleStep;
+  for (let i = 0; i < BAR_COUNT; i++) {
+    /* --- average a slice of FFT bins so each spoke represents a band --- */
+    let sum = 0;
+    for (let j = 0; j < binsPerBar; j++) {
+      sum += dataArray[i * binsPerBar + j];
+    }
+    const value      = sum / binsPerBar;      // 0-255
+    const barLength  = value * 0.25;          // scale down for less intensity
+    const angle      = i * angleStep;
 
-    const x1 = centerX + Math.cos(angle) * radius;
-    const y1 = centerY + Math.sin(angle) * radius;
-    const x2 = centerX + Math.cos(angle) * (radius + barLength);
-    const y2 = centerY + Math.sin(angle) * (radius + barLength);
+    /* --- spoke endpoints --- */
+    const x1 = cx + Math.cos(angle) * radius;
+    const y1 = cy + Math.sin(angle) * radius;
+    const x2 = cx + Math.cos(angle) * (radius + barLength);
+    const y2 = cy + Math.sin(angle) * (radius + barLength);
 
-    ctx.strokeStyle = `rgba(100, 100, 255, 0.6)`;
-    ctx.lineWidth = 1;
-
+    /* --- draw spoke --- */
+    ctx.strokeStyle = "rgba(100,100,255,0.6)";
+    ctx.lineWidth   = 1;
     ctx.beginPath();
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
@@ -227,7 +223,8 @@ function drawVisualizer() {
   }
 }
 
-drawVisualizer();
+drawVisualizer();            // kick it off once your audio is ready
+
 
 // Resume AudioContext on user interaction
 document.addEventListener("click", () => {
