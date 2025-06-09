@@ -197,15 +197,30 @@ function drawVisualizer() {
   analyser.getByteFrequencyData(dataArray);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  const barWidth = (canvas.width / bufferLength) * 1.5;
-  let x = 0;
+  const centerX = canvas.width / 2;
+const centerY = canvas.height / 2;
+const radius = 80; // Radius of the inner circle
+const bars = bufferLength;
+const angleStep = (Math.PI * 2) / bars;
 
-  for (let i = 0; i < bufferLength; i++) {
-    const barHeight = dataArray[i] / 2;
-    ctx.fillStyle = `rgb(${barHeight + 100}, 50, 200)`;
-    ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-    x += barWidth + 1;
-  }
+for (let i = 0; i < bars; i++) {
+  const value = dataArray[i] / 4; // Smaller value = less intense
+  const angle = i * angleStep;
+
+  const x1 = centerX + Math.cos(angle) * radius;
+  const y1 = centerY + Math.sin(angle) * radius;
+  const x2 = centerX + Math.cos(angle) * (radius + value);
+  const y2 = centerY + Math.sin(angle) * (radius + value);
+
+  ctx.strokeStyle = `rgba(100, 100, 255, 0.5)`; // Softer color
+  ctx.lineWidth = 2;
+
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+}
+
 }
 
 drawVisualizer();
