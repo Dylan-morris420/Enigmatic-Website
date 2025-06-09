@@ -166,7 +166,7 @@ body::after {
   width: auto;
   padding: 8px;
   box-shadow: 0 4px 16px -4px #bfbfbf;
-  background-color: #bfbfbf;
+  background-color: #7f7f7f;
   color: white;
   z-index: 102;
   border: 1px solid black;
