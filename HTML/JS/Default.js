@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- Title and Page Name ---
   const fullFileName = decodeURIComponent(window.location.pathname.split("/").pop());
   const pageName = fullFileName.split(".")[0] || "home";
-  document.title = `Enigmatic Website – ${pageName}`;
+  document.title = Enigmatic Website – ${pageName};
   document.querySelectorAll(".page-name").forEach(el => el.textContent = pageName);
 
   // --- Dropdown Click ---
@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- Last Modified Display ---
   const display = document.getElementById("last-modified");
-  if (display) display.textContent = `Last updated: ${document.lastModified}`;
+  if (display) display.textContent = Last updated: ${document.lastModified};
 
   // --- Back to Top Button ---
   const mybutton = document.getElementById("myBtn");
@@ -77,9 +77,9 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  const audio = new Audio(`/Enigmatic Website/MEDIA/${musicFile}`);
+  const audio = new Audio(/Enigmatic Website/MEDIA/${musicFile});
   const toggleMusicBtn = document.getElementById("toggleMusicBtn");
-  const storageKey = `audioPos:${pageName}`;
+  const storageKey = audioPos:${pageName};
   let isMuted = localStorage.getItem("musicMuted") === "true";
 
   audio.loop = true;
@@ -175,7 +175,40 @@ document.addEventListener("DOMContentLoaded", () => {
       applyDarkMode(!content?.classList.contains("dark-mode"));
     });
   }
+  // --- Music Visualizer Setup ---
+const canvas = document.getElementById("music-visualizer");
+const ctx = canvas.getContext("2d");
 
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const analyser = audioCtx.createAnalyser();
+const source = audioCtx.createMediaElementSource(audio);
+
+source.connect(analyser);
+analyser.connect(audioCtx.destination);
+
+analyser.fftSize = 256; // Lower for simpler waveform
+const bufferLength = analyser.frequencyBinCount;
+const dataArray = new Uint8Array(bufferLength);
+
+// Draw waveform
+function drawVisualizer() {
+  requestAnimationFrame(drawVisualizer);
+
+  analyser.getByteFrequencyData(dataArray);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const barWidth = (canvas.width / bufferLength) * 1.5;
+  let x = 0;
+
+  for (let i = 0; i < bufferLength; i++) {
+    const barHeight = dataArray[i] / 2;
+    ctx.fillStyle = rgb(${barHeight + 100}, 50, 200);
+    ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+    x += barWidth + 1;
+  }
+}
+
+drawVisualizer();
 
 // Resume AudioContext on user interaction
 document.addEventListener("click", () => {
