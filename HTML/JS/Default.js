@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- Title and Page Name ---
   const fullFileName = decodeURIComponent(window.location.pathname.split("/").pop());
   const pageName = fullFileName.split(".")[0] || "home";
-  document.title = Enigmatic Website – ${pageName};
+  document.title = 'Enigmatic Website – ${pageName}';
   document.querySelectorAll(".page-name").forEach(el => el.textContent = pageName);
 
   // --- Dropdown Click ---
