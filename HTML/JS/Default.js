@@ -201,8 +201,8 @@ function drawVisualizer() {
   analyser.getByteFrequencyData(dataArray);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  const centerX = canvas.width / 2;
-  const centerY = canvas.height / 2;
+  const centerX = canvas.width / 6;
+  const centerY = canvas.height / 6;
   const radius = 30; // Radius of the circle
   const bars = bufferLength;
   const angleStep = (Math.PI * 2) / bars;
