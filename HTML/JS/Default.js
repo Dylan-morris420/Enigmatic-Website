@@ -175,47 +175,61 @@ document.addEventListener("DOMContentLoaded", () => {
       applyDarkMode(!content?.classList.contains("dark-mode"));
     });
   }
-  /* JavaScript (put this after your analyser / audio setup) */
+  // --- Music Visualizer Setup ---
 const canvas = document.getElementById("music-visualizer");
-const ctx     = canvas.getContext("2d");
+const ctx = canvas.getContext("2d");
 
-analyser.fftSize = 256;                       // keep it light-weight
-const dataArray  = new Uint8Array(analyser.frequencyBinCount);
+const audio = document.getElementById("audio");
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const analyser = audioCtx.createAnalyser();
+const source = audioCtx.createMediaElementSource(audio);
 
-const BAR_COUNT  = 10;                        // only 10 spokes
-const radius     = 25;                        // small centre ring
-const angleStep  = (Math.PI * 2) / BAR_COUNT;
-const binsPerBar = Math.floor(dataArray.length / BAR_COUNT);
+source.connect(analyser);
+analyser.connect(audioCtx.destination);
 
+// Use a low fftSize for simple data, still need at least 32 for decent range
+analyser.fftSize = 64;
+const fullBufferLength = analyser.frequencyBinCount;
+const dataArray = new Uint8Array(fullBufferLength);
+
+// Use only 10 bars spaced out across frequency data
+const barCount = 10;
+const barIndexes = Array.from({ length: barCount }, (_, i) =>
+  Math.floor((i / barCount) * fullBufferLength)
+);
+
+// Resume AudioContext on click (browser autoplay policy)
+document.addEventListener("click", () => {
+  if (audioCtx.state === "suspended") audioCtx.resume();
+});
+
+// Draw visualizer
 function drawVisualizer() {
   requestAnimationFrame(drawVisualizer);
 
-  // fixed 120 × 120 canvas
   analyser.getByteFrequencyData(dataArray);
-  ctx.clearRect(0, 0, 120, 120);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  const cx = 60;                              // centre (120 / 2)
-  const cy = 60;
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
+  const radius = 10; // Smaller radius
+  const angleStep = (Math.PI * 2) / barCount;
 
-  for (let i = 0; i < BAR_COUNT; i++) {
-    /* --- average a slice of FFT bins so each spoke represents a band --- */
-    let sum = 0;
-    for (let j = 0; j < binsPerBar; j++) {
-      sum += dataArray[i * binsPerBar + j];
-    }
-    const value      = sum / binsPerBar;      // 0-255
-    const barLength  = value * 0.25;          // scale down for less intensity
-    const angle      = i * angleStep;
+  for (let i = 0; i < barCount; i++) {
+    const index = barIndexes[i];
+    const value = dataArray[index];
+    const barLength = value * 0.05; // Adjust bar size
 
-    /* --- spoke endpoints --- */
-    const x1 = cx + Math.cos(angle) * radius;
-    const y1 = cy + Math.sin(angle) * radius;
-    const x2 = cx + Math.cos(angle) * (radius + barLength);
-    const y2 = cy + Math.sin(angle) * (radius + barLength);
+    const angle = i * angleStep;
 
-    /* --- draw spoke --- */
-    ctx.strokeStyle = "rgba(100,100,255,0.6)";
-    ctx.lineWidth   = 1;
+    const x1 = centerX + Math.cos(angle) * radius;
+    const y1 = centerY + Math.sin(angle) * radius;
+    const x2 = centerX + Math.cos(angle) * (radius + barLength);
+    const y2 = centerY + Math.sin(angle) * (radius + barLength);
+
+    ctx.strokeStyle = `rgba(100, 100, 255, 0.7)`;
+    ctx.lineWidth = 1;
+
     ctx.beginPath();
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
@@ -223,8 +237,7 @@ function drawVisualizer() {
   }
 }
 
-drawVisualizer();            // kick it off once your audio is ready
-
+drawVisualizer();
 
 // Resume AudioContext on user interaction
 document.addEventListener("click", () => {
