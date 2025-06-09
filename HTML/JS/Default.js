@@ -197,11 +197,6 @@ const barIndexes = Array.from({ length: barCount }, (_, i) =>
   Math.floor((i / barCount) * fullBufferLength)
 );
 
-// Resume AudioContext on click (browser autoplay policy)
-document.addEventListener("click", () => {
-  if (audioCtx.state === "suspended") audioCtx.resume();
-});
-
 // Draw visualizer
 function drawVisualizer() {
   requestAnimationFrame(drawVisualizer);
