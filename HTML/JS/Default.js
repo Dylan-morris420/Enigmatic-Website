@@ -194,34 +194,39 @@ const dataArray = new Uint8Array(bufferLength);
 function drawVisualizer() {
   requestAnimationFrame(drawVisualizer);
 
+  // Resize canvas if necessary
+  canvas.width = canvas.clientWidth;
+  canvas.height = canvas.clientHeight;
+
   analyser.getByteFrequencyData(dataArray);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   const centerX = canvas.width / 2;
-const centerY = canvas.height / 2;
-const radius = 80; // Radius of the inner circle
-const bars = bufferLength;
-const angleStep = (Math.PI * 2) / bars;
+  const centerY = canvas.height / 2;
+  const radius = 60; // Radius of the circle
+  const bars = bufferLength;
+  const angleStep = (Math.PI * 2) / bars;
 
-for (let i = 0; i < bars; i++) {
-  const value = dataArray[i] / 4; // Smaller value = less intense
-  const angle = i * angleStep;
+  for (let i = 0; i < bars; i++) {
+    const value = dataArray[i];
+    const barLength = value * 0.4; // Adjust for less intensity
+    const angle = i * angleStep;
 
-  const x1 = centerX + Math.cos(angle) * radius;
-  const y1 = centerY + Math.sin(angle) * radius;
-  const x2 = centerX + Math.cos(angle) * (radius + value);
-  const y2 = centerY + Math.sin(angle) * (radius + value);
+    const x1 = centerX + Math.cos(angle) * radius;
+    const y1 = centerY + Math.sin(angle) * radius;
+    const x2 = centerX + Math.cos(angle) * (radius + barLength);
+    const y2 = centerY + Math.sin(angle) * (radius + barLength);
 
-  ctx.strokeStyle = `rgba(100, 100, 255, 0.5)`; // Softer color
-  ctx.lineWidth = 2;
+    ctx.strokeStyle = `rgba(100, 100, 255, 0.6)`; // Softer color
+    ctx.lineWidth = 2;
 
-  ctx.beginPath();
-  ctx.moveTo(x1, y1);
-  ctx.lineTo(x2, y2);
-  ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+  }
 }
 
-}
 
 drawVisualizer();
 
