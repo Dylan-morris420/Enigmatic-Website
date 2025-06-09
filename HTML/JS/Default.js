@@ -77,106 +77,145 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  const audio = new Audio(`../../Enigmatic-Website/MEDIA/${musicFile}`);
+  const audio = new Audio(`/Enigmatic Website/MEDIA/${musicFile}`);
+  const toggleMusicBtn = document.getElementById("toggleMusicBtn");
+  const storageKey = `audioPos:${pageName}`;
+  let isMuted = localStorage.getItem("musicMuted") === "true";
+
   audio.loop = true;
-  audio.volume = localStorage.getItem("musicMuted") === "true" ? 0 : 0.3;
+  audio.volume = isMuted ? 0 : 0.3;
+  audio.muted = false;
 
-  // Create AudioContext and source here (once)
-  const audioCtx = new AudioContext();
-  const sourceNode = audioCtx.createMediaElementSource(audio);
+  const savedPosition = parseFloat(localStorage.getItem(storageKey));
+  if (!isNaN(savedPosition)) {
+    audio.currentTime = savedPosition;
+  }
 
-  // Setup analyser node outside visualizer function
-  const analyser = audioCtx.createAnalyser();
-  analyser.fftSize = 2048;
-  sourceNode.connect(analyser);
-  analyser.connect(audioCtx.destination);
+  if (!isMuted) {
+    audio.play().catch(() => {});
+  }
 
-  // Play audio (handle saved position etc.) as before
-  // ...
-
-  // Resume audio context on user interaction
-  document.addEventListener("click", () => {
-    if (audioCtx.state === "suspended") {
-      audioCtx.resume();
+  audio.addEventListener("timeupdate", () => {
+    const now = Date.now();
+    if (!audio._lastSaved || now - audio._lastSaved > 1000) {
+      localStorage.setItem(storageKey, audio.currentTime);
+      audio._lastSaved = now;
     }
-  }, { once: true });
-
-  // Now call your visualizer function, passing analyser and audioCtx
-  createCircularVisualizer({
-    elementId: 'music-visualizer',
-    analyser: analyser,
-    barCount: 64,
-    intensity: 2,
   });
 
-  // Modified visualizer function (use passed analyser):
-  function createCircularVisualizer({ elementId, analyser, barCount = 64, intensity = 1 }) {
-    const container = document.getElementById(elementId);
-    if (!container) {
-      console.warn(`Element with id '${elementId}' not found`);
-      return;
-    }
+  window.addEventListener("beforeunload", () => {
+    localStorage.setItem(storageKey, audio.currentTime);
+  });
 
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    container.innerHTML = '';
-    container.appendChild(canvas);
+  // --- Music Toggle Button ---
+  function fadeVolume(targetVolume, duration = 100, onComplete) {
+    const stepTime = 50;
+    const steps = duration / stepTime;
+    const volumeDiff = targetVolume - audio.volume;
+    let currentStep = 0;
 
-    const resize = () => {
-      canvas.width = container.clientWidth;
-      canvas.height = container.clientHeight;
-    };
-    resize();
-    window.addEventListener('resize', resize);
-
-    const bufferLength = analyser.frequencyBinCount;
-    const dataArray = new Uint8Array(bufferLength);
-
-    function draw() {
-      requestAnimationFrame(draw);
-
-      analyser.getByteFrequencyData(dataArray);
-
-      const width = canvas.width;
-      const height = canvas.height;
-      const centerX = width / 2;
-      const centerY = height / 2;
-      const radius = Math.min(centerX, centerY) * 0.6;
-
-      ctx.clearRect(0, 0, width, height);
-
-      ctx.save();
-      ctx.translate(centerX, centerY);
-
-      const sliceAngle = (Math.PI * 2) / barCount;
-
-      for (let i = 0; i < barCount; i++) {
-        const freqIndex = Math.floor((i / barCount) * bufferLength);
-        const value = dataArray[freqIndex];
-        const barHeight = value * intensity;
-
-        const angle = sliceAngle * i;
-
-        const xStart = Math.cos(angle) * radius;
-        const yStart = Math.sin(angle) * radius;
-
-        const xEnd = Math.cos(angle) * (radius + barHeight);
-        const yEnd = Math.sin(angle) * (radius + barHeight);
-
-        ctx.strokeStyle = `hsl(${(i / barCount) * 360}, 100%, 50%)`;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(xStart, yStart);
-        ctx.lineTo(xEnd, yEnd);
-        ctx.stroke();
+    const fadeInterval = setInterval(() => {
+      currentStep++;
+      audio.volume = Math.max(0, Math.min(1, audio.volume + volumeDiff / steps));
+      if (currentStep >= steps) {
+        clearInterval(fadeInterval);
+        audio.volume = targetVolume;
+        if (onComplete) onComplete();
       }
+    }, stepTime);
+  }
 
-      ctx.restore();
-    }
+  if (toggleMusicBtn) {
+    toggleMusicBtn.textContent = isMuted ? "🔇" : "🔊";
+    toggleMusicBtn.addEventListener("click", () => {
+      isMuted = !isMuted;
+      localStorage.setItem("musicMuted", isMuted);
+      toggleMusicBtn.textContent = isMuted ? "🔇" : "🔊";
 
-    draw();
+      if (isMuted) {
+        fadeVolume(0, 100, () => audio.pause());
+      } else {
+        audio.play().then(() => fadeVolume(0.3));
+      }
+    });
+  }
+
+  // --- Audio Guide Modal ---
+  const modal = document.getElementById("audioGuideModal");
+  if (!localStorage.getItem("audioGuideDismissed") && modal) {
+    modal.style.display = "flex";
+  }
+
+  let audioStarted = false;
+  function startAudio() {
+    if (audioStarted || isMuted) return;
+    audioStarted = true;
+    audio.play().catch(e => console.warn("Playback failed after interaction:", e));
+  }
+  document.addEventListener("click", startAudio, { once: true });
+  document.addEventListener("keydown", startAudio, { once: true });
+
+  // --- Dark Mode ---
+  const darkModeBtn = document.getElementById("toggleDarkModeBtn");
+  const content = document.querySelector(".content");
+  const bg = document.querySelector(".background");
+
+  function applyDarkMode(isDark) {
+    content?.classList.toggle("dark-mode", isDark);
+    bg?.classList.toggle("dark-mode", isDark);
+    localStorage.setItem("contentDarkMode", isDark);
+    if (darkModeBtn) darkModeBtn.textContent = isDark ? "🌙" : "☀️";
+  }
+
+  const isDarkInitial = localStorage.getItem("contentDarkMode") === "true";
+  applyDarkMode(isDarkInitial);
+
+  if (darkModeBtn) {
+    darkModeBtn.addEventListener("click", () => {
+      applyDarkMode(!content?.classList.contains("dark-mode"));
+    });
+  }
+  // --- Music Visualizer Setup ---
+const canvas = document.getElementById("music-visualizer");
+const ctx = canvas.getContext("2d");
+
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const analyser = audioCtx.createAnalyser();
+const source = audioCtx.createMediaElementSource(audio);
+
+source.connect(analyser);
+analyser.connect(audioCtx.destination);
+
+analyser.fftSize = 256; // Lower for simpler waveform
+const bufferLength = analyser.frequencyBinCount;
+const dataArray = new Uint8Array(bufferLength);
+
+// Draw waveform
+function drawVisualizer() {
+  requestAnimationFrame(drawVisualizer);
+
+  analyser.getByteFrequencyData(dataArray);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const barWidth = (canvas.width / bufferLength) * 1.5;
+  let x = 0;
+
+  for (let i = 0; i < bufferLength; i++) {
+    const barHeight = dataArray[i] / 2;
+    ctx.fillStyle = `rgb(${barHeight + 100}, 50, 200)`;
+    ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+    x += barWidth + 1;
   }
 }
+
+drawVisualizer();
+
+// Resume AudioContext on user interaction
+document.addEventListener("click", () => {
+  if (audioCtx.state === "suspended") {
+    audioCtx.resume();
+  }
+}, { once: true });
 
 });
 
