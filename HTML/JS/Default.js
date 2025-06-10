@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- Title and Page Name ---
   const fullFileName = decodeURIComponent(window.location.pathname.split("/").pop());
   const pageName = fullFileName.split(".")[0] || "home";
-  document.title = Enigmatic Website – ${pageName};
+  document.title = `Enigmatic Website – ${pageName}`;
   document.querySelectorAll(".page-name").forEach(el => el.textContent = pageName);
 
   // --- Dropdown Click ---
@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- Last Modified Display ---
   const display = document.getElementById("last-modified");
-  if (display) display.textContent = Last updated: ${document.lastModified};
+  if (display) display.textContent = `Last updated: ${document.lastModified}`;
 
   // --- Back to Top Button ---
   const mybutton = document.getElementById("myBtn");
@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  const audio = new Audio(/Enigmatic Website/MEDIA/${musicFile});
+  const audio = new Audio(../../Enigmatic-Website/MEDIA/${musicFile});
   const toggleMusicBtn = document.getElementById("toggleMusicBtn");
   const storageKey = audioPos:${pageName};
   let isMuted = localStorage.getItem("musicMuted") === "true";
