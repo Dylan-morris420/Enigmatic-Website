@@ -171,7 +171,7 @@ function startAudio() {
   function drawVisualizer() {
     requestAnimationFrame(drawVisualizer);
     analyser.getByteFrequencyData(dataArray);
-    ctx.clearRect(0, 0, canvas.width/255, canvas.height/255);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const barCount = analyser.frequencyBinCount; // e.g. 8
     const barWidth = (canvas.width / barCount) - 1; // leave 1px gap
@@ -182,7 +182,7 @@ function startAudio() {
       const scale = canvas.height / 255; // ~0.235 for 60px
       const barHeight = dataArray[i] * scale;
 
-      ctx.fillStyle = rgb(${barHeight + 100}, 50, 200);
+      ctx.fillStyle = `rgb(${barHeight + 100}, 50, 200)`;
       ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
       x += barWidth + 1;
     }
@@ -220,18 +220,9 @@ function startAudio() {
       applyDarkMode(!content?.classList.contains("dark-mode"));
     });
   }
-  // --- Music Visualizer Setup ---
-const canvas = document.getElementById("music-visualizer");
-const ctx = canvas.getContext("2d");
 
 
 
-// Resume AudioContext on user interaction
-document.addEventListener("click", () => {
-  if (audioCtx.state === "suspended") {
-    audioCtx.resume();
-  }
-}, { once: true });
 
 });
 
