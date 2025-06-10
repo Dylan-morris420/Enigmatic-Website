@@ -173,11 +173,15 @@ function startAudio() {
     analyser.getByteFrequencyData(dataArray);
     ctx.clearRect(0, 0, canvas.width/255, canvas.height/255);
 
-    const barWidth = (canvas.width / bufferLength) * 1.5;
+    const barCount = analyser.frequencyBinCount; // e.g. 8
+    const barWidth = (canvas.width / barCount) - 1; // leave 1px gap
+
     let x = 0;
 
     for (let i = 0; i < bufferLength; i++) {
-      const barHeight = dataArray[i] / 2;
+      const scale = canvas.height / 255; // ~0.235 for 60px
+      const barHeight = dataArray[i] * scale;
+
       ctx.fillStyle = `rgb(${barHeight + 100}, 50, 200)`;
       ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
       x += barWidth + 1;
