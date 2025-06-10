@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   // --- Title and Page Name ---
-  const fullFileName = decodeURIComponent(window.location.pathname.split("/").pop());
+  const fullFileName = decodeURIComponent(window.location.pathname.split("/").pop()); 
   const pageName = fullFileName.split(".")[0] || "home";
   document.title = `Enigmatic Website – ${pageName}`;
   document.querySelectorAll(".page-name").forEach(el => el.textContent = pageName);
@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // --- Music Toggle Button ---
-  function fadeVolume(targetVolume, duration = 100, onComplete) {
+  function fadeVolume(targetVolume, duration = 400, onComplete) {
     const stepTime = 50;
     const steps = duration / stepTime;
     const volumeDiff = targetVolume - audio.volume;
@@ -133,7 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
       toggleMusicBtn.textContent = isMuted ? "🔇" : "🔊";
 
       if (isMuted) {
-        fadeVolume(0, 100, () => audio.pause());
+        fadeVolume(0, 400, () => audio.pause());
       } else {
         audio.play().then(() => fadeVolume(0.3));
       }
@@ -175,47 +175,69 @@ document.addEventListener("DOMContentLoaded", () => {
       applyDarkMode(!content?.classList.contains("dark-mode"));
     });
   }
-// --- Music Visualizer Setup ---
-const canvas = document.getElementById("music-visualizer");
-if (canvas) {
-  const ctx = canvas.getContext("2d");
+  window.onload = function() {
+  
+  var file = audio
+  
+  file.onchange = function() {
+    var files = this.files;
+    audio.src = URL.createObjectURL(files[0]);
+    audio.load();
+    audio.play();
+    var context = new AudioContext();
+    var src = context.createMediaElementSource(audio);
+    var analyser = context.createAnalyser();
 
-  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  const analyser = audioCtx.createAnalyser();
-  const source = audioCtx.createMediaElementSource(audio);
+    var canvas = document.getElementById("canvas");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    var ctx = canvas.getContext("2d");
 
-  source.connect(analyser);
-  analyser.connect(audioCtx.destination);
+    src.connect(analyser);
+    analyser.connect(context.destination);
 
-  analyser.fftSize = 256;
-  const bufferLength = analyser.frequencyBinCount;
-  const dataArray = new Uint8Array(bufferLength);
+    analyser.fftSize = 256;
 
-  function drawVisualizer() {
-    requestAnimationFrame(drawVisualizer);
-    analyser.getByteFrequencyData(dataArray);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    var bufferLength = analyser.frequencyBinCount;
+    console.log(bufferLength);
 
-    const barWidth = (canvas.width / bufferLength) * 1.5;
-    let x = 0;
+    var dataArray = new Uint8Array(bufferLength);
 
-    for (let i = 0; i < bufferLength; i++) {
-      const barHeight = dataArray[i] / 2;
-      ctx.fillStyle = `rgb(${barHeight + 100}, 50, 200)`;
-      ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-      x += barWidth + 1;
+    var WIDTH = canvas.width;
+    var HEIGHT = canvas.height;
+
+    var barWidth = (WIDTH / bufferLength) * 2.5;
+    var barHeight;
+    var x = 0;
+
+    function renderFrame() {
+      requestAnimationFrame(renderFrame);
+
+      x = 0;
+
+      analyser.getByteFrequencyData(dataArray);
+
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+      for (var i = 0; i < bufferLength; i++) {
+        barHeight = dataArray[i];
+        
+        var r = barHeight + (25 * (i/bufferLength));
+        var g = 250 * (i/bufferLength);
+        var b = 50;
+
+        ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
+        ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
+
+        x += barWidth + 1;
+      }
     }
-  }
 
-  drawVisualizer();
-
-  document.addEventListener("click", () => {
-    if (audioCtx.state === "suspended") {
-      audioCtx.resume();
-    }
-  }, { once: true });
-}
-
+    audio.play();
+    renderFrame();
+  };
+};
 });
 
 // --- Audio Guide Dismiss ---
