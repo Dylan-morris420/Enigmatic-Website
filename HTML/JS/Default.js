@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- Title and Page Nasme ---
   const fullFileName = decodeURIComponent(window.location.pathname.split("/").pop());
   const pageName = fullFileName.split(".")[0] || "home";
-  document.title = 'Enigmatic Website – ${pageName}';
+  document.title = `Enigmatic Website – ${pageName}`;
   document.querySelectorAll(".page-name").forEach(el => el.textContent = pageName);
 
   // --- Dropdown Click ---
@@ -47,9 +47,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const mybutton = document.getElementById("myBtn");
   window.onscroll = () => {
     if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-      mybutton?.classList.add("show");
+      if (mybutton) mybutton.classList.add("show");
     } else {
-      mybutton?.classList.remove("show");
+      if (mybutton) mybutton.classList.remove("show");
     }
   };
 
@@ -77,14 +77,14 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  const audio = new Audio(/Enigmatic Website/MEDIA/${musicFile});
+  const audio = new Audio(`/Enigmatic Website/MEDIA/${musicFile}`);
   const toggleMusicBtn = document.getElementById("toggleMusicBtn");
-  const storageKey = audioPos:${pageName};
+  const storageKey = `audioPos:${pageName}`;
   let isMuted = localStorage.getItem("musicMuted") === "true";
 
   audio.loop = true;
+  audio.muted = isMuted;
   audio.volume = isMuted ? 0 : 0.3;
-  audio.muted = false;
 
   const savedPosition = parseFloat(localStorage.getItem(storageKey));
   if (!isNaN(savedPosition)) {
