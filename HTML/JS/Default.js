@@ -175,47 +175,46 @@ document.addEventListener("DOMContentLoaded", () => {
       applyDarkMode(!content?.classList.contains("dark-mode"));
     });
   }
-  // --- Music Visualizer Setup ---
+// --- Music Visualizer Setup ---
 const canvas = document.getElementById("music-visualizer");
-const ctx = canvas.getContext("2d");
+if (canvas) {
+  const ctx = canvas.getContext("2d");
 
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-const analyser = audioCtx.createAnalyser();
-const source = audioCtx.createMediaElementSource(audio);
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const analyser = audioCtx.createAnalyser();
+  const source = audioCtx.createMediaElementSource(audio);
 
-source.connect(analyser);
-analyser.connect(audioCtx.destination);
+  source.connect(analyser);
+  analyser.connect(audioCtx.destination);
 
-analyser.fftSize = 256; // Lower for simpler waveform
-const bufferLength = analyser.frequencyBinCount;
-const dataArray = new Uint8Array(bufferLength);
+  analyser.fftSize = 256;
+  const bufferLength = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
 
-// Draw waveform
-function drawVisualizer() {
-  requestAnimationFrame(drawVisualizer);
+  function drawVisualizer() {
+    requestAnimationFrame(drawVisualizer);
+    analyser.getByteFrequencyData(dataArray);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  analyser.getByteFrequencyData(dataArray);
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const barWidth = (canvas.width / bufferLength) * 1.5;
+    let x = 0;
 
-  const barWidth = (canvas.width / bufferLength) * 1.5;
-  let x = 0;
-
-  for (let i = 0; i < bufferLength; i++) {
-    const barHeight = dataArray[i] / 2;
-    ctx.fillStyle = `rgb(${barHeight + 100}, 50, 200)`;
-    ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-    x += barWidth + 1;
+    for (let i = 0; i < bufferLength; i++) {
+      const barHeight = dataArray[i] / 2;
+      ctx.fillStyle = `rgb(${barHeight + 100}, 50, 200)`;
+      ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+      x += barWidth + 1;
+    }
   }
+
+  drawVisualizer();
+
+  document.addEventListener("click", () => {
+    if (audioCtx.state === "suspended") {
+      audioCtx.resume();
+    }
+  }, { once: true });
 }
-
-drawVisualizer();
-
-// Resume AudioContext on user interaction
-document.addEventListener("click", () => {
-  if (audioCtx.state === "suspended") {
-    audioCtx.resume();
-  }
-}, { once: true });
 
 });
 
