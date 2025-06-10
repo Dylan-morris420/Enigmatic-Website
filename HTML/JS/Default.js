@@ -175,25 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
       applyDarkMode(!content?.classList.contains("dark-mode"));
     });
   }
-  w
-};
-});
-
-// --- Audio Guide Dismiss ---
-function dismissAudioGuide(dontAskAgain) {
-  const modal = document.getElementById("audioGuideModal");
-  if (modal) modal.style.display = "none";
-  if (dontAskAgain) {
-    localStorage.setItem("audioGuideDismissed", "true");
-  }
-}
-
-// --- Scroll to Top ---
-function topFunction() {
-  document.body.scrollTop = 0;
-  document.documentElement.scrollTop = 0;
-}
-indow.onload = function() {
+  window.onload = function() {
   
   var file = audio
   
@@ -303,8 +285,26 @@ function update() {
 function init() {
     createAudio();
     createCanvas();
+
     createFile();
     update();
 }
 
 window.onload = init();
+};
+});
+
+// --- Audio Guide Dismiss ---
+function dismissAudioGuide(dontAskAgain) {
+  const modal = document.getElementById("audioGuideModal");
+  if (modal) modal.style.display = "none";
+  if (dontAskAgain) {
+    localStorage.setItem("audioGuideDismissed", "true");
+  }
+}
+
+// --- Scroll to Top ---
+function topFunction() {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+}
