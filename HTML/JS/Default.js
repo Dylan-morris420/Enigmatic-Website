@@ -146,7 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
     modal.style.display = "flex";
   }
 
- let audioStarted = false;
+  let audioStarted = false;
 let audioCtx;
 
 function startAudio() {
@@ -160,7 +160,7 @@ function startAudio() {
   source.connect(analyser);
   analyser.connect(audioCtx.destination);
 
-  analyser.fftSize = 16; // 8 bars
+  analyser.fftSize = 16;
   const bufferLength = analyser.frequencyBinCount;
   const dataArray = new Uint8Array(bufferLength);
 
@@ -168,33 +168,27 @@ function startAudio() {
   const ctx = canvas?.getContext("2d");
   if (!canvas || !ctx) return;
 
-  // Ensure canvas is sized correctly
-  canvas.width = 200;
-  canvas.height = 60;
-
-  const scale = canvas.height / 255;
-
   function drawVisualizer() {
     requestAnimationFrame(drawVisualizer);
     analyser.getByteFrequencyData(dataArray);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width/255, canvas.height/255);
 
-    const barCount = bufferLength; // 8
-    const spacing = 1; // pixel gap between bars
-    const barWidth = (canvas.width - (barCount - 1) * spacing) / barCount;
+    const barCount = analyser.frequencyBinCount; // e.g. 8
+    const barWidth = (canvas.width / barCount) - 1; // leave 1px gap
 
     let x = 0;
-    for (let i = 0; i < barCount; i++) {
+
+    for (let i = 0; i < bufferLength; i++) {
+      const scale = canvas.height / 255; // ~0.235 for 60px
       const barHeight = dataArray[i] * scale;
+
       ctx.fillStyle = `rgb(${barHeight + 100}, 50, 200)`;
       ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-      x += barWidth + spacing;
+      x += barWidth + 1;
     }
   }
 
   drawVisualizer();
-}
-
 
   // Resume context and play audio
   audioCtx.resume().then(() => {
