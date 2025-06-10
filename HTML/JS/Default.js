@@ -179,14 +179,14 @@ document.addEventListener("DOMContentLoaded", () => {
 const canvas = document.getElementById("music-visualizer");
 const ctx = canvas.getContext("2d");
 
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const audioCtx = new (window.AudioContext)();
 const analyser = audioCtx.createAnalyser();
 const source = audioCtx.createMediaElementSource(audio);
 
 source.connect(analyser);
 analyser.connect(audioCtx.destination);
 
-analyser.fftSize = 256; // Lower for simpler waveform
+analyser.fftSize = 10; // Lower for simpler waveform
 const bufferLength = analyser.frequencyBinCount;
 const dataArray = new Uint8Array(bufferLength);
 
