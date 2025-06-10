@@ -6,9 +6,32 @@
     <link rel="icon" href="../../Enigmatic-Website/MEDIA/Default.ico" type="image/x-icon" sizes="64x64">
     <link rel="stylesheet" href="../../Enigmatic-Website/HTML/Default.css" />
     <script>
+// Catch synchronous and runtime errors
+window.onerror = function(message, source, lineno, colno, error) {
+  alert(
+    "🔥 JavaScript Error:\n" +
+    "Message: " + message + "\n" +
+    "Source: " + source + "\n" +
+    "Line: " + lineno + ", Column: " + colno + "\n" +
+    "Stack: " + (error && error.stack ? error.stack : "N/A")
+  );
+  return false; // Let browser handle it too (if allowed)
+};
+
+// Catch unhandled Promise rejections
+window.addEventListener("unhandledrejection", function(event) {
+  const reason = event.reason && event.reason.message ? event.reason.message : event.reason;
+  alert(
+    "❗ Unhandled Promise Rejection:\n" +
+    "Reason: " + reason
+  );
+});
+</script>
+
+    <script>
   window.pageMusicFile = "DEBUG.mp3"; // unique per page
 </script>
-    <script src="../Enigmatic-Website/HTML/JS/Default.js"></script>
+    <script src="../../Enigmatic-Website/HTML/JS/Default.js"></script>
   </head>
   <body>
     <header class="header">
