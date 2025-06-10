@@ -160,7 +160,7 @@ function startAudio() {
   source.connect(analyser);
   analyser.connect(audioCtx.destination);
 
-  analyser.fftSize = 64;
+  analyser.fftSize = 16;
   const bufferLength = analyser.frequencyBinCount;
   const dataArray = new Uint8Array(bufferLength);
 
@@ -171,7 +171,7 @@ function startAudio() {
   function drawVisualizer() {
     requestAnimationFrame(drawVisualizer);
     analyser.getByteFrequencyData(dataArray);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width/255, canvas.height/255);
 
     const barWidth = (canvas.width / bufferLength) * 1.5;
     let x = 0;
