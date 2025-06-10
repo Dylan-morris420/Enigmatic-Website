@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // --- Dropdown Hover ---
+  // --- Dropdowsn Hover ---
   const sidebar = document.querySelector(".sidebar");
   document.querySelectorAll(".dropdown-h").forEach(dropdownH => {
     const contentH = dropdownH.querySelector(".dropdown-content");
