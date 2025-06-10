@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // --- Title and Page Nasme ---
+  // --- Title and Page Name ---
   const fullFileName = decodeURIComponent(window.location.pathname.split("/").pop());
   const pageName = fullFileName.split(".")[0] || "home";
   document.title = `Enigmatic Website – ${pageName}`;
@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // --- Dropdowsn Hover ---
+  // --- Dropdown Hover ---
   const sidebar = document.querySelector(".sidebar");
   document.querySelectorAll(".dropdown-h").forEach(dropdownH => {
     const contentH = dropdownH.querySelector(".dropdown-content");
@@ -47,9 +47,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const mybutton = document.getElementById("myBtn");
   window.onscroll = () => {
     if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-      if (mybutton) mybutton.classList.add("show");
+      mybutton?.classList.add("show");
     } else {
-      if (mybutton) mybutton.classList.remove("show");
+      mybutton?.classList.remove("show");
     }
   };
 
@@ -83,8 +83,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let isMuted = localStorage.getItem("musicMuted") === "true";
 
   audio.loop = true;
-  audio.muted = isMuted;
   audio.volume = isMuted ? 0 : 0.3;
+  audio.muted = false;
 
   const savedPosition = parseFloat(localStorage.getItem(storageKey));
   if (!isNaN(savedPosition)) {
@@ -175,46 +175,50 @@ document.addEventListener("DOMContentLoaded", () => {
       applyDarkMode(!content?.classList.contains("dark-mode"));
     });
   }
-// --- Music Visualizer Setup ---
+  // --- Music Visualizer Setup ---
 const canvas = document.getElementById("music-visualizer");
-if (canvas) {
-  const ctx = canvas.getContext("2d");
+const ctx = canvas.getContext("2d");
 
-  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  const analyser = audioCtx.createAnalyser();
-  const source = audioCtx.createMediaElementSource(audio);
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const analyser = audioCtx.createAnalyser();
+const source = audioCtx.createMediaElementSource(audio);
 
-  source.connect(analyser);
-  analyser.connect(audioCtx.destination);
+source.connect(analyser);
+analyser.connect(audioCtx.destination);
 
-  analyser.fftSize = 256;
-  const bufferLength = analyser.frequencyBinCount;
-  const dataArray = new Uint8Array(bufferLength);
+analyser.fftSize = 256; // Lower for simpler waveform
+const bufferLength = analyser.frequencyBinCount;
+const dataArray = new Uint8Array(bufferLength);
 
-  function drawVisualizer() {
-    requestAnimationFrame(drawVisualizer);
-    analyser.getByteFrequencyData(dataArray);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+// Draw waveform
+function drawVisualizer() {
+  requestAnimationFrame(drawVisualizer);
 
-    const barWidth = (canvas.width / bufferLength) * 1.5;
-    let x = 0;
+  analyser.getByteFrequencyData(dataArray);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    for (let i = 0; i < bufferLength; i++) {
-      const barHeight = dataArray[i] / 2;
-      ctx.fillStyle = `rgb(${barHeight + 100}, 50, 200)`;
-      ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-      x += barWidth + 1;
-    }
+  const barWidth = (canvas.width / bufferLength) * 1.5;
+  let x = 0;
+
+  for (let i = 0; i < bufferLength; i++) {
+    const barHeight = dataArray[i] / 2;
+    ctx.fillStyle = `rgb(${barHeight + 100}, 50, 200)`;
+    ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+    x += barWidth + 1;
   }
-
-  drawVisualizer();
-
-  document.addEventListener("click", () => {
-    if (audioCtx.state === "suspended") {
-      audioCtx.resume();
-    }
-  }, { once: true });
 }
+
+drawVisualizer();
+
+// Resume AudioContext on user interaction
+document.addEventListener("click", () => {
+  if (audioCtx.state === "suspended") {
+    audioCtx.resume();
+  }
+}, { once: true });
+
+});
+
 // --- Audio Guide Dismiss ---
 function dismissAudioGuide(dontAskAgain) {
   const modal = document.getElementById("audioGuideModal");
