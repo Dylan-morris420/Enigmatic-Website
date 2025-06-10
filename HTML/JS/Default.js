@@ -147,11 +147,51 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   let audioStarted = false;
-  function startAudio() {
-    if (audioStarted || isMuted) return;
-    audioStarted = true;
-    audio.play().catch(e => console.warn("Playback failed after interaction:", e));
+let audioCtx;
+
+function startAudio() {
+  if (audioStarted || isMuted) return;
+  audioStarted = true;
+
+  // Create audio context and analyser AFTER user interaction
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const analyser = audioCtx.createAnalyser();
+  const source = audioCtx.createMediaElementSource(audio);
+  source.connect(analyser);
+  analyser.connect(audioCtx.destination);
+
+  analyser.fftSize = 64;
+  const bufferLength = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
+
+  const canvas = document.getElementById("music-visualizer");
+  const ctx = canvas?.getContext("2d");
+  if (!canvas || !ctx) return;
+
+  function drawVisualizer() {
+    requestAnimationFrame(drawVisualizer);
+    analyser.getByteFrequencyData(dataArray);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const barWidth = (canvas.width / bufferLength) * 1.5;
+    let x = 0;
+
+    for (let i = 0; i < bufferLength; i++) {
+      const barHeight = dataArray[i] / 2;
+      ctx.fillStyle = `rgb(${barHeight + 100}, 50, 200)`;
+      ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+      x += barWidth + 1;
+    }
   }
+
+  drawVisualizer();
+
+  // Resume context and play audio
+  audioCtx.resume().then(() => {
+    audio.play().catch(e => console.warn("Playback failed after interaction:", e));
+  });
+}
+
   document.addEventListener("click", startAudio, { once: true });
   document.addEventListener("keydown", startAudio, { once: true });
 
@@ -179,36 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const canvas = document.getElementById("music-visualizer");
 const ctx = canvas.getContext("2d");
 
-const audioCtx = new (window.AudioContext)();
-const analyser = audioCtx.createAnalyser();
-const source = audioCtx.createMediaElementSource(audio);
 
-source.connect(analyser);
-analyser.connect(audioCtx.destination);
-
-analyser.fftSize = 10; // Lower for simpler waveform
-const bufferLength = analyser.frequencyBinCount;
-const dataArray = new Uint8Array(bufferLength);
-
-// Draw waveform
-function drawVisualizer() {
-  requestAnimationFrame(drawVisualizer);
-
-  analyser.getByteFrequencyData(dataArray);
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  const barWidth = (canvas.width / bufferLength) * 1.5;
-  let x = 0;
-
-  for (let i = 0; i < bufferLength; i++) {
-    const barHeight = dataArray[i] / 2;
-    ctx.fillStyle = `rgb(${barHeight + 100}, 50, 200)`;
-    ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-    x += barWidth + 1;
-  }
-}
-
-drawVisualizer();
 
 // Resume AudioContext on user interaction
 document.addEventListener("click", () => {
