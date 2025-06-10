@@ -179,118 +179,64 @@ document.addEventListener("DOMContentLoaded", () => {
   
   var file = audio
   
-  Visualizer.prototype.draw = function() {
+  file.onchange = function() {
+    var files = this.files;
+    audio.src = URL.createObjectURL(files[0]);
+    audio.load();
+    audio.play();
+    var context = new AudioContext();
+    var src = context.createMediaElementSource(audio);
+    var analyser = context.createAnalyser();
 
-    var r = this.radius,
-        t = this.barWidth * this.barScale * Math.PI / 180,
-        s = 0;
-
-    analyser.getByteFrequencyData(frequencyData);
-
-    for (var i = 0; i < 15; i++) {
-        s += frequencyData[i] / 255;
-    }
-    s /= 15;
-    r += s * r * 2;
-    s = (s > 1 / 3) ? ((s < 2 / 5) ? s : 2 / 5) : 1 / 3;
-
-    canvasCtx.clearRect(-150 - r, -150 - r, 300 + r * 2, 300 + r * 2);
-    canvasCtx.save();
-    for (var i = 0; i < bufferLength; i++) {
-
-        var h = frequencyData[i];
-
-        var red = parseInt(h + 100 + i / 15);
-        var green = parseInt(h);
-        var blue = 0;
-        var grad = canvasCtx.createLinearGradient(0, r, 0, r + h * s * this.freqScale);
-        grad.addColorStop(0.00, 'rgba(' + red + ',' + green + ',' + blue + ',0)');
-        grad.addColorStop(0.15, 'rgba(' + red + ',' + green + ',' + blue + ',1)');
-        grad.addColorStop(0.75, 'rgba(' + red + ',' + green + ',' + blue + ',1)');
-        grad.addColorStop(1.00, 'rgba(0,0,0,0)');
-        canvasCtx.fillStyle = grad;
-
-        canvasCtx.fillRect(0, r, this.barWidth * 5, h * s * this.freqScale + r);
-
-        canvasCtx.transform(-Math.cos(t), -Math.sin(t), Math.sin(t), -Math.cos(t), 0, 0);
-    }
-    canvasCtx.restore();
-    canvasCtx.rotate(s * this.rotation * Math.PI / 180);
-}
-
-function createAudio() {
-    audio = document.querySelector('audio');
-    audioCtx = new(window.AudioContext || window.webkitAudioContext)();
-    source = audioCtx.createMediaElementSource(audio);
-    compressor = audioCtx.createDynamicsCompressor();
-    analyser = audioCtx.createAnalyser();
-    bufferLength = analyser.frequencyBinCount;
-    frequencyData = new Uint8Array(bufferLength);
-    
-    source.connect(analyser);
-    
-    analyser.getByteTimeDomainData(frequencyData);
-    analyser.fftSize = 2048;
-    analyser.smoothingTimeConstant = 0.83;
-    analyser.minDecibels = -90;
-    analyser.maxDecibels = 0;
-    audio.volume = 0.3;
-    analyser.connect(audioCtx.destination);
-}
-
-function createGui() {
-    gui = new dat.GUI();
-    gui.remember(visual);
-    var gen = gui.addFolder('General');
-    var freq = gui.addFolder('Frequency scaling');
-    gen.add(visual, 'radius').min(10).max(200).step(5);
-    gen.add(visual, 'barWidth').min(0.1).max(5).step(0.1);
-    gen.add(visual, 'barScale').min(0.1).max(10).step(0.1);
-    gen.add(visual, 'rotation').min(-10).max(10).step(0.1);
-    freq.add(visual, 'freqScale').min(1).max(10).step(0.1);
-    gen.open();
-    freq.open();
-}
-
-function createCanvas() {
-    canvas = document.getElementById('canvas');
-    canvasCtx = canvas.getContext('2d');
+    var canvas = document.getElementById("canvas");
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    canvasCtx.translate((canvas.width / 2), (canvas.height / 2));
-    visual = new Visualizer();
-}
+    var ctx = canvas.getContext("2d");
 
-function createStats() {
-    stats = new Stats();
-    stats.setMode(0);
-    document.body.appendChild(stats.domElement);
-}
+    src.connect(analyser);
+    analyser.connect(context.destination);
 
-function createFile() {
-    document.querySelector('#file-input').onchange = function(e) {
-        var file = e.target.files[0];
-        var url = URL.createObjectURL(file);
-        audio.src = url;
-        audio.play();
+    analyser.fftSize = 256;
+
+    var bufferLength = analyser.frequencyBinCount;
+    console.log(bufferLength);
+
+    var dataArray = new Uint8Array(bufferLength);
+
+    var WIDTH = canvas.width;
+    var HEIGHT = canvas.height;
+
+    var barWidth = (WIDTH / bufferLength) * 2.5;
+    var barHeight;
+    var x = 0;
+
+    function renderFrame() {
+      requestAnimationFrame(renderFrame);
+
+      x = 0;
+
+      analyser.getByteFrequencyData(dataArray);
+
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+      for (var i = 0; i < bufferLength; i++) {
+        barHeight = dataArray[i];
+        
+        var r = barHeight + (25 * (i/bufferLength));
+        var g = 250 * (i/bufferLength);
+        var b = 50;
+
+        ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
+        ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
+
+        x += barWidth + 1;
+      }
     }
-}
 
-function update() {
-    requestAnimationFrame(update);
-    visual.draw();
-    stats.update();
-};
-
-function init() {
-    createAudio();
-    createCanvas();
-
-    createFile();
-    update();
-}
-
-window.onload = init();
+    audio.play();
+    renderFrame();
+  };
 };
 });
 
