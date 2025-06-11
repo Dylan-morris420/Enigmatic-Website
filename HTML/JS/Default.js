@@ -176,7 +176,7 @@ canvas.height = rect.height;
   const HEIGHT = canvas.height;
   const centerX = WIDTH / 2;
   const centerY = HEIGHT / 2;
-  const baseRadius = 60;
+  const baseRadius = 45;
   const angleStep = (2 * Math.PI) / bufferLength;
 
   function renderFrame() {
@@ -200,7 +200,7 @@ canvas.height = rect.height;
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
       ctx.strokeStyle = `hsl(${(i / bufferLength) * 360}, 100%, 50%)`;
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 4;
       ctx.stroke();
     }
   }
