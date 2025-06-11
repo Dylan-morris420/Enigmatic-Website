@@ -146,7 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
     modal.style.display = "flex";
   }
 
- let audioStarted = false;
+let audioStarted = false;
 let audioCtx;
 
 function startAudio() {
@@ -160,7 +160,7 @@ function startAudio() {
   source.connect(analyser);
   analyser.connect(audioCtx.destination);
 
-  analyser.fftSize = 32;
+  analyser.fftSize = 256;
   const bufferLength = analyser.frequencyBinCount;
   const dataArray = new Uint8Array(bufferLength);
 
@@ -168,34 +168,40 @@ function startAudio() {
   const ctx = canvas?.getContext("2d");
   if (!canvas || !ctx) return;
 
-  function drawVisualizer() {
-    requestAnimationFrame(drawVisualizer);
-    analyser.getByteFrequencyData(dataArray);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 
-    const barCount = analyser.frequencyBinCount; // e.g. 8
-    const barWidth = (canvas.width / barCount) - 1; // leave 1px gap
+  const WIDTH = canvas.width;
+  const HEIGHT = canvas.height;
+  const barWidth = (WIDTH / bufferLength) * 2.5;
+
+  function renderFrame() {
+    requestAnimationFrame(renderFrame);
+
+    analyser.getByteFrequencyData(dataArray);
+
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
     let x = 0;
-
     for (let i = 0; i < bufferLength; i++) {
-      const scale = canvas.height / 0.235; // ~0.235 for 60px
-      const barHeight = dataArray[i] * scale;
+      const barHeight = dataArray[i];
+      const r = barHeight + (25 * (i / bufferLength));
+      const g = 250 * (i / bufferLength);
+      const b = 50;
 
-      ctx.fillStyle = `rgb(${barHeight + 100}, 50, 200)`;
-      ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+      ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+      ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
       x += barWidth + 1;
     }
   }
 
-  drawVisualizer();
-
-
-  // Resume context and play audio
   audioCtx.resume().then(() => {
     audio.play().catch(e => console.warn("Playback failed after interaction:", e));
+    renderFrame();
   });
 }
+
 
   document.addEventListener("click", startAudio, { once: true });
   document.addEventListener("keydown", startAudio, { once: true });
