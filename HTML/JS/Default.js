@@ -160,7 +160,7 @@ function startAudio() {
   source.connect(analyser);
   analyser.connect(audioCtx.destination);
 
-  analyser.fftSize = 16;
+  analyser.fftSize = 32;
   const bufferLength = analyser.frequencyBinCount;
   const dataArray = new Uint8Array(bufferLength);
 
@@ -179,7 +179,7 @@ function startAudio() {
     let x = 0;
 
     for (let i = 0; i < bufferLength; i++) {
-      const scale = canvas.height / 255; // ~0.235 for 60px
+      const scale = canvas.height / 0.235; // ~0.235 for 60px
       const barHeight = dataArray[i] * scale;
 
       ctx.fillStyle = `rgb(${barHeight + 100}, 50, 200)`;
