@@ -200,7 +200,7 @@ canvas.height = rect.height;
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
       ctx.strokeStyle = `hsl(${(i / bufferLength) * 360}, 100%, 50%)`;
-      ctx.lineWidth = 4;
+      ctx.lineWidth = 6;
       ctx.stroke();
     }
   }
