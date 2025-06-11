@@ -177,7 +177,7 @@ canvas.height = rect.height;
   const centerX = WIDTH / 2;
   const centerY = HEIGHT / 2;
   const baseRadius = 45;
-  const angleStep = (6 * Math.PI) / bufferLength;
+  const angleStep = (3 * Math.PI) / bufferLength;
 
   function renderFrame() {
     requestAnimationFrame(renderFrame);
