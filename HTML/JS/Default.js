@@ -174,7 +174,7 @@ function startAudio() {
   const HEIGHT = canvas.height;
   const centerX = WIDTH / 2;
   const centerY = HEIGHT / 2;
-  const baseRadius = 80;
+  const baseRadius = 60;
   const angleStep = (2 * Math.PI) / bufferLength;
 
   function renderFrame() {
@@ -188,7 +188,7 @@ function startAudio() {
       const value = dataArray[i];
       const angle = i * angleStep;
 
-      const barLength = value * 1.5; // You can tweak this multiplier
+      const barLength = value * 0.5; // You can tweak this multiplier
       const x1 = centerX + Math.cos(angle) * baseRadius;
       const y1 = centerY + Math.sin(angle) * baseRadius;
       const x2 = centerX + Math.cos(angle) * (baseRadius + barLength);
