@@ -160,7 +160,7 @@ function startAudio() {
   source.connect(analyser);
   analyser.connect(audioCtx.destination);
 
-  analyser.fftSize = 32;
+  analyser.fftSize = 256;
   const bufferLength = analyser.frequencyBinCount;
   const dataArray = new Uint8Array(bufferLength);
 
@@ -179,9 +179,6 @@ function startAudio() {
     requestAnimationFrame(renderFrame);
 
     analyser.getByteFrequencyData(dataArray);
-
-    ctx.fillStyle = "#000";
-    ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
     let x = 0;
     for (let i = 0; i < bufferLength; i++) {
