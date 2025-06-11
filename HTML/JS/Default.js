@@ -1,4 +1,4 @@
-/Enigmatic-Website/MEDIA/document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
   // --- Title and Page Name ---
   const fullFileName = decodeURIComponent(window.location.pathname.split("/").pop());
   const pageName = fullFileName.split(".")[0] || "home";
