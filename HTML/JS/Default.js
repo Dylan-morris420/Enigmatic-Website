@@ -153,7 +153,6 @@ function startAudio() {
   if (audioStarted || isMuted) return;
   audioStarted = true;
 
-  // Create audio context and analyser AFTER user interaction
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   const analyser = audioCtx.createAnalyser();
   const source = audioCtx.createMediaElementSource(audio);
@@ -165,7 +164,7 @@ function startAudio() {
   const dataArray = new Uint8Array(bufferLength);
 
   const canvas = document.getElementById("music-visualizer");
-  const ctx = canvas?.getContext("2d");
+  const ctx = canvas?.getContext("2d", { alpha: true }); // allow transparency
   if (!canvas || !ctx) return;
 
   canvas.width = window.innerWidth;
@@ -173,23 +172,34 @@ function startAudio() {
 
   const WIDTH = canvas.width;
   const HEIGHT = canvas.height;
-  const barWidth = (WIDTH / bufferLength);
+  const centerX = WIDTH / 2;
+  const centerY = HEIGHT / 2;
+  const baseRadius = 80;
+  const angleStep = (2 * Math.PI) / bufferLength;
 
   function renderFrame() {
     requestAnimationFrame(renderFrame);
 
     analyser.getByteFrequencyData(dataArray);
 
-    let x = 0;
-    for (let i = 0; i < bufferLength; i++) {
-      const barHeight = dataArray[i];
-      const r = barHeight + (25 * (i / bufferLength));
-      const g = 250 * (i / bufferLength);
-      const b = 50;
+    ctx.clearRect(0, 0, WIDTH, HEIGHT); // transparent clear
 
-      ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-      ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
-      x += barWidth + 1;
+    for (let i = 0; i < bufferLength; i++) {
+      const value = dataArray[i];
+      const angle = i * angleStep;
+
+      const barLength = value * 1.5; // You can tweak this multiplier
+      const x1 = centerX + Math.cos(angle) * baseRadius;
+      const y1 = centerY + Math.sin(angle) * baseRadius;
+      const x2 = centerX + Math.cos(angle) * (baseRadius + barLength);
+      const y2 = centerY + Math.sin(angle) * (baseRadius + barLength);
+
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.strokeStyle = `hsl(${(i / bufferLength) * 360}, 100%, 50%)`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
     }
   }
 
@@ -198,6 +208,7 @@ function startAudio() {
     renderFrame();
   });
 }
+
 
 
   document.addEventListener("click", startAudio, { once: true });
