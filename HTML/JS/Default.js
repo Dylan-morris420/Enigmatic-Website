@@ -173,7 +173,7 @@ function startAudio() {
 
   const WIDTH = canvas.width;
   const HEIGHT = canvas.height;
-  const barWidth = (WIDTH / bufferLength) * 2.5;
+  const barWidth = (WIDTH / bufferLength) * 0.25;
 
   function renderFrame() {
     requestAnimationFrame(renderFrame);
@@ -185,7 +185,7 @@ function startAudio() {
 
     let x = 0;
     for (let i = 0; i < bufferLength; i++) {
-      const barHeight = dataArray[i];
+      const barHeight = dataArray[i] * 0.25;
       const r = barHeight + (25 * (i / bufferLength));
       const g = 250 * (i / bufferLength);
       const b = 50;
