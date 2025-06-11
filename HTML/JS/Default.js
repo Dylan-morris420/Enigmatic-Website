@@ -146,72 +146,66 @@ document.addEventListener("DOMContentLoaded", () => {
     modal.style.display = "flex";
   }
 
-let audioStarted = false;
-let audioCtx;
+  let audioStarted = false;
+  let audioCtx;
 
-function startAudio() {
-  if (audioStarted || isMuted) return;
-  audioStarted = true;
+  function startAudio() {
+    if (audioStarted || isMuted) return;
+    audioStarted = true;
 
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  const analyser = audioCtx.createAnalyser();
-  const source = audioCtx.createMediaElementSource(audio);
-  source.connect(analyser);
-  analyser.connect(audioCtx.destination);
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const analyser = audioCtx.createAnalyser();
+    const source = audioCtx.createMediaElementSource(audio);
+    source.connect(analyser);
+    analyser.connect(audioCtx.destination);
 
-  analyser.fftSize = 256;
-  const bufferLength = analyser.frequencyBinCount;
-  const dataArray = new Uint8Array(bufferLength);
+    analyser.fftSize = 256;
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
 
-  const canvas = document.getElementById("music-visualizer");
-  const ctx = canvas?.getContext("2d", { alpha: true }); // allow transparency
-  if (!canvas || !ctx) return;
+    const canvas = document.getElementById("music-visualizer");
+    const ctx = canvas?.getContext("2d", { alpha: true });
+    if (!canvas || !ctx) return;
 
- const rect = canvas.getBoundingClientRect();
-canvas.width = rect.width;
-canvas.height = rect.height;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
 
+    const WIDTH = canvas.width;
+    const HEIGHT = canvas.height;
+    const centerX = WIDTH / 2;
+    const centerY = HEIGHT / 2;
+    const baseRadius = 45;
+    const angleStep = (3 * Math.PI) / bufferLength;
 
-  const WIDTH = canvas.width;
-  const HEIGHT = canvas.height;
-  const centerX = WIDTH / 2;
-  const centerY = HEIGHT / 2;
-  const baseRadius = 45;
-  const angleStep = (3 * Math.PI) / bufferLength;
+    function renderFrame() {
+      requestAnimationFrame(renderFrame);
+      analyser.getByteFrequencyData(dataArray);
+      ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
-  function renderFrame() {
-    requestAnimationFrame(renderFrame);
+      for (let i = 0; i < bufferLength; i++) {
+        const value = dataArray[i];
+        const angle = i * angleStep;
+        const barLength = value * 0.35;
+        const x1 = centerX + Math.cos(angle) * baseRadius;
+        const y1 = centerY + Math.sin(angle) * baseRadius;
+        const x2 = centerX + Math.cos(angle) * (baseRadius + barLength);
+        const y2 = centerY + Math.sin(angle) * (baseRadius + barLength);
 
-    analyser.getByteFrequencyData(dataArray);
-
-    ctx.clearRect(0, 0, WIDTH, HEIGHT); // transparent clear
-
-    for (let i = 0; i < bufferLength; i++) {
-      const value = dataArray[i];
-      const angle = i * angleStep;
-
-      const barLength = value * 0.35; // You can tweak this multiplier
-      const x1 = centerX + Math.cos(angle) * baseRadius;
-      const y1 = centerY + Math.sin(angle) * baseRadius;
-      const x2 = centerX + Math.cos(angle) * (baseRadius + barLength);
-      const y2 = centerY + Math.sin(angle) * (baseRadius + barLength);
-
-      ctx.beginPath();
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x2, y2);
-      ctx.strokeStyle = `hsl(${(i / bufferLength) * 360}, 100%, 50%)`;
-      ctx.lineWidth = 6;
-      ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = `hsl(${(i / bufferLength) * 360}, 100%, 50%)`;
+        ctx.lineWidth = 6;
+        ctx.stroke();
+      }
     }
+
+    audioCtx.resume().then(() => {
+      audio.play().catch(e => console.warn("Playback failed after interaction:", e));
+      renderFrame();
+    });
   }
-
-  audioCtx.resume().then(() => {
-    audio.play().catch(e => console.warn("Playback failed after interaction:", e));
-    renderFrame();
-  });
-}
-
-
 
   document.addEventListener("click", startAudio, { once: true });
   document.addEventListener("keydown", startAudio, { once: true });
@@ -236,10 +230,6 @@ canvas.height = rect.height;
       applyDarkMode(!content?.classList.contains("dark-mode"));
     });
   }
-
-
-
-
 });
 
 // --- Audio Guide Dismiss ---
