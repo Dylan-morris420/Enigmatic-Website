@@ -173,7 +173,7 @@ function startAudio() {
 
   const WIDTH = canvas.width;
   const HEIGHT = canvas.height;
-  const barWidth = (WIDTH / bufferLength) * 0.25;
+  const barWidth = (WIDTH / bufferLength);
 
   function renderFrame() {
     requestAnimationFrame(renderFrame);
