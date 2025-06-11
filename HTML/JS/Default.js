@@ -167,8 +167,10 @@ function startAudio() {
   const ctx = canvas?.getContext("2d", { alpha: true }); // allow transparency
   if (!canvas || !ctx) return;
 
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+ const rect = canvas.getBoundingClientRect();
+canvas.width = rect.width;
+canvas.height = rect.height;
+
 
   const WIDTH = canvas.width;
   const HEIGHT = canvas.height;
