@@ -1,4 +1,4 @@
-/Enigmatic-Productions/MEDIA/document.addEventListener("DOMContentLoaded", () => {
+/Enigmatic-Website/MEDIA/document.addEventListener("DOMContentLoaded", () => {
   // --- Title and Page Name ---
   const fullFileName = decodeURIComponent(window.location.pathname.split("/").pop());
   const pageName = fullFileName.split(".")[0] || "home";
@@ -77,7 +77,7 @@
     return;
   }
 
-  const audio = new Audio(`../../Enigmatic-Website/MEDIA/${musicFile}`);
+  const audio = new Audio(`/Enigmatic-Website/MEDIA/${musicFile}`);
   const toggleMusicBtn = document.getElementById("toggleMusicBtn");
   const storageKey = `audioPos:${pageName}`;
   let isMuted = localStorage.getItem("musicMuted") === "true";
