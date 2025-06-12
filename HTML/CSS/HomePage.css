@@ -18,8 +18,7 @@
 html, body {
   height: 100%;
   font-family: var(--font-main);
-  background-color: var(--bg-dark);
-  color: var(--text-light);
+
   scroll-behavior: smooth;
   text-align: center;
 
@@ -80,8 +79,8 @@ body::after {
 }
 .content {
   max-width: 1000px;
+z-index: 5;
 
-  color: var(--text-light);
   border-radius: var(--border-radius);
   padding: 40px;
   box-shadow: 0 0 10px rgba(0, 255, 255, 0.05);
@@ -125,13 +124,8 @@ body::after {
 
 /* Items (Dropdown Menu) */
 .items {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  min-width: 240px;
   background-color: #102818; /* deeper dark green */
   border-radius: 18px;
-  padding: 14px 0;
   border: 2px solid rgba(0, 255, 0, 0.3);
   box-shadow:
     0 0 12px rgba(0, 255, 0, 0.1),
@@ -139,7 +133,14 @@ body::after {
     inset 0 0 10px rgba(0, 255, 100, 0.1);
   backdrop-filter: blur(6px);
   animation: dropdownFade 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 16px 0;
+  width: 240px;
 }
+
 
 @keyframes dropdownFade {
   from {
@@ -255,6 +256,22 @@ body::after {
   opacity: 0;
   pointer-events: none;
   transition: all 0.4s ease;
+}
+#toggleSidebarBtn {
+  position: fixed;
+  top: 0;
+  left: 16px;
+  z-index: 100;
+  background: var(--panel-gray);
+  color: var(--accent-cyan);
+  box-shadow: var(--hover-glow);
+  border: 1px solid var(--accent-cyan);
+  border-radius: var(--border-radius);
+  padding: 5px 16px;
+  font-family: 'Comic Sans', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 #myBtn.show {
   opacity: 1;
