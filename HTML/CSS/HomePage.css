@@ -1,10 +1,10 @@
 :root {
   --bg-dark: #0d0d0d;
   --text-light: #e0e0e0;
-  --accent-violet: #8a2be2;
-  --accent-cyan: #00ffff;
+  --accent-violet: rgba(0, 255, 0, 0.3);
+  --accent-cyan: rgba(0, 255, 0, 0.3);
   --panel-gray: #2e2e2e;
-  --hover-glow: 0 0 8px rgba(0, 255, 255, 0.6);
+  --hover-glow: 0 0 8px rgba(0, 255, 0, 0.3);
   --font-main: 'Comic Sans MS', cursive, sans-serif;
   --border-radius: 20px;
 }
@@ -45,7 +45,7 @@ body::after {
 /* === SIDEBAR === */
 .sidebar {
   width: 260px;
-  background-color: var(--panel-gray);
+  background-color: #191919;
   border-right: 2px solid var(--accent-violet);
   box-shadow: inset -2px 0 4px rgba(0,0,0,0.5);
   color: var(--text-light);
