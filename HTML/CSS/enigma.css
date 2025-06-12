@@ -146,14 +146,18 @@ body, html {
   display: inline-block;
 }
 
+/* Items */
 .items {
-  display: none;
-  position: absolute;
-  min-width: 160px;
-  background-color: #2f3a1a;
-  border-radius: 0 0 6px 6px;
-  box-shadow: 0 4px 10px rgba(143, 191, 63, 0.7);
-  z-index: 10;
+  box-shadow: 10px 0 20px rgba(0, 255, 34, 0.1);
+  background-color: #1e3826;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 16px 0;
+  border-radius: 30px;
+  border-right: 3px solid rgb(21, 255, 0);
+  width: 240px;
 }
 
 .dropdown:hover .items,
