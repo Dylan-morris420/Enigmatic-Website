@@ -13,7 +13,7 @@ body, html {
   color: #f0f0f0;
 }
 
-
+/* Layout container */
 .container {
   display: flex;
   min-height: 100vh;
@@ -27,44 +27,38 @@ body, html {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  width: 240px;
+  width: 220px;
   padding: 20px;
   z-index: 5;
   text-align: left;
-  box-shadow: 10px 0 20px rgba(0, 255, 204, 0.1);
+  box-shadow: 10px 0 16px -4px rgba(0, 255, 255, 0.3);
   background: linear-gradient(160deg, #0f2027, #203a43, #2c5364);
-  font-size: 90%;
-  border-right: 3px solid #0ff;
+  font-size: 92.5%;
 }
 
 .sidebar h2 {
   margin-bottom: 20px;
   text-align: center;
-  font-size: 24px;
+  font-size: 20px;
   color: #0ff;
-  letter-spacing: 1px;
 }
 
-/* Navigation links */
-.nav-link, .dropdown-btn, .dropdown-btn-h {
+/* Nav links */
+.nav-link {
   text-decoration: none;
   background: rgba(255, 255, 255, 0.05);
   padding: 12px 16px;
-  border-radius: 8px;
+  border-radius: 4px;
   margin-bottom: 10px;
-  transition: all 0.3s ease;
-  border: 1px solid transparent;
+  transition: background 0.3s, color 0.3s;
+  border: none;
   cursor: pointer;
-  font-size: 15px;
-  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
   color: #f0f0f0;
 }
 
-.nav-link:hover,
-.dropdown-btn:hover,
-.dropdown-btn-h:hover {
-  background: #0ff2;
-  border-color: #0ff;
+.nav-link:hover {
+  background-color: #0ff2;
   color: #0ff;
 }
 
@@ -74,44 +68,45 @@ body, html {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: #1e1e1e;
-  color: #fff;
+  background-color: #1e1e1e;
 }
 
 .main p, .main ul {
-  font-size: 18px;
-  line-height: 1.6;
+  font-size: 20px;
 }
 
 /* Header */
 .header {
   position: relative;
   width: 100%;
-  padding: 20px;
+  padding: 8px;
   text-align: center;
   background: linear-gradient(90deg, #00c6ff, #0072ff);
   color: white;
-  font-size: 24px;
+  z-index: 1;
   font-weight: 700;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
-
+/* Content */
 .content {
   max-width: 1000px;
   margin: auto;
   flex: 1;
-  padding: 40px;
+  padding: 30px;
   word-wrap: break-word;
 }
 
 /* Footer */
 .footer {
+  position: relative;
+  left: 0;
   background-color: #151f2b;
-  color: #ccc;
+  color: white;
+  bottom: 0;
   width: 100%;
   text-align: center;
-  padding: 40px 20px;
+  padding: 50px;
+  z-index: 1;
   border-top: 3px solid #0ff;
 }
 
@@ -120,10 +115,9 @@ body, html {
 }
 
 .footer .social-links a {
-  color: #888;
+  color: #ccc;
   margin: 0 10px;
   text-decoration: none;
-  font-size: 18px;
   transition: color 0.3s ease;
 }
 
@@ -131,25 +125,29 @@ body, html {
   color: #0ff;
 }
 
-
-.dropdown,
+/* Dropdown */
+.dropdown {
+  position: inherit;
+  display: inline-block;
+}
 .dropdown-h {
-  position: relative;
+  position: inherit;
   display: inline-block;
 }
 
 .dropdown-content {
   display: none;
-  min-width: 180px;
-  z-index: 10;
+  min-width: 160px;
+  z-index: 1;
   background-color: #1e2a38;
-  font-size: 14px;
+  font-size: 95%;
+  padding-left: 0;
   border-radius: 6px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 255, 255, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 255, 255, 0.1);
 }
 
 .dropdown-content a {
+  padding-left: inherit;
   display: block;
   padding: 12px 16px;
   color: #f0f0f0;
@@ -162,11 +160,37 @@ body, html {
   color: #0ff;
 }
 
+.dropdown-btn, .dropdown-btn-h {
+  all: unset;
+  display: block;
+  width: 92.5%;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 16px 16px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  transition: background 0.3s, color 0.3s;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  color: #f0f0f0;
+}
+
+.dropdown-btn:hover,
+.dropdown-btn-h:hover {
+  background-color: #0ff2;
+  color: #0ff;
+}
+
 .show {
   display: block;
 }
 
+.dropdown-h:hover .dropdown-content {
+  display: block;
+}
 
+/* Nested dropdown theme progression */
 .sidebar .dropdown-content {
   background-color: #16232f;
 }
