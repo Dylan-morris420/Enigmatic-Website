@@ -1,4 +1,13 @@
-
+:root {
+  --bg-dark: #0d0d0d;
+  --text-light: #e0e0e0;
+  --accent-violet: #8a2be2;
+  --accent-cyan: #00ffff;
+  --panel-gray: #2e2e2e;
+  --hover-glow: 0 0 8px rgba(0, 255, 255, 0.6);
+  --font-main: 'Comic Sans MS', cursive, sans-serif;
+  --border-radius: 20px;
+}
 
 * {
   margin: 0;
