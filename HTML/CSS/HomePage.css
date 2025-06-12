@@ -198,7 +198,7 @@ border: 2px solid var(--accent-cyan);
 }
 
 /* Dropdown Buttons (activators) */
-.dropdown-btn, .dropdown-btn-h, .nav-link {
+.dropdown-btn, .dropdown-btn-h, .nav-link, .dropdown-content {
   all: unset;
   display: block;
   width: 90%;
@@ -219,7 +219,7 @@ border: 2px solid var(--accent-cyan);
 .dropdown-btn:hover,
 .dropdown-btn:focus-visible,
 .dropdown-btn-h:hover,
-.dropdown-btn-h:focus-visible, .nav-link {
+.dropdown-btn-h:focus-visible, .nav-link, .dropdown-content {
   background: #2a4c22;
   color: #8fbf3f;
   box-shadow: 0 0 8px rgba(0, 255, 34, 0.2);
