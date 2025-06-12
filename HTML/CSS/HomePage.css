@@ -103,8 +103,7 @@ border: 2px solid var(--accent-cyan);
 .footer {
   background: #191919;
   padding: 50px 20px;
-  color: var(--text-light);
-  
+  border-top: 2px solid var(--accent-cyan);
 }
 .footer .social-links a {
   color: var(--accent-cyan);
