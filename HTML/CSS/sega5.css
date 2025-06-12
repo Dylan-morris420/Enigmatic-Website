@@ -80,7 +80,6 @@ body, html {
   flex-direction: column;
   min-height: 100vh;
   background-color: #121212; /* Dark charcoal */
-  color: #ddd;
 }
 
 .main p, .main ul {

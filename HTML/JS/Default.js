@@ -207,8 +207,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  document.addEventListener("click", startAudio, { once: true });
-  document.addEventListener("keydown", startAudio, { once: true });
+  startAudio(); // Direct call
+
 
   // --- Dark Mode ---
   const darkModeBtn = document.getElementById("toggleDarkModeBtn");
