@@ -284,21 +284,21 @@ border: 2px solid var(--accent-cyan);
 
 /* Nested sidebar dropdown colors */
 .sidebar .dropdown-content {
-  background-color: #191919;
+  background-color: #0f210d;
   border-radius: 30px;
 }
 
 .sidebar .dropdown-content .dropdown-content {
-  background-color: #3d3d3d;
+  background-color: #1c421b;
   border-radius: 30px;
 }
 
 .sidebar .dropdown-content .dropdown-content .dropdown-content {
-  background-color: #464646;
+  background-color: #255d1f;
   border-radius: 30px;
 }
 
 .sidebar .dropdown-content .dropdown-content .dropdown-content .dropdown-content {
-  background-color: #6e6e6e;
+  background-color: #326e29;
   border-radius: 30px;
 }

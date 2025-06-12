@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let isMuted = localStorage.getItem("musicMuted") === "true";
 
   audio.loop = true;
-  audio.volume = isMuted ? 0 : 0.3;
+  audio.volume = isMuted ? 0 : 0.5;
   audio.muted = false;
 
   const savedPosition = parseFloat(localStorage.getItem(storageKey));
