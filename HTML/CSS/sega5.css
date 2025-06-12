@@ -1,3 +1,6 @@
+/* Importing a thematic font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
 * {
   margin: 0;
   padding: 0;
@@ -6,7 +9,7 @@
 
 body, html {
   height: 100%;
-  font-family: 'Comic Sans MS', sans-serif; /* Consider 'Orbitron', 'Roboto Mono', or 'Audiowide' for future */
+  font-family: 'Orbitron', monospace, 'Courier New', monospace;
   background-color: #0a0a0a; /* Very dark background */
   color: #eee; /* Light text for readability */
 }
@@ -30,15 +33,20 @@ body, html {
   z-index: 5;
   text-align: left;
   box-shadow: 10px 0 16px -4px #440000cc; /* Dark red shadow */
-  background-color: #1a0000; /* Deep dark red */
+  background-color: #220000; /* Deep dark red, slightly lighter for less eye strain */
   font-size: 92.5%;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  user-select: none;
 }
 
 .sidebar h2 {
   margin-bottom: 20px;
   text-align: center;
-  font-size: 20px;
+  font-size: 22px;
   color: #ff3b3b; /* Bright red */
+  font-weight: 700;
+  letter-spacing: 0.06em;
 }
 
 /* Nav links */
@@ -46,18 +54,23 @@ body, html {
   text-decoration: none;
   background: none;
   padding: 12px 16px;
-  border-radius: 4px;
+  border-radius: 6px;
   margin-bottom: 10px;
-  transition: background 0.3s;
+  transition: background 0.3s ease, color 0.3s ease;
   border: none;
   cursor: pointer;
   font-size: 14px;
   color: #f0f0f0;
+  font-weight: 500;
+  display: block;
 }
 
-.nav-link:hover {
+.nav-link:hover,
+.nav-link:focus-visible {
   background-color: #660000; /* Dark red highlight */
   color: #ffb600; /* Yellow accent on hover */
+  outline: none;
+  box-shadow: 0 0 8px #ffb600aa;
 }
 
 /* Main content area */
@@ -83,7 +96,9 @@ body, html {
   box-shadow: 0 4px 16px -4px #ff3b3b99; /* red shadow */
   background-color: #b80000; /* Bright blood red */
   color: #fff;
-  font-weight: bold;
+  font-weight: 700;
+  font-family: 'Orbitron', monospace;
+  letter-spacing: 0.05em;
   z-index: 1;
 }
 
@@ -94,7 +109,6 @@ body, html {
   flex: 1;
   padding: 30px;
   word-wrap: break-word;
-  color: #eee;
 }
 
 /* Footer */
@@ -109,6 +123,7 @@ body, html {
   text-align: center;
   padding: 50px;
   z-index: 1;
+  font-family: 'Orbitron', monospace;
 }
 
 .footer .social-links {
@@ -120,16 +135,21 @@ body, html {
   margin: 0 10px;
   text-decoration: none;
   transition: color 0.3s ease;
+  font-weight: 600;
 }
 
-.footer .social-links a:hover {
+.footer .social-links a:hover,
+.footer .social-links a:focus-visible {
   color: #ff3b3b;
+  outline: none;
+  text-decoration: underline;
 }
 
 /* Dropdowns */
 .dropdown, .dropdown-h {
   position: inherit;
   display: inline-block;
+  font-family: 'Orbitron', monospace;
 }
 
 .dropdown-content {
@@ -141,6 +161,16 @@ body, html {
   padding-left: 0;
   border-radius: 0 0 6px 6px;
   box-shadow: 0 4px 10px rgba(255, 59, 59, 0.7);
+  font-weight: 400;
+}
+.items {
+  display: none;
+  position: absolute;
+  min-width: 160px;
+  background-color: #3a1a1a;
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 4px 10px rgba(191, 63, 63, 0.7);
+  z-index: 10;
 }
 
 .dropdown-content a {
@@ -149,14 +179,19 @@ body, html {
   color: #fff;
   text-decoration: none;
   padding: 10px 15px;
-  transition: background 0.25s ease;
+  transition: background 0.25s ease, color 0.25s ease;
+  font-weight: 500;
+  cursor: pointer;
 }
 
-.dropdown-content a:hover {
+.dropdown-content a:hover,
+.dropdown-content a:focus-visible {
   background-color: #660000;
   color: #ffb600;
+  outline: none;
 }
 
+/* Dropdown buttons */
 .dropdown-btn, .dropdown-btn-h {
   all: unset;
   display: block;
@@ -164,16 +199,27 @@ body, html {
   text-decoration: none;
   background: none;
   padding: 16px 16px;
-  border-radius: 4px;
+  border-radius: 6px;
   margin-bottom: 10px;
-  transition: background 0.3s;
+  transition: background 0.3s ease, color 0.3s ease;
   cursor: pointer;
-  font-family: 'Comic Sans MS', sans-serif;
+  font-family: 'Orbitron', monospace;
+  font-weight: 500;
   font-size: 14px;
   color: #eee;
+  user-select: none;
 }
 
-.dropdown-h:hover .dropdown-content {
+.dropdown-btn:hover,
+.dropdown-btn:focus-visible {
+  background-color: #660000;
+  color: #ffb600;
+  outline: none;
+  box-shadow: 0 0 8px #ffb600aa;
+}
+
+.dropdown-h:hover .dropdown-content,
+.dropdown-h:focus-within .dropdown-content {
   display: block;
 }
 
