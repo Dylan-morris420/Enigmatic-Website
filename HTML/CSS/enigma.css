@@ -256,11 +256,18 @@ body, html {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #12110e;
+  background-image: url('/Enigmatic-Website/MEDIA/enigma.png');
+  background-color: transparent;
+  background-blend-mode: multiply; /* or overlay, darken, etc */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
   filter: blur(10px);
   z-index: -1;
 }
-
+.background.dark-mode {
+  background-color: darkslategray;
+}
 /* Utility */
 .show {
   display: block;
