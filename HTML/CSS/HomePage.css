@@ -80,7 +80,7 @@ body::after {
 .content {
   max-width: 1000px;
 z-index: 5;
-
+border: 2px solid var(--accent-cyan);
   border-radius: var(--border-radius);
   padding: 40px;
   box-shadow: 0 0 10px rgba(0, 255, 255, 0.05);
@@ -104,7 +104,7 @@ z-index: 5;
   background: #191919;
   padding: 50px 20px;
   color: var(--text-light);
-  border-top: 2px solid var(--accent-violet);
+  
 }
 .footer .social-links a {
   color: var(--accent-cyan);
