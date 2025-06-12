@@ -8,7 +8,7 @@
 body, html {
   height: 100%;
   font-family: 'Courier New', monospace; /* More readable base font */
-  background-color: #12110e; /* Very dark brownish-black */
+
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -74,7 +74,7 @@ body, html {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #1b1a17; /* Dark charcoal brown */
+
   font-family: 'Courier New', monospace;
 }
 

@@ -10,7 +10,7 @@
 body, html {
   height: 100%;
   font-family: 'Orbitron', monospace, 'Courier New', monospace;
-  background-color: #0a0a0a; /* Very dark background */
+
 }
 
 /* Layout container */
@@ -78,7 +78,7 @@ body, html {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #121212; /* Dark charcoal */
+
 }
 
 .main p, .main ul {
