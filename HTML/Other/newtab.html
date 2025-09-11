@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Custom New Tab</title>
+  <style>
+    /* Reset */
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: sans-serif;
+      color: white;
+      overflow: hidden;
+    }
+
+    /* Background */
+    body {
+      background: url("background.jpg") no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end; /* push everything to bottom */
+      align-items: center;
+    }
+
+    /* Search bar */
+    .search {
+      margin-bottom: 20px;
+      width: 60%;
+      max-width: 500px;
+    }
+
+    .search input {
+      width: 100%;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      outline: none;
+      background: rgba(0, 0, 0, 0.4);
+      color: white;
+    }
+
+    /* Shortcuts */
+    .shortcuts {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    .shortcuts a {
+      padding: 10px 15px;
+      border-radius: 20px;
+      text-decoration: none;
+      color: white;
+      background: rgba(0, 0, 0, 0.4);
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    .shortcuts a:hover {
+      background: rgba(0, 0, 0, 0.6);
+    }
+  </style>
+</head>
+<body>
+  <!-- Search bar -->
+  <div class="search">
+    <form action="https://www.google.com/search" method="get">
+      <input type="text" name="q" placeholder="Search Google...">
+    </form>
+  </div>
+
+  <!-- Shortcuts -->
+  <div class="shortcuts">
+    <a href="https://google.com">Google</a>
+    <a href="https://youtube.com">YouTube</a>
+    <a href="https://github.com">GitHub</a>
+    <a href="https://reddit.com">Reddit</a>
+  </div>
+</body>
+</html>
