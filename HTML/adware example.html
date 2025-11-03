@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Notification & Download Example</title>
+</head>
+<body>
+  <button id="clickMe">Click Me</button>
+
+  <script>
+    let notificationInterval;
+
+    // Create a blank txt file and download it
+    function downloadEmptyFile() {
+      const blob = new Blob([""], { type: "text/plain" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "empty.txt";
+      link.click();
+    }
+
+    // Send a notification
+    function sendNotification() {
+      if (Notification.permission === "granted") {
+        new Notification("Example Adware", {
+          body: "This is a notification example.",
+          icon: "https://via.placeholder.com/50"
+        });
+      }
+    }
+
+    document.getElementById("clickMe").addEventListener("click", () => {
+      // Download the empty file
+      downloadEmptyFile();
+
+      // Request notification permission if not granted
+      if (Notification.permission !== "granted") {
+        Notification.requestPermission().then(permission => {
+          if (permission === "granted") {
+            // Start sending notifications every second
+            notificationInterval = setInterval(sendNotification, 1000);
+          } else {
+            alert("Notifications permission denied.");
+          }
+        });
+      } else {
+        // Already granted, start sending notifications
+        notificationInterval = setInterval(sendNotification, 1000);
+      }
+    });
+  </script>
+</body>
+</html>
