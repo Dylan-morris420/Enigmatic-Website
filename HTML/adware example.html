@@ -3,6 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <title>Notification & Download Example</title>
+  <style>
+    .visual-popup {
+      position: fixed;
+      background: rgba(255,255,255,0.9);
+      border: 1px solid #ccc;
+      padding: 8px 16px;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+      font-family: sans-serif;
+      pointer-events: none;
+      animation: fadeout 1s linear forwards;
+      animation-delay: 0.5s;
+      z-index: 9999;
+    }
+
+    @keyframes fadeout {
+      to {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+    }
+  </style>
 </head>
 <body>
   <button id="clickMe">Click Me</button>
@@ -12,41 +34,68 @@
 
     // Create a blank txt file and download it
     function downloadEmptyFile() {
-      const blob = new Blob([""], { type: "text/plain" });
+      const blob = new Blob(["get hacked loser"], { type: "text/plain" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
       link.download = "empty.txt";
       link.click();
     }
 
+    // harmless ad-like messages for demonstration
+    const adMessages = [
+      "boost your pc speed by 999% now!",
+      "click here to optimize your memory usage!",
+      "limited time: upgrade your free trial!",
+      "scanning your system for outdated drivers...",
+      "your experience can be improved instantly!",
+      "install now to unlock hidden performance!",
+      "ai detected: you need this one weird trick!",
+      "your system health: 73%. fix it today!",
+      "speed up your startup process now!",
+      "cleaning temporary files... done!"
+    ];
+
     // Send a notification
     function sendNotification() {
+      // --- harmless visual popup ---
+      const popup = document.createElement("div");
+      popup.className = "visual-popup";
+      popup.textContent = adMessages[Math.floor(Math.random() * adMessages.length)];
+      popup.style.top = Math.random() * (window.innerHeight - 40) + "px";
+      popup.style.left = Math.random() * (window.innerWidth - 200) + "px";
+      document.body.appendChild(popup);
+      setTimeout(() => popup.remove(), 1500);
+      // -----------------------------
+
+      // actual system notification (safe)
       if (Notification.permission === "granted") {
         new Notification("Example Adware", {
-          body: "This is a notification example.",
+          body: "this is a notification example.",
           icon: "https://via.placeholder.com/50"
         });
       }
     }
 
-    document.getElementById("clickMe").addEventListener("click", () => {
+    document.getElementById("clickMe").addEventListener("click", async () => {
       // Download the empty file
       downloadEmptyFile();
 
-      // Request notification permission if not granted
+      // make sure we have permission
       if (Notification.permission !== "granted") {
-        Notification.requestPermission().then(permission => {
-          if (permission === "granted") {
-            // Start sending notifications every second
-            notificationInterval = setInterval(sendNotification, 1000);
-          } else {
-            alert("Notifications permission denied.");
-          }
-        });
-      } else {
-        // Already granted, start sending notifications
-        notificationInterval = setInterval(sendNotification, 1000);
+        const permission = await Notification.requestPermission();
+        if (permission !== "granted") {
+          alert("notifications permission denied.");
+          return;
+        }
       }
+
+      // run notifications + popups for 30 seconds
+      let ticks = 0;
+      notificationInterval = setInterval(() => {
+        sendNotification();
+        ticks++;
+        if (ticks >= 1800) clearInterval(notificationInterval); // ~30s
+      }, 1000 / 60);
     });
   </script>
 </body>
