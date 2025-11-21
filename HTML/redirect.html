@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <meta http-equiv="refresh" content="0; url=http://chatgpt.com/" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/Enigmatic-Website/MEDIA/Default.ico" type="image/x-icon" sizes="64x64" />
+    <link rel="stylesheet" href="/Enigmatic-Website/HTML/Default.css" />
+
+    <!-- Error Catching -->
+    <script>
+      window.onerror = function(message, source, lineno, colno, error) {
+        alert(
+          "🔥 JavaScript Error:\n" +
+          "Message: " + message + "\n" +
+          "Source: " + source + "\n" +
+          "Line: " + lineno + ", Column: " + colno + "\n" +
+          "Stack: " + (error && error.stack ? error.stack : "N/A")
+        );
+        return false;
+      };
+      window.addEventListener("unhandledrejection", function(event) {
+        const reason = event.reason && event.reason.message ? event.reason.message : event.reason;
+        alert("❗ Unhandled Promise Rejection:\n" + "Reason: " + reason);
+      });
+    </script>
+
+    <!-- Page-Specific Music -->
+    <script>
+      window.pageMusicFile = "DEBUG.mp3";
+    </script>
+
+    <!-- Default JS -->
+    <script src="/Enigmatic-Website/HTML/JS/Default.js"></script>
+  </head>
+
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="header-stuff">
+        <button id="toggleSidebarBtn" style="position: fixed; top: 10px; left: 10px; z-index: 1000;">☰</button>
+        <button onclick="topFunction()" id="myBtn" title="Go to top">Top</button>
+        <h2><span class="page-name"></span></h2>
+      </div>
+    </header>
+
+    <div class="container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="items">
+          <a class="nav-link" href="/Enigmatic-Website/HTML/HomePage.html" style="font-weight: bold; display: flex; justify-content: center; width: 88%">
+            <img src="/Enigmatic-Website/MEDIA/Default.ico" style="width: 100px;" alt="Home Icon" />
+          </a>
+
+          <p style="font-weight: bold; font-size: 25px; padding: 20px; text-decoration: underline;">⁕ Creative ⁕</p>
+
+          <!-- Video -->
+          <div class="dropdown">
+            <button class="dropdown-btn nav-link">⌀ Video <span class="arrow">▼</span></button>
+            <div class="dropdown-content">
+              <a class="nav-link" href="/Enigmatic-Website/HTML/Video/Enigmatic Productions/Enigmatic Productions.html">⁕ Enigmatic Productions</a>
+            </div>
+          </div>
+          <br>
+
+          <!-- Games/Programming -->
+          <div class="dropdown">
+            <button class="dropdown-btn nav-link">⌀ Games/Programming <span class="arrow">▼</span></button>
+            <div class="dropdown-content">
+              <!-- Sega5 Games Sub-dropdown -->
+              <div class="dropdown-h">
+                <a class="dropdown-btn-h nav-link" href="/Enigmatic-Website/HTML/Games/Sega5 Games™/Sega5 Games™.html">⁕ Sega5 Games™ <span class="arrow">▼</span></a>
+                <div class="dropdown-content">
+                  <a class="nav-link" target="_blank" href="https://sites.google.com/view/sega5games/home">• Official Website</a><br />
+                  <a class="nav-link" target="_blank" href="https://sega5.fandom.com/wiki/Sega5_Wiki">• Official Wiki</a><br />
+                  <a class="nav-link" target="_blank" href="https://timmylul.itch.io/">• Itch.io Page</a>
+                </div>
+              </div>
+
+              <!-- DivDev -->
+              <div class="dropdown-h">
+                <a href="/Enigmatic-Website/HTML/Games/DivDev/DivDev.html" class="dropdown-btn-h nav-link">⁕ DivDev <span class="arrow">▼</span></a>
+                <div class="dropdown-content">
+                  <a class="nav-link" target="_blank" href="https://www.roblox.com/users/5624790936/profile">• Roblox</a>
+                </div>
+              </div>
+
+              <br />
+
+              <!-- Scratch Sub-dropdown -->
+              <div class="dropdown-h">
+                <a href="/Enigmatic-Website/HTML/Games/Scratch/Scratch.html" class="dropdown-btn-h nav-link">⁕ Scratch <span class="arrow">▼</span></a>
+                <div class="dropdown-content">
+                  <a class="nav-link" href="/Enigmatic-Website/HTML/Games/Scratch/dylanananananananna/dylanananananananna.html">• dylanananananananna</a><br />
+                  <a class="nav-link" href="/Enigmatic-Website/HTML/Games/Scratch/dylanananananannatwo/dylanananananannatwo.html">• dylanananananannatwo</a><br />
+                  <a class="nav-link" href="/Enigmatic-Website/HTML/Games/Scratch/ReelScoobey/ReelScoobey.html">• ReelScoobey</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br />
+
+          <!-- Music -->
+          <div class="dropdown">
+            <button class="dropdown-btn nav-link">⌀ Music <span class="arrow">▼</span></button>
+            <div class="dropdown-content">
+              <a class="nav-link" href="/Enigmatic-Website/HTML/Music/ReelScoobey/ReelScoobey.html">⁕ ReelScoobey</a><br />
+              <a class="nav-link" href="/Enigmatic-Website/HTML/Music/DJ5 Fart/DJ5 Fart.html">⁕ DJ5 Fart</a>
+            </div>
+          </div>
+          <br />
+
+          <!-- Art -->
+          <div class="dropdown">
+            <button class="dropdown-btn nav-link">⌀ Art <span class="arrow">▼</span></button>
+            <div class="dropdown-content">
+              <div class="dropdown-h">
+                <button class="dropdown-btn-h nav-link">⁕ Dylan Morris Media Arts <span class="arrow">▼</span></button>
+                <div class="dropdown-content">
+                  <a class="nav-link" href="/Enigmatic-Website/HTML/Art/Dylan Morris Media Arts/Dylan Morris Media Arts I.html">• Semester I</a><br />
+                  <a class="nav-link" href="/Enigmatic-Website/HTML/Art/Dylan Morris Media Arts/Dylan Morris Media Arts II.html">• Semester II</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br />
+
+          <!-- People -->
+          <div class="dropdown">
+            <button class="dropdown-btn nav-link">⌀ People <span class="arrow">▼</span></button>
+            <div class="dropdown-content">
+              <div class="dropdown-h">
+                <a href="/Enigmatic-Website/HTML/People/Cody.html" class="nav-link">⁕ Cody</a><br />
+                <a href="/Enigmatic-Website/HTML/People/Dylan.html" class="nav-link">⁕ Dylan</a>
+              </div>
+            </div>
+          </div>
+          <br />
+
+          <p style="font-weight: bold; font-size: 25px; padding: 20px; text-decoration: underline;">⁕ Personal ⁕</p>
+
+          <!-- Blogs -->
+          <div class="dropdown">
+            <button class="dropdown-btn nav-link">⌀ Blogs <span class="arrow">▼</span></button>
+            <div class="dropdown-content">
+              <div class="dropdown-h">
+                <a href="/Enigmatic-Website/HTML/Blogs/Cody.html" class="dropdown-btn-h nav-link">⁕ Cody</a><br />
+                <a href="/Enigmatic-Website/HTML/Blogs/Dylan.html" class="dropdown-btn-h nav-link">⁕ Dylan</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Resumes -->
+          <div class="dropdown">
+            <button class="dropdown-btn nav-link">⌀ Resumes <span class="arrow">▼</span></button>
+            <div class="dropdown-content">
+              <div class="dropdown-h">
+                <a href="/Enigmatic-Website/HTML/Resumes/Cody.html" class="dropdown-btn-h nav-link">⁕ Cody</a><br />
+                <a href="/Enigmatic-Website/HTML/Resumes/Dylan.html" class="dropdown-btn-h nav-link">⁕ Dylan</a>
+              </div>
+            </div>
+          </div>
+
+          <p style="font-weight: bold; font-size: 25px; padding: 20px; text-decoration: underline;">⁕ Other ⁕</p>
+
+          <!-- Footer Links -->
+          <a class="nav-link" style="font-weight: bold; font-size: 15px; margin-top: auto; text-align: center; width: 88%;" href="/Enigmatic-Website/HTML/References.html">⌀-- References --⌀</a>
+          <a class="nav-link" style="font-weight: bold; font-size: 15px; margin-top: auto; text-align: center; width: 88%;" target="_blank" href="https://docs.google.com/forms/d/e/1FAIpQLSdXMph1XbY1BDRTjTs0b59hOLmeHatn8VVeVJDEP6SSLD4A_g/viewform?usp=dialog">⌀-- Collab Registration --⌀</a>
+          <a class="nav-link" style="font-weight: bold; font-size: 15px; margin-top: auto; text-align: center; width: 88%;" href="/Enigmatic-Website/HTML/DEBUG.html">⌀-- DEBUG --⌀</a>
+
+          <!-- Controls -->
+          <div style="transform: scale(1.5); padding: 20px;">
+            <button id="toggleMusicBtn">🔇</button>
+            <button id="toggleDarkModeBtn">🌙</button>
+          </div>
+
+          <br />
+          <img src="/Enigmatic-Website/MEDIA/cat.gif" style="height: 200px;" />
+          <canvas id="music-visualizer" style="height: 200px;"></canvas>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <div class="main">
+        <div class="background"></div>
+        <main class="content">
+          <h1>Welcome to <span class="page-name"></span></h1>
+          <br />
+          <p>This is the <span class="page-name"></span> content. This page is used to test new content or design changes.</p>
+        </main>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-stuff">
+        <p>&copy; 2025 Dylan Morris. All rights reserved.</p>
+        <p style="font-size: 15px;" id="last-modified"></p>
+        <div class="social-links">
+          <a href="https://mail.google.com/mail/?view=cm&to=littlemorrisboys@gmail.com" target="_blank">Email</a>
+          <a href="https://github.com/Dylan-morris420" target="_blank">Github</a>
+          <a href="https://linkedin.com/in/yourhandle" target="_blank">Placeholder</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Music Autoplay Modal -->
+    <div id="audioGuideModal" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.85); color: #bfbfbf; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; z-index: 9999; padding: 20px; font-family: sans-serif; display: none;">
+      <h2>Enable Background Music</h2>
+      <br />
+      <p>Don't worry, this isn't one of those scam pop-ups...<br> you'll need to allow autoplay for this domain:</p>
+      <p style="margin: 12px 0;"><strong style="color: white;">dylan-morris420.github.io</strong></p>
+      <br />
+      <div style="max-width: 500px; text-align: left; margin: 0 auto;">
+        <p><strong>Chrome:</strong> 🔒 → Site settings → Sound → <em>Allow</em></p>
+        <p><strong>Firefox:</strong> ⓘ → Permissions → Autoplay → <em>Allow Audio and Video</em></p>
+        <p><strong>Safari:</strong> Right-click → Settings → Auto-Play → <em>Allow All Auto-Play</em></p>
+      </div>
+      <br />
+      <button onclick="dismissAudioGuide(true)" style="margin-top: 20px; padding: 10px 20px; font-size: 16px;">Don't Ask Again</button>
+      <button onclick="dismissAudioGuide(false)" style="margin-top: 10px; padding: 8px 16px; font-size: 14px;">Remind Me Later</button>
+    </div>
+  </body>
+</html>
