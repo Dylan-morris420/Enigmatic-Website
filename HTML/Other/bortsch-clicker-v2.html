@@ -1,0 +1,2277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BORTSCH CLICKER v2 — THE GRAND STEW</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=VT323&family=Roboto+Mono:wght@300;500&display=swap');
+
+:root {
+  --beet:#8B1A1A;--beet2:#C23B3B;--beet3:#5C0E0E;
+  --cream:#F5EDD6;--gold:#D4A843;--gold2:#F0C870;--gold3:#A07020;
+  --dill:#4A7C3F;--dill2:#6BA85E;
+  --broth:#C8864A;--dark:#110606;--dark2:#1A0808;--dark3:#240C0C;
+  --border:rgba(212,168,67,0.35);--panel:rgba(17,6,6,0.92);
+  --purple:#6A0080;--purple2:#A040C0;--cyan:#00C8C8;--cyan2:#00F0F0;
+  --orange:#E05010;--orange2:#FF7030;
+  --glow-beet: 0 0 20px rgba(139,26,26,0.8);
+  --glow-gold: 0 0 15px rgba(212,168,67,0.6);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+
+body{
+  background:var(--dark);color:var(--cream);
+  font-family:'Libre Baskerville',serif;
+  background-image:
+    radial-gradient(ellipse at 15% 50%,rgba(139,26,26,0.12) 0%,transparent 55%),
+    radial-gradient(ellipse at 85% 50%,rgba(74,124,63,0.07) 0%,transparent 55%),
+    repeating-linear-gradient(45deg,transparent,transparent 50px,rgba(212,168,67,0.015) 50px,rgba(212,168,67,0.015) 51px);
+}
+
+/* ── LAYOUT ── */
+#root{display:grid;grid-template-rows:58px 1fr 26px;height:100vh;}
+#topbar{background:linear-gradient(90deg,var(--beet3),var(--dark2),var(--beet3));border-bottom:2px solid var(--gold);display:flex;align-items:center;gap:0;overflow:hidden;}
+#main-area{display:grid;grid-template-columns:260px 1fr 300px;overflow:hidden;}
+#bottombar{background:linear-gradient(90deg,var(--beet3),var(--dark2));border-top:1px solid var(--border);overflow:hidden;display:flex;align-items:center;}
+
+/* ── TOPBAR ── */
+#logo{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--gold2);text-shadow:0 0 25px var(--beet2),0 0 50px rgba(212,168,67,0.3);letter-spacing:3px;padding:0 20px;white-space:nowrap;border-right:1px solid var(--border);}
+.top-stats{display:flex;flex:1;overflow:hidden;}
+.ts{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 18px;border-right:1px solid var(--border);min-width:100px;}
+.ts-val{font-family:'VT323',monospace;font-size:22px;color:var(--gold2);line-height:1;}
+.ts-lbl{font-family:'Roboto Mono',monospace;font-size:9px;letter-spacing:2px;opacity:0.5;text-transform:uppercase;}
+#top-btns{display:flex;align-items:center;gap:5px;padding:0 10px;border-left:1px solid var(--border);}
+.tbtn{background:var(--beet3);border:1px solid var(--border);color:var(--gold);font-family:'Roboto Mono',monospace;font-size:10px;padding:4px 8px;cursor:pointer;letter-spacing:1px;transition:all 0.15s;border-radius:2px;white-space:nowrap;}
+.tbtn:hover{background:var(--beet);border-color:var(--gold2);color:var(--gold2);}
+.tbtn.active{background:var(--gold3);color:var(--dark);border-color:var(--gold2);}
+
+/* ── LEFT PANEL ── */
+#left-panel{border-right:1px solid var(--border);overflow-y:auto;overflow-x:hidden;background:var(--panel);}
+#left-panel::-webkit-scrollbar{width:4px;}
+#left-panel::-webkit-scrollbar-thumb{background:var(--gold3);}
+
+.sect-hdr{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:3px;color:var(--gold);padding:8px 12px 4px;background:rgba(212,168,67,0.06);border-top:1px solid var(--border);border-bottom:1px solid rgba(212,168,67,0.1);display:flex;justify-content:space-between;align-items:center;}
+
+/* Building cards */
+.bld{display:flex;align-items:center;gap:8px;padding:7px 10px;border-bottom:1px solid rgba(212,168,67,0.08);cursor:pointer;transition:all 0.15s;position:relative;overflow:hidden;}
+.bld::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:transparent;transition:background 0.15s;}
+.bld.can::before{background:var(--gold);}
+.bld.cannot{opacity:0.45;cursor:not-allowed;}
+.bld.locked{opacity:0.2;cursor:not-allowed;filter:blur(0.5px);}
+.bld:hover.can{background:rgba(212,168,67,0.08);}
+.bld-icon{font-size:26px;min-width:34px;text-align:center;transition:transform 0.15s;}
+.bld:hover.can .bld-icon{transform:scale(1.15);}
+.bld-mid{flex:1;min-width:0;}
+.bld-name{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--gold2);letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bld-sub{font-size:10px;color:var(--cream);opacity:0.55;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bld-bps{font-family:'Roboto Mono',monospace;font-size:9px;color:var(--dill2);margin-top:1px;}
+.bld-right{text-align:right;min-width:58px;}
+.bld-cnt{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--cream);line-height:1;}
+.bld-cost{font-family:'VT323',monospace;font-size:15px;color:var(--gold);}
+.bld-bar{position:absolute;bottom:0;left:0;height:2px;background:linear-gradient(90deg,var(--gold3),var(--gold));transition:width 0.3s;}
+
+/* ── CENTER PANEL ── */
+#center{display:flex;flex-direction:column;align-items:center;overflow:hidden;position:relative;}
+
+/* Center tabs */
+#center-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--dark2);width:100%;flex-shrink:0;}
+.ctab{flex:1;padding:8px 4px;text-align:center;font-family:'Roboto Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;color:var(--cream);opacity:0.4;border-bottom:2px solid transparent;transition:all 0.2s;}
+.ctab.active{opacity:1;color:var(--gold);border-bottom-color:var(--gold);}
+
+.cview{display:none;flex:1;overflow-y:auto;overflow-x:hidden;width:100%;}
+.cview.active{display:flex;flex-direction:column;align-items:center;}
+.cview::-webkit-scrollbar{width:4px;}
+.cview::-webkit-scrollbar-thumb{background:var(--gold3);}
+
+/* ── MAIN CLICKER VIEW ── */
+#clicker-view{justify-content:center;gap:12px;padding:16px;}
+
+#bowl-wrap{position:relative;cursor:pointer;user-select:none;flex-shrink:0;}
+#bowl-wrap:active{transform:scale(0.93);}
+#bowl-wrap{transition:transform 0.06s;}
+
+#bowl-canvas{display:block;border-radius:50%;filter:drop-shadow(0 0 30px rgba(139,26,26,0.7));}
+
+#steam-box{position:absolute;top:-50px;left:0;right:0;pointer-events:none;height:60px;}
+.sp{position:absolute;bottom:0;border-radius:50%;background:radial-gradient(circle,rgba(245,237,214,0.25),transparent);animation:steamUp 2.5s ease-out infinite;}
+.sp:nth-child(1){width:20px;height:20px;left:38%;animation-delay:0s;}
+.sp:nth-child(2){width:25px;height:25px;left:52%;animation-delay:0.8s;}
+.sp:nth-child(3){width:18px;height:18px;left:45%;animation-delay:1.6s;}
+@keyframes steamUp{0%{opacity:0;transform:translateY(0) scaleX(1);}40%{opacity:0.7;}100%{opacity:0;transform:translateY(-55px) scaleX(2.5);}}
+
+#click-stats{text-align:center;flex-shrink:0;}
+#big-count{font-family:'VT323',monospace;font-size:52px;color:var(--gold2);text-shadow:0 0 20px rgba(212,168,67,0.4);line-height:1;display:block;}
+#count-label{font-family:'Roboto Mono',monospace;font-size:10px;letter-spacing:3px;opacity:0.45;text-transform:uppercase;}
+#bps-line{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--dill2);letter-spacing:2px;}
+#bpc-line{font-family:'Roboto Mono',monospace;font-size:11px;color:var(--broth);}
+
+/* Combo */
+#combo-wrap{position:absolute;top:70px;right:16px;text-align:right;pointer-events:none;}
+#combo-num{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--gold2);text-shadow:var(--glow-gold);opacity:0;transition:opacity 0.3s,font-size 0.1s;}
+#combo-label{font-family:'Roboto Mono',monospace;font-size:9px;letter-spacing:2px;opacity:0.6;}
+
+/* Active buffs display */
+#buffs-bar{display:flex;gap:6px;flex-wrap:wrap;padding:8px 16px;width:100%;flex-shrink:0;min-height:36px;}
+.buff-chip{padding:3px 8px;border-radius:2px;font-family:'Roboto Mono',monospace;font-size:10px;border:1px solid;display:flex;align-items:center;gap:4px;animation:buffIn 0.3s ease-out;}
+@keyframes buffIn{from{transform:scale(0.7);opacity:0}to{transform:scale(1);opacity:1}}
+.buff-frenzy{background:rgba(224,80,16,0.2);border-color:var(--orange2);color:var(--orange2);}
+.buff-golden{background:rgba(212,168,67,0.2);border-color:var(--gold2);color:var(--gold2);}
+.buff-dill{background:rgba(74,124,63,0.2);border-color:var(--dill2);color:var(--dill2);}
+.buff-time{font-size:8px;opacity:0.7;}
+
+/* ── STEW CRAFTING VIEW ── */
+#stew-view{padding:14px;gap:10px;align-items:stretch;}
+.stew-title{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold);letter-spacing:3px;text-align:center;border-bottom:1px solid var(--border);padding-bottom:8px;width:100%;}
+#cauldron-area{display:flex;flex-direction:column;align-items:center;gap:8px;}
+#stew-slots{display:flex;gap:8px;justify-content:center;}
+.stew-slot{width:52px;height:52px;border:2px dashed var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer;transition:all 0.2s;position:relative;background:rgba(212,168,67,0.04);}
+.stew-slot.filled{border-style:solid;border-color:var(--gold);background:rgba(212,168,67,0.12);}
+.stew-slot:hover{border-color:var(--gold2);background:rgba(212,168,67,0.1);}
+.stew-slot .slot-clear{position:absolute;top:-6px;right:-6px;background:var(--beet);color:var(--cream);border-radius:50%;width:14px;height:14px;font-size:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;transition:opacity 0.15s;}
+.stew-slot.filled:hover .slot-clear{opacity:1;}
+#brew-btn{background:linear-gradient(135deg,var(--beet),var(--beet3));border:2px solid var(--gold);color:var(--gold2);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;padding:8px 30px;cursor:pointer;transition:all 0.2s;width:100%;max-width:200px;}
+#brew-btn:hover{background:linear-gradient(135deg,var(--beet2),var(--beet));box-shadow:0 0 20px rgba(139,26,26,0.6);}
+#brew-result{text-align:center;padding:10px;background:rgba(212,168,67,0.06);border:1px solid var(--border);border-radius:3px;font-size:12px;min-height:50px;width:100%;}
+.ingredient-shelf{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;width:100%;}
+.ingr{padding:6px;border:1px solid var(--border);border-radius:3px;text-align:center;cursor:pointer;transition:all 0.2s;background:rgba(26,8,8,0.5);}
+.ingr:hover{border-color:var(--gold);background:rgba(212,168,67,0.1);}
+.ingr.no-stock{opacity:0.4;cursor:not-allowed;}
+.ingr-icon{font-size:22px;}
+.ingr-name{font-family:'Roboto Mono',monospace;font-size:9px;color:var(--gold2);margin-top:2px;}
+.ingr-qty{font-family:'VT323',monospace;font-size:14px;color:var(--dill2);}
+#stew-log{width:100%;max-height:100px;overflow-y:auto;border:1px solid var(--border);padding:6px;font-size:11px;color:var(--cream);opacity:0.7;line-height:1.5;}
+#stew-log::-webkit-scrollbar{width:3px;}#stew-log::-webkit-scrollbar-thumb{background:var(--gold3);}
+
+/* ── MINIGAMES VIEW ── */
+#mini-view{padding:10px;gap:8px;align-items:stretch;}
+.mg-selector{display:flex;gap:6px;width:100%;}
+.mg-btn{flex:1;padding:8px 4px;border:1px solid var(--border);background:var(--dark2);color:var(--cream);font-family:'Roboto Mono',monospace;font-size:10px;cursor:pointer;text-align:center;transition:all 0.2s;letter-spacing:1px;}
+.mg-btn.active{border-color:var(--gold);background:rgba(212,168,67,0.1);color:var(--gold);}
+#mg-area{flex:1;width:100%;position:relative;min-height:280px;}
+canvas{display:block;}
+#mg-canvas{border:1px solid var(--border);background:var(--dark3);width:100%;image-rendering:pixelated;}
+#mg-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(17,6,6,0.88);gap:10px;}
+#mg-overlay.hidden{display:none;}
+.mg-start-btn{background:var(--beet);border:2px solid var(--gold);color:var(--gold2);font-family:'Bebas Neue',sans-serif;font-size:20px;padding:10px 30px;cursor:pointer;letter-spacing:3px;transition:all 0.2s;}
+.mg-start-btn:hover{background:var(--beet2);}
+#mg-score-display{font-family:'VT323',monospace;font-size:22px;color:var(--gold);text-align:center;}
+#mg-instructions{font-family:'Roboto Mono',monospace;font-size:10px;color:var(--cream);opacity:0.6;text-align:center;line-height:1.6;}
+
+/* ── RIGHT PANEL ── */
+#right-panel{border-left:1px solid var(--border);overflow-y:auto;background:var(--panel);}
+#right-panel::-webkit-scrollbar{width:4px;}
+#right-panel::-webkit-scrollbar-thumb{background:var(--gold3);}
+
+.rpanel-tabs{display:flex;background:var(--dark2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:20;}
+.rtab{flex:1;padding:9px 4px;text-align:center;font-family:'Roboto Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;color:var(--cream);opacity:0.4;border-bottom:2px solid transparent;transition:all 0.2s;}
+.rtab.active{opacity:1;color:var(--gold);border-bottom-color:var(--gold);}
+.rtab-content{display:none;padding:8px;}
+.rtab-content.active{display:block;}
+
+/* Upgrade cards */
+.upg{display:flex;align-items:center;gap:7px;padding:7px 8px;border:1px solid rgba(212,168,67,0.15);border-radius:3px;margin-bottom:5px;cursor:pointer;transition:all 0.18s;background:rgba(17,6,6,0.5);}
+.upg:hover{border-color:var(--gold);background:rgba(212,168,67,0.08);}
+.upg.cannot{opacity:0.38;cursor:not-allowed;}
+.upg.done{opacity:0.25;pointer-events:none;border-color:var(--dill);background:rgba(74,124,63,0.07);}
+.upg-ico{font-size:22px;min-width:28px;text-align:center;}
+.upg-info{flex:1;min-width:0;}
+.upg-name{font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--gold2);letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.upg-desc{font-size:10px;color:var(--cream);opacity:0.55;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.upg-cost{font-family:'VT323',monospace;font-size:15px;color:var(--gold);min-width:52px;text-align:right;}
+
+/* ── PRESTIGE TREE ── */
+#prestige-tree-container{padding:10px;overflow:auto;}
+#ptree-canvas{border:1px solid var(--border);background:radial-gradient(ellipse at 50% 50%,rgba(106,0,128,0.1),var(--dark3));cursor:grab;display:block;}
+#ptree-canvas:active{cursor:grabbing;}
+.ptree-hdr{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--purple2);letter-spacing:3px;text-align:center;padding:8px;}
+#ptree-info{padding:10px;background:rgba(106,0,128,0.1);border:1px solid rgba(160,64,192,0.3);border-radius:3px;font-size:11px;min-height:60px;}
+#ptree-info .pt-name{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--purple2);}
+#ptree-info .pt-desc{color:var(--cream);opacity:0.7;line-height:1.5;}
+#ptree-actions{display:flex;gap:8px;padding:8px;align-items:center;}
+#ptree-buy-btn{background:linear-gradient(135deg,var(--purple),var(--purple2));border:2px solid var(--purple2);color:#E0A0FF;font-family:'Bebas Neue',sans-serif;font-size:16px;padding:8px 20px;cursor:pointer;letter-spacing:2px;transition:all 0.2s;flex:1;}
+#ptree-buy-btn:hover{box-shadow:0 0 15px rgba(160,64,192,0.5);}
+#spoons-display{font-family:'VT323',monospace;font-size:22px;color:#E0A0FF;white-space:nowrap;}
+#prestige-reset-btn{background:var(--beet3);border:1px solid var(--beet2);color:var(--beet2);font-family:'Roboto Mono',monospace;font-size:10px;padding:6px 10px;cursor:pointer;letter-spacing:1px;transition:all 0.2s;border-radius:2px;}
+#prestige-reset-btn:hover{background:var(--beet);border-color:var(--beet2);}
+
+/* Achievements */
+.ach-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.ach{padding:7px;border:1px solid var(--border);border-radius:3px;background:rgba(17,6,6,0.5);transition:all 0.3s;text-align:center;}
+.ach.got{border-color:var(--gold);background:rgba(212,168,67,0.08);}
+.ach.nope{opacity:0.28;filter:grayscale(0.8);}
+.ach-ico{font-size:26px;}
+.ach-name{font-family:'Bebas Neue',sans-serif;font-size:10px;color:var(--gold2);letter-spacing:1px;}
+.ach-desc{font-size:9px;color:var(--cream);opacity:0.5;}
+
+/* Research */
+#research-view{padding:8px;}
+.res-tree{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.res-node{padding:8px;border:1px solid var(--border);border-radius:3px;background:rgba(17,6,6,0.5);cursor:pointer;transition:all 0.2s;text-align:center;position:relative;}
+.res-node.unlocked{border-color:var(--cyan);background:rgba(0,200,200,0.07);}
+.res-node.researching{border-color:var(--orange);animation:researchPulse 1s ease-in-out infinite;}
+.res-node.cannot{opacity:0.35;cursor:not-allowed;}
+@keyframes researchPulse{0%,100%{box-shadow:none}50%{box-shadow:0 0 10px var(--orange);}}
+.res-icon{font-size:22px;}
+.res-name{font-family:'Bebas Neue',sans-serif;font-size:12px;color:var(--cyan2);letter-spacing:1px;}
+.res-desc{font-size:9px;color:var(--cream);opacity:0.55;line-height:1.4;}
+.res-cost{font-family:'VT323',monospace;font-size:12px;color:var(--orange2);}
+.res-progress{position:absolute;bottom:0;left:0;height:2px;background:var(--orange);border-radius:0 0 3px 3px;transition:width 1s linear;}
+
+/* Stats */
+.stat-r{display:flex;justify-content:space-between;align-items:center;padding:5px 8px;border-bottom:1px solid rgba(212,168,67,0.08);font-size:11px;}
+.stat-r .sk{color:var(--cream);opacity:0.55;}
+.stat-r .sv{font-family:'Roboto Mono',monospace;font-size:11px;color:var(--gold2);}
+
+/* Stock market */
+#market-view{padding:10px;gap:8px;display:flex;flex-direction:column;}
+.mkt-title{font-family:'Bebas Neue',sans-serif;color:var(--gold);font-size:16px;letter-spacing:2px;border-bottom:1px solid var(--border);padding-bottom:4px;}
+.stock-card{padding:8px;border:1px solid var(--border);border-radius:3px;background:rgba(17,6,6,0.5);}
+.stock-header{display:flex;justify-content:space-between;align-items:center;}
+.stock-name{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;}
+.stock-price{font-family:'VT323',monospace;font-size:20px;}
+.stock-change{font-family:'Roboto Mono',monospace;font-size:10px;}
+.stock-change.up{color:#60FF60;}
+.stock-change.dn{color:#FF6060;}
+.stock-btns{display:flex;gap:4px;margin-top:5px;}
+.stock-btn{flex:1;padding:4px;border:1px solid var(--border);background:rgba(212,168,67,0.05);color:var(--cream);font-family:'Roboto Mono',monospace;font-size:9px;cursor:pointer;letter-spacing:1px;transition:all 0.15s;}
+.stock-btn.buy-b:hover{border-color:#60FF60;color:#60FF60;background:rgba(96,255,96,0.08);}
+.stock-btn.sell-b:hover{border-color:#FF6060;color:#FF6060;background:rgba(255,96,96,0.08);}
+.stock-owned{font-family:'Roboto Mono',monospace;font-size:9px;color:var(--dill2);margin-top:3px;}
+#market-cash{font-family:'VT323',monospace;font-size:18px;color:var(--gold);}
+#market-portfolio{font-family:'Roboto Mono',monospace;font-size:10px;color:var(--cream);opacity:0.6;}
+
+/* Chart canvas */
+.stock-chart{margin-top:4px;border:1px solid rgba(212,168,67,0.1);}
+
+/* ── SPECIAL OVERLAYS ── */
+.float-txt{position:fixed;pointer-events:none;z-index:9999;font-family:'Bebas Neue',sans-serif;font-weight:700;text-shadow:0 0 10px currentColor;animation:ft 1.3s ease-out forwards;font-size:20px;}
+@keyframes ft{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-110px) scale(0.4)}}
+
+.particle{position:fixed;pointer-events:none;z-index:8000;font-size:18px;animation:pft 3.5s ease-in forwards;}
+@keyframes pft{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-170px) rotate(360deg)}}
+
+#milestone-bar{position:fixed;top:68px;left:50%;transform:translateX(-50%) translateY(-100px);background:linear-gradient(135deg,var(--beet),var(--beet3));border:2px solid var(--gold);padding:12px 35px;font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold2);letter-spacing:3px;z-index:5000;transition:transform 0.45s cubic-bezier(0.175,0.885,0.32,1.275);box-shadow:0 8px 30px rgba(0,0,0,0.7);white-space:nowrap;pointer-events:none;}
+#milestone-bar.show{transform:translateX(-50%) translateY(0);}
+
+#golden-bowl{position:fixed;font-size:48px;cursor:pointer;z-index:4000;display:none;filter:drop-shadow(0 0 12px gold);animation:gBounce 1.2s ease-in-out infinite alternate;}
+@keyframes gBounce{from{transform:scale(1) rotate(-5deg)}to{transform:scale(1.12) rotate(5deg)}}
+
+.event-notif{position:fixed;bottom:35px;right:15px;background:linear-gradient(135deg,var(--beet3),#2A1500);border:2px solid var(--gold);padding:12px 16px;border-radius:3px;z-index:4500;font-family:'Bebas Neue',sans-serif;animation:slideR 0.45s ease-out;max-width:240px;box-shadow:0 5px 20px rgba(0,0,0,0.7);}
+@keyframes slideR{from{transform:translateX(260px)}to{transform:translateX(0)}}
+.en-title{font-size:16px;color:var(--gold2);letter-spacing:2px;}
+.en-desc{font-size:11px;color:var(--cream);opacity:0.7;margin-top:3px;font-family:'Roboto Mono',monospace;}
+
+/* LORE modal */
+#lore-modal{position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:9000;display:none;align-items:center;justify-content:center;}
+#lore-inner{background:linear-gradient(135deg,var(--beet3),#1A0A00);border:2px solid var(--gold);padding:36px;max-width:580px;width:92%;max-height:80vh;overflow-y:auto;position:relative;}
+#lore-inner h2{font-family:'Bebas Neue',sans-serif;color:var(--gold);font-size:26px;letter-spacing:3px;margin-bottom:16px;}
+#lore-inner p{color:var(--cream);opacity:0.82;line-height:1.85;margin-bottom:12px;font-size:14px;}
+#lore-close{position:absolute;top:12px;right:16px;background:none;border:none;color:var(--gold);font-size:22px;cursor:pointer;font-family:'VT323',monospace;}
+
+/* TICKER */
+#ticker-wrap{flex:1;overflow:hidden;font-family:'Roboto Mono',monospace;font-size:11px;color:var(--gold2);letter-spacing:1px;}
+#ticker-inner{white-space:nowrap;display:inline-block;animation:tick 60s linear infinite;}
+@keyframes tick{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
+
+/* Challenge mode badge */
+#challenge-badge{background:rgba(200,50,50,0.2);border:1px solid var(--beet2);color:var(--beet2);font-family:'Roboto Mono',monospace;font-size:9px;padding:2px 6px;border-radius:2px;letter-spacing:1px;cursor:pointer;transition:all 0.2s;}
+#challenge-badge.active{background:rgba(200,50,50,0.4);color:#FF8080;border-color:#FF8080;}
+#challenge-badge:hover{border-color:#FF8080;}
+
+/* Artifact notification */
+.artifact-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,168,67,0.15),var(--dark3));border:3px solid var(--gold2);padding:30px 50px;z-index:9500;text-align:center;animation:artifactShow 0.6s cubic-bezier(0.175,0.885,0.32,1.275);box-shadow:0 0 60px rgba(212,168,67,0.3);}
+@keyframes artifactShow{from{transform:translate(-50%,-50%) scale(0.3) rotate(-15deg);opacity:0}to{transform:translate(-50%,-50%) scale(1) rotate(0);opacity:1}}
+.art-icon{font-size:60px;display:block;animation:artFloat 2s ease-in-out infinite;}
+@keyframes artFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.art-title{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--gold2);letter-spacing:3px;margin-top:8px;}
+.art-desc{font-family:'Libre Baskerville',serif;font-size:12px;color:var(--cream);opacity:0.7;margin-top:6px;}
+.art-close{margin-top:14px;background:var(--beet);border:1px solid var(--gold);color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:16px;padding:6px 20px;cursor:pointer;letter-spacing:2px;}
+
+/* Scrollbars */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--dark2);}
+::-webkit-scrollbar-thumb{background:var(--gold3);border-radius:2px;}
+</style>
+</head>
+<body>
+<div id="root">
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <div id="logo">🍲 BORTSCH</div>
+  <div class="top-stats">
+    <div class="ts"><div class="ts-val" id="ts-bortsch">0</div><div class="ts-lbl">Bortsch</div></div>
+    <div class="ts"><div class="ts-val" id="ts-total">0</div><div class="ts-lbl">All Time</div></div>
+    <div class="ts"><div class="ts-val" id="ts-bps">0</div><div class="ts-lbl">Per Sec</div></div>
+    <div class="ts"><div class="ts-val" id="ts-bpc">1</div><div class="ts-lbl">Per Click</div></div>
+    <div class="ts"><div class="ts-val" id="ts-spoons" style="color:#E0A0FF">0</div><div class="ts-lbl">H.Spoons</div></div>
+    <div class="ts"><div class="ts-val" id="ts-prestige" style="color:#A040C0">0</div><div class="ts-lbl">Prestige</div></div>
+  </div>
+  <div id="top-btns">
+    <div id="challenge-badge" onclick="toggleChallenge()" title="Challenge mode">NORMAL</div>
+    <button class="tbtn" onclick="showLore()">📖</button>
+    <button class="tbtn" onclick="exportSave()">💾</button>
+    <button class="tbtn" onclick="importSave()">📂</button>
+    <button class="tbtn" id="sound-btn" onclick="toggleSound()">🔊</button>
+    <button class="tbtn" onclick="toggleFX()">✨FX</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main-area">
+
+  <!-- LEFT: BUILDINGS -->
+  <div id="left-panel">
+    <div class="sect-hdr">🏗️ PRODUCTION <span id="total-bld-count" style="color:var(--dill2);font-size:11px">0 buildings</span></div>
+    <div id="bld-list"></div>
+  </div>
+
+  <!-- CENTER -->
+  <div id="center">
+    <div id="center-tabs">
+      <div class="ctab active" onclick="setCenterTab('clicker')">🍲 Clicker</div>
+      <div class="ctab" onclick="setCenterTab('stew')">🫕 Stew</div>
+      <div class="ctab" onclick="setCenterTab('mini')">🎮 Games</div>
+      <div class="ctab" onclick="setCenterTab('market')">📈 Market</div>
+    </div>
+
+    <!-- CLICKER -->
+    <div id="cv-clicker" class="cview active" id="clicker-view">
+      <div id="buffs-bar"></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:10px;">
+        <div id="bowl-wrap" onclick="clickBortsch(event)">
+          <div id="steam-box"><div class="sp"></div><div class="sp"></div><div class="sp"></div></div>
+          <canvas id="bowl-canvas" width="220" height="220"></canvas>
+        </div>
+        <div id="click-stats">
+          <span id="big-count">0</span>
+          <div id="count-label">bowls of bortsch</div>
+          <div id="bps-line">0 bowls/sec</div>
+          <div id="bpc-line">1 bowl per click</div>
+        </div>
+      </div>
+      <div id="combo-wrap"><div id="combo-num">x1</div><div id="combo-label">COMBO</div></div>
+    </div>
+
+    <!-- STEW CRAFTING -->
+    <div id="cv-stew" class="cview" style="padding:12px;gap:10px;align-items:stretch;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--gold);letter-spacing:3px;text-align:center;border-bottom:1px solid var(--border);padding-bottom:6px;">🫕 THE GRAND STEW</div>
+      <div style="font-size:10px;color:var(--cream);opacity:0.55;font-family:'Roboto Mono',monospace;text-align:center;line-height:1.5;">Combine ingredients to brew powerful stews. Stews grant temporary or permanent boosts. Ingredients drop from your buildings over time.</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:8px;border:1px solid var(--border);border-radius:4px;background:rgba(212,168,67,0.03);">
+        <div style="font-family:'Roboto Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:2px;">— CAULDRON SLOTS —</div>
+        <div id="stew-slots"></div>
+        <button id="brew-btn" onclick="brewStew()">🔥 BREW IT</button>
+        <div id="brew-result" style="text-align:center;padding:8px;background:rgba(212,168,67,0.04);border:1px solid var(--border);border-radius:3px;font-size:11px;min-height:42px;width:100%;font-family:'Roboto Mono',monospace;color:var(--cream);opacity:0.8;">Select 2–4 ingredients and brew.</div>
+      </div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--gold);letter-spacing:2px;">INGREDIENT SHELF <span id="ingr-totals" style="color:var(--dill2);font-size:11px;font-family:'Roboto Mono',monospace;font-weight:300;"></span></div>
+      <div id="ingr-shelf" class="ingredient-shelf"></div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:11px;color:var(--gold);letter-spacing:2px;margin-top:4px;">BREW LOG</div>
+      <div id="stew-log"></div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--gold);letter-spacing:2px;margin-top:4px;">KNOWN RECIPES <span style="font-family:'Roboto Mono',monospace;font-size:9px;color:var(--dill2);">(discovered by brewing)</span></div>
+      <div id="recipe-log" style="font-size:10px;color:var(--cream);opacity:0.6;font-family:'Roboto Mono',monospace;line-height:1.7;border:1px solid var(--border);padding:6px;background:rgba(17,6,6,0.4);">Brew combinations to discover recipes...</div>
+    </div>
+
+    <!-- MINIGAMES -->
+    <div id="cv-mini" class="cview" style="padding:10px;gap:8px;align-items:stretch;">
+      <div class="mg-selector">
+        <button class="mg-btn active" onclick="selectGame('catch')" id="gb-catch">🥕 BEET CATCH</button>
+        <button class="mg-btn" onclick="selectGame('rhythm')" id="gb-rhythm">🥄 STIR RHYTHM</button>
+        <button class="mg-btn" onclick="selectGame('blitz')" id="gb-blitz">⚡ BORTSCH BLITZ</button>
+      </div>
+      <div id="mg-score-display" style="font-family:'VT323',monospace;font-size:18px;color:var(--gold);text-align:center;">Score: 0 | Best: 0</div>
+      <div id="mg-area" style="flex:1;position:relative;min-height:260px;">
+        <canvas id="mg-canvas" width="420" height="260"></canvas>
+        <div id="mg-overlay">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--gold);letter-spacing:3px;" id="mg-title">BEET CATCH</div>
+          <div id="mg-instructions" style="font-family:'Roboto Mono',monospace;font-size:10px;color:var(--cream);opacity:0.6;text-align:center;line-height:1.7;max-width:280px;"></div>
+          <button class="mg-start-btn" onclick="startCurrentGame()">▶ PLAY</button>
+          <div id="mg-reward-info" style="font-size:10px;color:var(--dill2);font-family:'Roboto Mono',monospace;margin-top:4px;text-align:center;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STOCK MARKET -->
+    <div id="cv-market" class="cview" style="padding:10px;gap:8px;align-items:stretch;">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--border);padding-bottom:6px;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--gold);letter-spacing:3px;">📈 BORTSCH EXCHANGE</div>
+        <div><div id="market-cash" style="font-family:'VT323',monospace;font-size:18px;color:var(--gold);">💰 0</div></div>
+      </div>
+      <div style="font-size:9px;color:var(--cream);opacity:0.5;font-family:'Roboto Mono',monospace;text-align:center;">Invest bortsch in commodities. Buy low, sell high. Profits multiply production.</div>
+      <div id="market-portfolio" style="font-family:'Roboto Mono',monospace;font-size:10px;color:var(--dill2);text-align:center;"></div>
+      <div id="stocks-list"></div>
+      <canvas id="chart-canvas" width="280" height="80" style="border:1px solid var(--border);background:var(--dark3);border-radius:2px;margin-top:4px;"></canvas>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div id="right-panel">
+    <div class="rpanel-tabs">
+      <div class="rtab active" onclick="setRTab('upgrades')">Upgrades</div>
+      <div class="rtab" onclick="setRTab('prestige')">✦ Prestige</div>
+      <div class="rtab" onclick="setRTab('research')">🔬 Lab</div>
+      <div class="rtab" onclick="setRTab('achieve')">Medals</div>
+      <div class="rtab" onclick="setRTab('stats')">Stats</div>
+    </div>
+    <div id="rt-upgrades" class="rtab-content active"><div id="upg-list"></div></div>
+    <div id="rt-prestige" class="rtab-content">
+      <div style="padding:8px;">
+        <div style="text-align:center;padding:8px 0;">
+          <div style="font-size:36px">🌟</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--purple2);letter-spacing:3px;">HEAVENLY PRESTIGE TREE</div>
+          <div style="font-size:10px;color:var(--cream);opacity:0.55;font-family:'Roboto Mono',monospace;margin-top:4px;">Spend Heavenly Spoons on permanent upgrades across 5 branches</div>
+        </div>
+        <div id="ptree-actions">
+          <div id="spoons-display">🥄 0 spoons</div>
+          <button id="prestige-reset-btn" onclick="doPrestige()">PRESTIGE RESET</button>
+        </div>
+        <canvas id="ptree-canvas" width="280" height="360"></canvas>
+        <div id="ptree-info"><div class="pt-name">Select a node</div><div class="pt-desc">Hover nodes to see details. Click to purchase.</div></div>
+        <button id="ptree-buy-btn" onclick="buyPrestigeNode()">PURCHASE NODE</button>
+      </div>
+    </div>
+    <div id="rt-research" class="rtab-content"><div id="research-view"></div></div>
+    <div id="rt-achieve" class="rtab-content"><div id="ach-counter" style="font-family:'Roboto Mono',monospace;font-size:10px;color:var(--gold);padding:6px 0;text-align:center;"></div><div id="ach-grid" class="ach-grid"></div></div>
+    <div id="rt-stats" class="rtab-content"><div id="stats-grid"></div></div>
+  </div>
+</div>
+
+<!-- BOTTOM TICKER -->
+<div id="bottombar">
+  <div style="font-family:'Bebas Neue',sans-serif;font-size:12px;color:var(--gold3);padding:0 8px;letter-spacing:2px;border-right:1px solid var(--border);white-space:nowrap;">📡 BEET WIRE</div>
+  <div id="ticker-wrap"><div id="ticker-inner">Loading bortsch feed...</div></div>
+</div>
+
+</div><!-- end root -->
+
+<!-- OVERLAYS -->
+<div id="milestone-bar">🍲 MILESTONE</div>
+<div id="golden-bowl" onclick="clickGolden(event)">🍲</div>
+<div id="lore-modal">
+  <div id="lore-inner">
+    <button id="lore-close" onclick="hideLore()">✕</button>
+    <h2>📖 THE BOOK OF BORTSCH — EXPANDED EDITION</h2>
+    <p>In the beginning, there was the Beet. The universe was without form, and void — a dark and tasteless expanse. Then the First Babushka reached across the formless deep, took the Beet in her ancient hands, and said: <em>"It needs more dill."</em></p>
+    <p>From that primordial act of seasoning, all of creation emerged. The planets formed as giant beets. Stars are just very hot cauldrons. The Big Bang was a pressure cooker reaching critical mass. Scientists know this. They simply do not discuss it at conferences.</p>
+    <p>The Bortsch Clicker Expanded Edition introduces the Grand Stew system — the discovery that combining ingredients from across the cosmos produces meta-bortsch, a substance that bends the very rules of bowl-physics. The first alchemists tried to turn lead into gold; they were attempting the wrong transmutation. The correct target was bortsch.</p>
+    <p>The Prestige Tree, known in ancient texts as the Spoon of Heaven, allows those who have transcended mere mortal bortsch production to invest their divine currency into permanent cosmic upgrades. Five branches spread from the trunk: The Ladle Path (clicking), The Cauldron Path (buildings), The Dill Path (global), The Beet Path (prestige), and The Void Path (secret).</p>
+    <p>The Stock Exchange was founded in 1887 by Baron Vladimir Bortschemanoff, who realized that speculative investment in beet commodities was more reliable than actual beets. He was correct. The Baron is now a spirit who haunts the exchange, whispering "buy low" in the ears of traders.</p>
+    <p style="color:var(--gold);font-family:'Bebas Neue',sans-serif;letter-spacing:2px;">— Inscribed on the Eternal Ladle, 4th Age of Bortsch</p>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+//   BORTSCH CLICKER v2 — THE GRAND STEW
+//   Complete game engine with all systems
+// ═══════════════════════════════════════════════════════════════════
+
+// ── SOUND ENGINE (Web Audio API) ──────────────────────────────────
+let AudioCtx = null, soundEnabled = true;
+function getACtx() {
+  if (!AudioCtx) { try { AudioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){} }
+  return AudioCtx;
+}
+
+function playClick(vol=0.3) {
+  if (!soundEnabled) return;
+  const ctx = getACtx(); if (!ctx) return;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(280 + Math.random()*80, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.08);
+  gain.gain.setValueAtTime(vol, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+  osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.14);
+}
+
+function playBubble() {
+  if (!soundEnabled) return;
+  const ctx = getACtx(); if (!ctx) return;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.type = 'sine';
+  const f = 200 + Math.random()*400;
+  osc.frequency.setValueAtTime(f, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(f*1.5, ctx.currentTime+0.05);
+  osc.frequency.exponentialRampToValueAtTime(f*0.5, ctx.currentTime+0.15);
+  gain.gain.setValueAtTime(0.04, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.18);
+  osc.start(ctx.currentTime); osc.stop(ctx.currentTime+0.2);
+}
+
+function playGolden() {
+  if (!soundEnabled) return;
+  const ctx = getACtx(); if (!ctx) return;
+  [523,659,784,1047].forEach((f,i) => {
+    const osc = ctx.createOscillator(), gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = 'triangle'; osc.frequency.setValueAtTime(f, ctx.currentTime);
+    gain.gain.setValueAtTime(0.18, ctx.currentTime + i*0.1);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i*0.1 + 0.4);
+    osc.start(ctx.currentTime + i*0.1); osc.stop(ctx.currentTime + i*0.1 + 0.45);
+  });
+}
+
+function playMilestone() {
+  if (!soundEnabled) return;
+  const ctx = getACtx(); if (!ctx) return;
+  [392,494,587].forEach((f,i) => {
+    const osc = ctx.createOscillator(), gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = 'square'; osc.frequency.setValueAtTime(f, ctx.currentTime + i*0.12);
+    gain.gain.setValueAtTime(0.08, ctx.currentTime + i*0.12);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i*0.12 + 0.3);
+    osc.start(ctx.currentTime + i*0.12); osc.stop(ctx.currentTime + i*0.12 + 0.35);
+  });
+}
+
+function playBrew() {
+  if (!soundEnabled) return;
+  const ctx = getACtx(); if (!ctx) return;
+  const osc = ctx.createOscillator(), gain = ctx.createGain();
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(100, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime+0.3);
+  osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime+0.6);
+  gain.gain.setValueAtTime(0.15, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.7);
+  osc.start(ctx.currentTime); osc.stop(ctx.currentTime+0.75);
+}
+
+function playPurchase() {
+  if (!soundEnabled) return;
+  const ctx = getACtx(); if (!ctx) return;
+  [440,550].forEach((f,i) => {
+    const osc = ctx.createOscillator(), gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = 'triangle'; osc.frequency.setValueAtTime(f, ctx.currentTime + i*0.07);
+    gain.gain.setValueAtTime(0.12, ctx.currentTime + i*0.07);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i*0.07 + 0.25);
+    osc.start(ctx.currentTime + i*0.07); osc.stop(ctx.currentTime + i*0.07 + 0.3);
+  });
+}
+
+// Ambient bubbling loop
+let bubbleInterval = null;
+function startBubbling() {
+  if (bubbleInterval) clearInterval(bubbleInterval);
+  bubbleInterval = setInterval(() => {
+    if (soundEnabled && G.bps > 1) {
+      const chance = Math.min(0.4, G.bps / 1000);
+      if (Math.random() < chance) playBubble();
+    }
+  }, 800);
+}
+
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  document.getElementById('sound-btn').textContent = soundEnabled ? '🔊' : '🔇';
+  if (soundEnabled) { getACtx(); startBubbling(); }
+}
+
+// ── GAME STATE ────────────────────────────────────────────────────
+const G = {
+  bortsch:0, totalBortsch:0, totalClicks:0,
+  bps:0, bpc:1, globalMult:1,
+  prestigeLevel:0, heavenlySpoons:0, goldenClicks:0,
+  combo:1, lastClickTime:0, comboTimer:null,
+  fxEnabled:true, challengeMode:false,
+  readLore:false, gameStart:Date.now(),
+  buildingCounts:{}, upgradesPurchased:{}, achievementsUnlocked:{},
+  prestigeNodes:{}, researchDone:{},
+  ingredients:{}, discoveredRecipes:[],
+  activeBuffs:{},    // id->{name,mult,end,icon,type}
+  activeMultipliers:{},
+  artifacts:{},
+  stockOwned:{}, stockCash:0, stockProfit:0,
+  mgBestScores:{catch:0, rhythm:0, blitz:0},
+  mgRewardsMult:1,   // bonus from minigame wins
+  clickMult:1,
+  ingredientDropTimer:0,
+  challengePoints:0,
+  totalBortschSpentOnStocks:0,
+};
+
+// ── BUILDINGS ─────────────────────────────────────────────────────
+const BUILDINGS = [
+  {id:'babushka',name:"Babushka's Ladle",icon:'👵',baseCost:15,baseBps:0.1,desc:"Tireless grandmother stirs eternally"},
+  {id:'dacha',name:"Village Dacha",icon:'🏡',baseCost:100,baseBps:0.5,desc:"A country cottage, pot always on"},
+  {id:'market',name:"Beet Market",icon:'🛒',baseCost:1100,baseBps:4,desc:"Bulk procurement, industrial scale"},
+  {id:'cauldron',name:"Iron Cauldron",icon:'🫕',baseCost:12000,baseBps:25,desc:"Massive iron pot, diesel stirred"},
+  {id:'factory',name:"Bortsch Factory",icon:'🏭',baseCost:130000,baseBps:150,desc:"Full industrial bortsch production"},
+  {id:'mine',name:"Beet Mine",icon:'⛏️',baseCost:1400000,baseBps:750,desc:"Underground beet extraction"},
+  {id:'laboratory',name:"Bortsch Lab",icon:'🔬',baseCost:2e7,baseBps:3500,desc:"Quantum beet science"},
+  {id:'portal',name:"Bortsch Portal",icon:'🌀',baseCost:3.3e8,baseBps:20000,desc:"Interdimensional bortsch"},
+  {id:'golem',name:"Beet Golem",icon:'🗿',baseCost:5.1e9,baseBps:95000,desc:"Ancient clay, animated by soup"},
+  {id:'timemachine',name:"Time Machine",icon:'⏰',baseCost:7.5e10,baseBps:430000,desc:"Extract bortsch from history"},
+  {id:'planet',name:"Beet Planet",icon:'🪐',baseCost:1e15,baseBps:2e6,desc:"Terraformed beet farm"},
+  {id:'star',name:"Bortsch Star",icon:'⭐',baseCost:7e18,baseBps:1e7,desc:"Stellar bortsch fusion"},
+  {id:'galaxy',name:"Beet Galaxy",icon:'🌌',baseCost:2.1e23,baseBps:5.5e7,desc:"Galactic beet infrastructure"},
+  {id:'dimension',name:"Bortsch Dimension",icon:'🔮',baseCost:9e27,baseBps:2.8e8,desc:"Physics run on beet principles"},
+  {id:'singularity',name:"Beet Singularity",icon:'🕳️',baseCost:1e34,baseBps:1.5e9,desc:"Beet gravity collapse"},
+  {id:'consciousness',name:"Bortsch Mind",icon:'🧠',baseCost:1e41,baseBps:8e9,desc:"Universe thinks in bortsch"},
+  {id:'void',name:"Void Cauldron",icon:'🌑',baseCost:1e50,baseBps:5e10,desc:"Cauldron from crystallized void"},
+  {id:'goddess',name:"Bortsch Goddess",icon:'🦋',baseCost:1e60,baseBps:3e11,desc:"Divine entity of soup"},
+  {id:'realitybender',name:"Reality Bender",icon:'🎭',baseCost:1e75,baseBps:2e12,desc:"Rewrite physics for bortsch"},
+  {id:'omnipot',name:"The Omnipot",icon:'♾️',baseCost:1e93,baseBps:1.5e13,desc:"Contains all possible bortsch"},
+  {id:'multiversal',name:"Multiverse Farm",icon:'🌐',baseCost:1e115,baseBps:1e14,desc:"Every universe, every beet"},
+  {id:'entropy',name:"Entropy Harvester",icon:'🌪️',baseCost:1e140,baseBps:8e14,desc:"Harvest from dying stars"},
+  {id:'timeloop',name:"Bortsch Time Loop",icon:'🔄',baseCost:1e170,baseBps:6e15,desc:"Infinite cooking loop"},
+  {id:'omega',name:"Omega Cauldron",icon:'Ω',baseCost:1e210,baseBps:5e16,desc:"End-of-time bortsch"},
+  {id:'beyond',name:"Beyond Bortsch",icon:'✨',baseCost:1e260,baseBps:5e17,desc:"Transcended. This is everything."},
+];
+
+// ── UPGRADES ──────────────────────────────────────────────────────
+const UPGRADES = [
+  // Click
+  {id:'cl1',name:"Stronger Ladle",icon:'🥄',cost:100,type:'click',mult:2,desc:"2x click power",req:{tb:25}},
+  {id:'cl2',name:"Golden Ladle",icon:'🥇',cost:500,type:'click',mult:3,desc:"3x click power",req:{tb:100}},
+  {id:'cl3',name:"Diamond Ladle",icon:'💎',cost:5000,type:'click',mult:5,desc:"5x click",req:{tb:1000}},
+  {id:'cl4',name:"Quantum Stirrer",icon:'⚡',cost:50000,type:'click',mult:10,desc:"10x click",req:{tb:10000}},
+  {id:'cl5',name:"Cosmic Spoon",icon:'🌠',cost:1e6,type:'click',mult:50,desc:"50x click",req:{tb:1e5}},
+  {id:'cl6',name:"Void Stirrer",icon:'🌑',cost:1e9,type:'click',mult:200,desc:"200x click",req:{tb:1e7}},
+  {id:'cl7',name:"God Ladle",icon:'⚜️',cost:1e14,type:'click',mult:1000,desc:"1000x click",req:{tb:1e11}},
+  {id:'cl8',name:"Infinite Spoon",icon:'♾️',cost:1e20,type:'click',mult:10000,desc:"10,000x click",req:{tb:1e16}},
+  // Babushka
+  {id:'ba1',name:"Arthritis Cure",icon:'💊',cost:200,type:'bld',bld:'babushka',mult:2,desc:"Babushkas 2x",req:{bld:{babushka:1}}},
+  {id:'ba2',name:"Secret Recipe",icon:'📜',cost:1000,type:'bld',bld:'babushka',mult:4,desc:"Babushkas 4x",req:{bld:{babushka:5}}},
+  {id:'ba3',name:"Babushka Network",icon:'📡',cost:11000,type:'bld',bld:'babushka',mult:8,desc:"Babushkas 8x",req:{bld:{babushka:10}}},
+  {id:'ba4',name:"Babushka Academy",icon:'🎓',cost:1.1e5,type:'bld',bld:'babushka',mult:16,desc:"Babushkas 16x",req:{bld:{babushka:25}}},
+  {id:'ba5',name:"Babushka Collective",icon:'👩‍👩‍👧',cost:1.1e7,type:'bld',bld:'babushka',mult:32,desc:"Babushkas 32x",req:{bld:{babushka:50}}},
+  {id:'ba6',name:"Babushka Ascension",icon:'👼',cost:1.1e10,type:'bld',bld:'babushka',mult:128,desc:"Babushkas 128x",req:{bld:{babushka:100}}},
+  // Dacha
+  {id:'da1',name:"Bigger Stove",icon:'🔥',cost:500,type:'bld',bld:'dacha',mult:2,desc:"Dachas 2x",req:{bld:{dacha:1}}},
+  {id:'da2',name:"Greenhouse Beets",icon:'🌱',cost:5000,type:'bld',bld:'dacha',mult:4,desc:"Dachas 4x",req:{bld:{dacha:5}}},
+  {id:'da3',name:"Dacha Modernized",icon:'🏗️',cost:50000,type:'bld',bld:'dacha',mult:8,desc:"Dachas 8x",req:{bld:{dacha:10}}},
+  {id:'da4',name:"Communal Dacha",icon:'🤝',cost:5e5,type:'bld',bld:'dacha',mult:16,desc:"Dachas 16x",req:{bld:{dacha:25}}},
+  {id:'da5',name:"Dacha Fortress",icon:'🏰',cost:5e7,type:'bld',bld:'dacha',mult:32,desc:"Dachas 32x",req:{bld:{dacha:50}}},
+  // Market
+  {id:'mk1',name:"Bulk Beet Deal",icon:'📦',cost:11000,type:'bld',bld:'market',mult:2,desc:"Markets 2x",req:{bld:{market:1}}},
+  {id:'mk2',name:"Beet Futures",icon:'📈',cost:110000,type:'bld',bld:'market',mult:4,desc:"Markets 4x",req:{bld:{market:5}}},
+  {id:'mk3',name:"Beet Monopoly",icon:'🎩',cost:1.1e6,type:'bld',bld:'market',mult:8,desc:"Markets 8x",req:{bld:{market:10}}},
+  {id:'mk4',name:"Global Exchange",icon:'🌐',cost:1.1e8,type:'bld',bld:'market',mult:16,desc:"Markets 16x",req:{bld:{market:25}}},
+  // Cauldron
+  {id:'ca1',name:"Iron Alloy",icon:'⚙️',cost:130000,type:'bld',bld:'cauldron',mult:2,desc:"Cauldrons 2x",req:{bld:{cauldron:1}}},
+  {id:'ca2',name:"Auto-Stirring",icon:'🤖',cost:1.3e6,type:'bld',bld:'cauldron',mult:4,desc:"Cauldrons 4x",req:{bld:{cauldron:5}}},
+  {id:'ca3',name:"Pressure Cooking",icon:'💨',cost:1.3e7,type:'bld',bld:'cauldron',mult:8,desc:"Cauldrons 8x",req:{bld:{cauldron:10}}},
+  {id:'ca4',name:"Nuclear Cauldron",icon:'☢️',cost:1.3e9,type:'bld',bld:'cauldron',mult:16,desc:"Cauldrons 16x",req:{bld:{cauldron:25}}},
+  // Factory
+  {id:'fa1',name:"Assembly Line",icon:'🏭',cost:1.3e6,type:'bld',bld:'factory',mult:2,desc:"Factories 2x",req:{bld:{factory:1}}},
+  {id:'fa2',name:"Worker Bees",icon:'🐝',cost:1.3e7,type:'bld',bld:'factory',mult:4,desc:"Factories 4x",req:{bld:{factory:5}}},
+  {id:'fa3',name:"5-Year Plan",icon:'📋',cost:1.3e8,type:'bld',bld:'factory',mult:8,desc:"Factories 8x",req:{bld:{factory:10}}},
+  {id:'fa4',name:"Bortsch AI",icon:'🤖',cost:1.3e10,type:'bld',bld:'factory',mult:16,desc:"Factories 16x",req:{bld:{factory:25}}},
+  {id:'fa5',name:"FALB Communism",icon:'🚀',cost:1.3e13,type:'bld',bld:'factory',mult:32,desc:"Factories 32x",req:{bld:{factory:50}}},
+  // Mine
+  {id:'mi1',name:"Better Pickaxes",icon:'⛏️',cost:1.4e7,type:'bld',bld:'mine',mult:2,desc:"Mines 2x",req:{bld:{mine:1}}},
+  {id:'mi2',name:"Drill Tech",icon:'🔩',cost:1.4e8,type:'bld',bld:'mine',mult:4,desc:"Mines 4x",req:{bld:{mine:5}}},
+  {id:'mi3',name:"Deep Beet Core",icon:'🌋',cost:1.4e9,type:'bld',bld:'mine',mult:8,desc:"Mines 8x",req:{bld:{mine:10}}},
+  {id:'mi4',name:"Beet Geology",icon:'🪨',cost:1.4e11,type:'bld',bld:'mine',mult:16,desc:"Mines 16x",req:{bld:{mine:25}}},
+  // Global
+  {id:'gl1',name:"Beet Propaganda",icon:'📣',cost:1e6,type:'global',mult:1.1,desc:"+10% all",req:{tb:5e5}},
+  {id:'gl2',name:"Bortsch Religion",icon:'⛪',cost:1e8,type:'global',mult:1.25,desc:"+25% all",req:{tb:5e7}},
+  {id:'gl3',name:"National Bortsch Day",icon:'🎊',cost:1e10,type:'global',mult:1.5,desc:"+50% all",req:{tb:5e9}},
+  {id:'gl4',name:"Universal Constant",icon:'🔭',cost:1e13,type:'global',mult:2,desc:"2x all",req:{tb:5e12}},
+  {id:'gl5',name:"Singularity Protocol",icon:'🌑',cost:1e18,type:'global',mult:2.5,desc:"2.5x all",req:{tb:5e17}},
+  {id:'gl6',name:"Beet Revelation",icon:'📿',cost:1e25,type:'global',mult:3,desc:"3x all",req:{tb:1e24}},
+  {id:'gl7',name:"Omega Theorem",icon:'Ω',cost:1e35,type:'global',mult:5,desc:"5x all",req:{tb:1e34}},
+  {id:'gl8',name:"Infinite Loop",icon:'♾️',cost:1e50,type:'global',mult:10,desc:"10x all",req:{tb:1e49}},
+  // Flavor
+  {id:'fl1',name:"Sour Cream",icon:'🥛',cost:1000,type:'global',mult:1.05,desc:"+5% (tasty)",req:{tb:500}},
+  {id:'fl2',name:"Fresh Dill",icon:'🌿',cost:5000,type:'global',mult:1.05,desc:"+5% (aromatic)",req:{tb:2500}},
+  {id:'fl3',name:"Bone Broth",icon:'🦴',cost:25000,type:'global',mult:1.1,desc:"+10% (depth)",req:{tb:12000}},
+  {id:'fl4',name:"Pampushki",icon:'🍞',cost:100000,type:'global',mult:1.1,desc:"+10% (pairing)",req:{tb:50000}},
+  {id:'fl5',name:"Horseradish",icon:'🌶️',cost:1e6,type:'global',mult:1.15,desc:"+15% (fire)",req:{tb:5e5}},
+  {id:'fl6',name:"Aged Vinegar",icon:'🫙',cost:1e7,type:'global',mult:1.15,desc:"+15% (tangy)",req:{tb:5e6}},
+  {id:'fl7',name:"Black Pepper",icon:'⚫',cost:1e8,type:'global',mult:1.2,desc:"+20%",req:{tb:5e7}},
+  {id:'fl8',name:"Bay Leaf Magic",icon:'🍃',cost:1e9,type:'global',mult:1.2,desc:"+20%",req:{tb:5e8}},
+  {id:'fl9',name:"Grandmother's Tears",icon:'😢',cost:1e11,type:'global',mult:1.5,desc:"+50% (sacred)",req:{tb:5e10}},
+  // Passive
+  {id:'ps1',name:"Bortsch Dreams",icon:'💤',cost:50000,type:'passive',special:'bld_bonus',desc:"+0.1% per building",req:{tb:25000}},
+  {id:'ps2',name:"Lucky Dill",icon:'🍀',cost:500000,type:'passive',special:'golden_dur',desc:"Golden bowls last 2x",req:{tb:250000}},
+  {id:'ps3',name:"Click Frenzy Pro",icon:'💫',cost:5e6,type:'passive',special:'combo_boost',desc:"Combo scales harder",req:{tb:2.5e6}},
+  {id:'ps4',name:"Bortsch Aura",icon:'✨',cost:1e8,type:'passive',special:'click_bps',desc:"Clicks add 1% of BPS",req:{tb:5e7}},
+  {id:'ps5',name:"Eternal Pot",icon:'🫕',cost:1e12,type:'passive',special:'prestige_per_bld',desc:"+1% per prestige per building type",req:{tb:5e11}},
+  {id:'ps6',name:"Ingredient Magnet",icon:'🧲',cost:1e9,type:'passive',special:'ingr_rate',desc:"Ingredients drop 3x faster",req:{tb:5e8}},
+  {id:'ps7',name:"Market Sense",icon:'📊',cost:5e9,type:'passive',special:'stock_bonus',desc:"Stock profits +50%",req:{tb:1e9}},
+  {id:'ps8',name:"Research Burst",icon:'⚗️',cost:1e10,type:'passive',special:'research_speed',desc:"Research 2x faster",req:{tb:5e9}},
+];
+
+// ── PRESTIGE TREE ─────────────────────────────────────────────────
+// 5 branches: Ladle (click), Cauldron (buildings), Dill (global), Beet (prestige), Void (secret)
+const PTREE = [
+  // ROOT
+  {id:'root',name:"Heavenly Root",icon:'🌟',cost:1,desc:"Begin the heavenly path. Unlocks all branches.",branch:'root',x:140,y:30,req:[]},
+  // LADLE BRANCH (left)
+  {id:'l1',name:"Silver Touch",icon:'🥄',cost:2,desc:"Clicking gives +5% of current BPS",branch:'ladle',x:40,y:100,req:['root']},
+  {id:'l2',name:"Golden Hands",icon:'🤲',cost:5,desc:"Click power x5",branch:'ladle',x:30,y:175,req:['l1']},
+  {id:'l3',name:"Thunder Click",icon:'⚡',cost:10,desc:"Every 100th click: x50 bonus",branch:'ladle',x:40,y:250,req:['l2']},
+  {id:'l4',name:"Click Storm",icon:'🌩️',cost:20,desc:"Combos multiply at 2x rate",branch:'ladle',x:30,y:325,req:['l3']},
+  {id:'l5',name:"Transcendent Ladle",icon:'✨',cost:50,desc:"Click power = 10% of total BPS",branch:'ladle',x:40,y:400,req:['l4']},
+  // CAULDRON BRANCH (left-center)
+  {id:'c1',name:"Iron Will",icon:'🫕',cost:2,desc:"All buildings +10%",branch:'cauldron',x:90,y:100,req:['root']},
+  {id:'c2',name:"Efficient Fire",icon:'🔥',cost:5,desc:"Buildings cost 10% less",branch:'cauldron',x:80,y:175,req:['c1']},
+  {id:'c3',name:"Double Batch",icon:'2️⃣',cost:10,desc:"All buildings x2",branch:'cauldron',x:90,y:250,req:['c2']},
+  {id:'c4',name:"Cauldron Mastery",icon:'⚙️',cost:25,desc:"Each building type you own: +2% all",branch:'cauldron',x:80,y:325,req:['c3']},
+  {id:'c5',name:"Infinite Pot",icon:'♾️',cost:60,desc:"All buildings x5",branch:'cauldron',x:90,y:400,req:['c4']},
+  // DILL BRANCH (right-center)
+  {id:'d1',name:"Dill Blessing",icon:'🌿',cost:2,desc:"Global multiplier +25%",branch:'dill',x:190,y:100,req:['root']},
+  {id:'d2',name:"Double Dill",icon:'🌿🌿',cost:5,desc:"Global multiplier x2",branch:'dill',x:200,y:175,req:['d1']},
+  {id:'d3',name:"Dill Storm",icon:'🌪️',cost:12,desc:"Golden bowl effects last 3x",branch:'dill',x:190,y:250,req:['d2']},
+  {id:'d4',name:"Holy Herb",icon:'✝️',cost:30,desc:"All stew effects x2",branch:'dill',x:200,y:325,req:['d3']},
+  {id:'d5',name:"Eternal Dill",icon:'💚',cost:75,desc:"Global multiplier x10",branch:'dill',x:190,y:400,req:['d4']},
+  // BEET BRANCH (right)
+  {id:'b1',name:"Beet Memory",icon:'🥝',cost:3,desc:"Start each run with 10 free babushkas",branch:'beet',x:240,y:100,req:['root']},
+  {id:'b2',name:"Ancient Recipe",icon:'📜',cost:7,desc:"Carry 20% of upgrades through prestige",branch:'beet',x:250,y:175,req:['b1']},
+  {id:'b3',name:"Prestige Bonus",icon:'🌸',cost:15,desc:"Each prestige level: +5% permanent",branch:'beet',x:240,y:250,req:['b2']},
+  {id:'b4',name:"Deep Roots",icon:'🌱',cost:35,desc:"Spoons generate +1% BPS each",branch:'beet',x:250,y:325,req:['b3']},
+  {id:'b5',name:"The Eternal Beet",icon:'❤️',cost:100,desc:"Never lose upgrades on prestige",branch:'beet',x:240,y:400,req:['b4']},
+  // VOID BRANCH (hidden, unlocked after 5 prestiges)
+  {id:'v1',name:"Void Whisper",icon:'🌑',cost:10,desc:"VOID: Unlock dark bortsch (+50% all, permanently)",branch:'void',x:140,y:170,req:['root'],unlock:5},
+  {id:'v2',name:"Dark Stew",icon:'🖤',cost:25,desc:"VOID: Stew crafting can yield permanent boosts",branch:'void',x:140,y:250,req:['v1'],unlock:10},
+  {id:'v3',name:"Entropy Tap",icon:'💀',cost:60,desc:"VOID: Buildings scale with total clicks",branch:'void',x:140,y:330,req:['v2'],unlock:20},
+  {id:'v4',name:"BEYOND",icon:'Ω',cost:150,desc:"VOID: x100 everything. Become the bortsch.",branch:'void',x:140,y:410,req:['v3'],unlock:50},
+];
+
+// ── INGREDIENTS & STEW CRAFTING ────────────────────────────────────
+const INGREDIENTS = [
+  {id:'beet',name:"Beet",icon:'🥝',color:'#8B1A1A'},
+  {id:'cabbage',name:"Cabbage",icon:'🥬',color:'#4A7C3F'},
+  {id:'potato',name:"Potato",icon:'🥔',color:'#D4B483'},
+  {id:'carrot',name:"Carrot",icon:'🥕',color:'#E07020'},
+  {id:'onion',name:"Onion",icon:'🧅',color:'#C8A870'},
+  {id:'dill',name:"Dill",icon:'🌿',color:'#4A7C3F'},
+  {id:'cream',name:"Sour Cream",icon:'🥛',color:'#F5F0E8'},
+  {id:'bone',name:"Bone",icon:'🦴',color:'#D0C0A0'},
+  {id:'gold_beet',name:"Golden Beet",icon:'⭐',color:'#D4A843'},
+  {id:'void_herb',name:"Void Herb",icon:'🖤',color:'#6A0080'},
+  {id:'cosmic_salt',name:"Cosmic Salt",icon:'💫',color:'#00C8FF'},
+  {id:'ancient_yeast',name:"Yeast",icon:'🧫',color:'#B8A030'},
+];
+
+// Recipes: sorted ingredient ids → result
+const RECIPES = {
+  'beet+cabbage+potato+onion': {name:"Classic Bortsch",icon:'🍲',effect:'global',mult:2,dur:120,desc:"2x all for 2 minutes"},
+  'beet+dill+cream': {name:"Dill Dream",icon:'🌿',effect:'global',mult:1.5,dur:60,desc:"1.5x all for 1 minute"},
+  'beet+bone+onion': {name:"Bone Broth Bortsch",icon:'🦴',effect:'bps',mult:3,dur:90,desc:"3x BPS for 90 seconds"},
+  'beet+gold_beet': {name:"Golden Bortsch",icon:'✨',effect:'golden',mult:1,dur:0,desc:"Spawn golden bowl instantly!"},
+  'cabbage+potato+carrot+onion': {name:"Village Soup",icon:'🏡',effect:'click',mult:5,dur:60,desc:"5x clicks for 1 minute"},
+  'void_herb+beet': {name:"Void Bortsch",icon:'🌑',effect:'global',mult:10,dur:30,desc:"10x all for 30 seconds"},
+  'cosmic_salt+beet+gold_beet': {name:"Cosmic Soup",icon:'🌌',effect:'permanent',mult:1.05,dur:0,desc:"+5% permanent global!"},
+  'ancient_yeast+cabbage+potato': {name:"Fermented Fury",icon:'⚗️',effect:'global',mult:4,dur:45,desc:"4x all for 45s"},
+  'dill+cream+carrot': {name:"Babushka's Blessing",icon:'👵',effect:'click',mult:20,dur:30,desc:"20x clicks 30s"},
+  'bone+cosmic_salt+void_herb': {name:"Void Marrow",icon:'💀',effect:'permanent',mult:1.1,dur:0,desc:"+10% permanent!"},
+  'gold_beet+cream+dill+cosmic_salt': {name:"Transcendent Stew",icon:'🌟',effect:'permanent',mult:1.25,dur:0,desc:"+25% PERMANENT!"},
+  'beet+cabbage+carrot+potato+onion': {name:"Grand Bortsch",icon:'👑',effect:'global',mult:7,dur:180,desc:"7x all for 3 minutes!"},
+};
+
+// ── RESEARCH TREE ─────────────────────────────────────────────────
+const RESEARCH = [
+  {id:'r_click',name:"Click Science",icon:'🖱️',cost_bps:10,desc:"Clicks count double for combo",duration:60,effect:'click_combo',req:[]},
+  {id:'r_drops',name:"Ingredient Theory",icon:'🧪',cost_bps:50,desc:"Ingredients drop 2x faster",duration:120,effect:'drop_rate',req:[]},
+  {id:'r_golden',name:"Golden Frequency",icon:'🟡',cost_bps:200,desc:"Golden bowls appear 50% more often",duration:180,effect:'golden_freq',req:['r_click']},
+  {id:'r_combo',name:"Combo Dynamics",icon:'💥',cost_bps:500,desc:"Max combo raised to x200",duration:240,effect:'max_combo',req:['r_click']},
+  {id:'r_stew',name:"Stew Chemistry",icon:'🫕',cost_bps:1000,desc:"Stew buffs last 50% longer",duration:300,effect:'stew_dur',req:['r_drops']},
+  {id:'r_buildings',name:"Mass Production",icon:'🏭',cost_bps:5000,desc:"All buildings +20%",duration:400,effect:'bld_boost',req:['r_golden','r_stew']},
+  {id:'r_void',name:"Void Theory",icon:'🌑',cost_bps:20000,desc:"Void branch costs -30%",duration:600,effect:'void_cheap',req:['r_buildings']},
+  {id:'r_omega',name:"Omega Bortsch Theory",icon:'Ω',cost_bps:100000,desc:"EVERYTHING x2 permanently",duration:1800,effect:'omega',req:['r_void','r_combo']},
+];
+
+// ── ARTIFACTS ─────────────────────────────────────────────────────
+const ARTIFACTS = [
+  {id:'art_ladle',name:"Ancient Ladle",icon:'🏺',desc:"Click power permanently x3",effect:'click',mult:3,rarity:'rare'},
+  {id:'art_bowl',name:"Crystal Bowl",icon:'🔮',desc:"BPS +50% permanently",effect:'global',mult:1.5,rarity:'rare'},
+  {id:'art_babushka',name:"Babushka's Soul",icon:'👻',desc:"Babushkas x10 permanently",effect:'bld',bld:'babushka',mult:10,rarity:'legendary'},
+  {id:'art_golden',name:"Eternal Golden Beet",icon:'🌟',desc:"Golden bowls: 5x more bortsch",effect:'golden_reward',mult:5,rarity:'legendary'},
+  {id:'art_void',name:"Void Fragment",icon:'🖤',desc:"All void stew recipes now permanent",effect:'void_stew',mult:1,rarity:'mythic'},
+  {id:'art_omega',name:"Ω Fragment",icon:'Ω',desc:"ALL PRODUCTION x100",effect:'global',mult:100,rarity:'mythic'},
+];
+
+// Artifact drop chances from buildings
+const ART_DROP_CHANCE = 0.00005; // per second per 100 buildings
+
+// ── STOCKS ────────────────────────────────────────────────────────
+const STOCKS = [
+  {id:'BEET',name:"Beet Corp",icon:'🥝',basePrice:100,volatility:0.08,color:'#8B1A1A'},
+  {id:'DILL',name:"Dill Inc",icon:'🌿',basePrice:200,volatility:0.12,color:'#4A7C3F'},
+  {id:'SOUP',name:"Soup Exchange",icon:'🍲',basePrice:500,volatility:0.15,color:'#C8864A'},
+  {id:'VOID',name:"Void Capital",icon:'🌑',basePrice:1000,volatility:0.25,color:'#6A0080'},
+  {id:'GOLD',name:"Golden Beet ETF",icon:'⭐',basePrice:5000,volatility:0.06,color:'#D4A843'},
+];
+let stockPrices = {};
+let stockHistory = {};
+STOCKS.forEach(s => {
+  stockPrices[s.id] = s.basePrice;
+  stockHistory[s.id] = [s.basePrice];
+});
+
+// ── ACHIEVEMENTS ──────────────────────────────────────────────────
+const ACHIEVEMENTS = [
+  // Clicks
+  {id:'a_c1',name:"First Stir",icon:'🥄',desc:"Click once",chk:()=>G.totalClicks>=1},
+  {id:'a_c2',name:"Rhythm",icon:'🎵',desc:"100 clicks",chk:()=>G.totalClicks>=100},
+  {id:'a_c3',name:"Carpal Tunnel",icon:'🩹',desc:"10,000 clicks",chk:()=>G.totalClicks>=10000},
+  {id:'a_c4',name:"Machine",icon:'🤖',desc:"100,000 clicks",chk:()=>G.totalClicks>=100000},
+  {id:'a_c5',name:"Transcendent",icon:'⚡',desc:"1M clicks",chk:()=>G.totalClicks>=1e6},
+  // Bortsch
+  {id:'a_b1',name:"First Bowl",icon:'🍲',desc:"1 bowl",chk:()=>G.totalBortsch>=1},
+  {id:'a_b2',name:"Village Fed",icon:'🏘️',desc:"100,000 bowls",chk:()=>G.totalBortsch>=100000},
+  {id:'a_b3',name:"City Fed",icon:'🏙️',desc:"1M bowls",chk:()=>G.totalBortsch>=1e6},
+  {id:'a_b4',name:"Nation Fed",icon:'🗺️',desc:"1B bowls",chk:()=>G.totalBortsch>=1e9},
+  {id:'a_b5',name:"World Fed",icon:'🌍',desc:"1T bowls",chk:()=>G.totalBortsch>=1e12},
+  {id:'a_b6',name:"Galaxy Fed",icon:'🌌',desc:"10^15 bowls",chk:()=>G.totalBortsch>=1e15},
+  {id:'a_b7',name:"Universe Fed",icon:'🌠',desc:"10^18 bowls",chk:()=>G.totalBortsch>=1e18},
+  {id:'a_b8',name:"Multiverse Fed",icon:'🔮',desc:"10^24 bowls",chk:()=>G.totalBortsch>=1e24},
+  {id:'a_b9',name:"Omnipot",icon:'♾️',desc:"10^30 bowls",chk:()=>G.totalBortsch>=1e30},
+  // BPS
+  {id:'a_bps1',name:"Trickle",icon:'💧',desc:"1/sec",chk:()=>G.bps>=1},
+  {id:'a_bps2',name:"River",icon:'🌊',desc:"100/sec",chk:()=>G.bps>=100},
+  {id:'a_bps3',name:"Torrent",icon:'⛈️',desc:"10K/sec",chk:()=>G.bps>=10000},
+  {id:'a_bps4',name:"Ocean",icon:'🌊',desc:"1M/sec",chk:()=>G.bps>=1e6},
+  {id:'a_bps5',name:"Beyond",icon:'∞',desc:"1T/sec",chk:()=>G.bps>=1e12},
+  // Buildings
+  {id:'a_bld1',name:"First Hire",icon:'👵',desc:"Buy any building",chk:()=>totalBuildings()>=1},
+  {id:'a_bld2',name:"Small Kitchen",icon:'🍳',desc:"10 buildings",chk:()=>totalBuildings()>=10},
+  {id:'a_bld3',name:"Empire",icon:'👑',desc:"100 buildings",chk:()=>totalBuildings()>=100},
+  {id:'a_bld4',name:"The Cook",icon:'👨‍🍳',desc:"500 buildings",chk:()=>totalBuildings()>=500},
+  {id:'a_bld5',name:"The Chef",icon:'🎖️',desc:"1000 buildings",chk:()=>totalBuildings()>=1000},
+  {id:'a_bld6',name:"Collector",icon:'🏆',desc:"Own all building types",chk:()=>BUILDINGS.every(b=>(G.buildingCounts[b.id]||0)>=1)},
+  // Golden
+  {id:'a_g1',name:"Fool's Gold",icon:'🟡',desc:"1 golden",chk:()=>G.goldenClicks>=1},
+  {id:'a_g2',name:"Golden Streak",icon:'✨',desc:"10 golden",chk:()=>G.goldenClicks>=10},
+  {id:'a_g3',name:"Golden God",icon:'👑',desc:"100 golden",chk:()=>G.goldenClicks>=100},
+  // Prestige
+  {id:'a_p1',name:"Reborn",icon:'🌸',desc:"Prestige once",chk:()=>G.prestigeLevel>=1},
+  {id:'a_p2',name:"Eternal Return",icon:'🔄',desc:"5 prestiges",chk:()=>G.prestigeLevel>=5},
+  {id:'a_p3',name:"Bortsch God",icon:'🙏',desc:"10 prestiges",chk:()=>G.prestigeLevel>=10},
+  {id:'a_p4',name:"Cosmic Cycle",icon:'🌀',desc:"25 prestiges",chk:()=>G.prestigeLevel>=25},
+  // Stew crafting
+  {id:'a_s1',name:"First Brew",icon:'🫕',desc:"Brew your first stew",chk:()=>G.discoveredRecipes.length>=1},
+  {id:'a_s2',name:"Alchemist",icon:'⚗️',desc:"Discover 5 recipes",chk:()=>G.discoveredRecipes.length>=5},
+  {id:'a_s3',name:"Grand Chef",icon:'👨‍🍳',desc:"Discover all 12 recipes",chk:()=>G.discoveredRecipes.length>=12},
+  {id:'a_s4',name:"Void Brewer",icon:'🌑',desc:"Brew void bortsch",chk:()=>G.discoveredRecipes.includes('void_herb+beet')},
+  {id:'a_s5',name:"Cosmic Chef",icon:'🌌',desc:"Brew the transcendent stew",chk:()=>G.discoveredRecipes.includes('gold_beet+cream+dill+cosmic_salt')},
+  // Stock market
+  {id:'a_m1',name:"Investor",icon:'📈',desc:"Make first stock purchase",chk:()=>G.totalBortschSpentOnStocks>=1},
+  {id:'a_m2',name:"Profit!",icon:'💰',desc:"Net profit from stocks",chk:()=>G.stockProfit>0},
+  {id:'a_m3',name:"Tycoon",icon:'🤑',desc:"1B profit from stocks",chk:()=>G.stockProfit>=1e9},
+  // Research
+  {id:'a_r1',name:"Scientist",icon:'🔬',desc:"Complete first research",chk:()=>Object.keys(G.researchDone).length>=1},
+  {id:'a_r2',name:"Professor",icon:'🎓',desc:"Complete 4 researches",chk:()=>Object.keys(G.researchDone).length>=4},
+  {id:'a_r3',name:"Omega Scholar",icon:'Ω',desc:"Unlock Omega research",chk:()=>G.researchDone['r_omega']},
+  // Prestige tree
+  {id:'a_pt1',name:"Branch Out",icon:'🌲',desc:"Buy 3 prestige nodes",chk:()=>Object.keys(G.prestigeNodes).length>=3},
+  {id:'a_pt2',name:"Full Tree",icon:'🌳',desc:"Buy 10 prestige nodes",chk:()=>Object.keys(G.prestigeNodes).length>=10},
+  {id:'a_pt3',name:"Void Walker",icon:'🌑',desc:"Unlock any void node",chk:()=>['v1','v2','v3','v4'].some(v=>G.prestigeNodes[v])},
+  // Artifacts
+  {id:'a_art1',name:"Lucky Drop",icon:'🎁',desc:"Find your first artifact",chk:()=>Object.keys(G.artifacts).length>=1},
+  {id:'a_art2',name:"Collector",icon:'🗝️',desc:"Find 3 artifacts",chk:()=>Object.keys(G.artifacts).length>=3},
+  // Minigames
+  {id:'a_mg1',name:"Gamer",icon:'🎮',desc:"Score 100 in any minigame",chk:()=>Object.values(G.mgBestScores).some(s=>s>=100)},
+  {id:'a_mg2',name:"High Score",icon:'🏅',desc:"Score 500 in any minigame",chk:()=>Object.values(G.mgBestScores).some(s=>s>=500)},
+  // Hidden
+  {id:'a_h1',name:"Lore Reader",icon:'📖',desc:"Read the lore",chk:()=>G.readLore},
+  {id:'a_h2',name:"Addict",icon:'😰',desc:"Play 10 minutes",chk:()=>(Date.now()-G.gameStart)>=600000},
+  {id:'a_h3',name:"Devoted",icon:'🙏',desc:"Play 1 hour",chk:()=>(Date.now()-G.gameStart)>=3600000},
+  {id:'a_h4',name:"Challenge Winner",icon:'⚔️',desc:"Win a challenge run",chk:()=>G.challengePoints>=1},
+  {id:'a_h5',name:"Combo King",icon:'💥',desc:"Reach x50 combo",chk:()=>G.combo>=50},
+  {id:'a_h6',name:"Upgrade Hoarder",icon:'📦',desc:"Buy 30 upgrades",chk:()=>Object.keys(G.upgradesPurchased).length>=30},
+];
+
+// ── UTILITY ───────────────────────────────────────────────────────
+function fmt(n) {
+  if (isNaN(n)||!isFinite(n)) return '∞';
+  if (n < 0) return '-'+fmt(-n);
+  if (n < 1000) return Math.floor(n).toString();
+  const sfx = ['','K','M','B','T','Qa','Qi','Sx','Sp','Oc','No','Dc','UDc','DDc','TDc','QaDc','QiDc','SxDc','SpDc','OcDc','NoDc','Vg','UVg','DVg','TVg','Tg','∞'];
+  let t = Math.floor(Math.log10(n)/3); if(t>=sfx.length)t=sfx.length-1;
+  const s = n/Math.pow(10,t*3);
+  return (s<10?s.toFixed(2):s<100?s.toFixed(1):Math.floor(s))+sfx[t];
+}
+function fmtTime(s) { return `${Math.floor(s/3600)}h${Math.floor((s%3600)/60)}m${Math.floor(s%60)}s`; }
+function totalBuildings() { return Object.values(G.buildingCounts).reduce((a,b)=>a+b,0); }
+function getBldCost(b,n) { return Math.ceil(b.baseCost * Math.pow(1.15, n||0)); }
+
+// ── CANVAS BOWL RENDERER ──────────────────────────────────────────
+function drawBowl() {
+  const cv = document.getElementById('bowl-canvas');
+  const ctx = cv.getContext('2d');
+  const W=220,H=220,cx=110,cy=125;
+  ctx.clearRect(0,0,W,H);
+
+  // Shadow
+  ctx.save();
+  ctx.globalAlpha=0.3;
+  ctx.fillStyle='#000';
+  ctx.beginPath();ctx.ellipse(cx,218,70,8,0,0,Math.PI*2);ctx.fill();
+  ctx.restore();
+
+  // Bowl body
+  const bodyGrad = ctx.createRadialGradient(cx-20,cy-20,5,cx,cy,85);
+  bodyGrad.addColorStop(0,'#D4A07A');bodyGrad.addColorStop(0.5,'#A06840');bodyGrad.addColorStop(1,'#6B3820');
+  ctx.beginPath();
+  ctx.moveTo(cx-78,cy-5);
+  ctx.quadraticCurveTo(cx-82,cy+65,cx,cy+80);
+  ctx.quadraticCurveTo(cx+82,cy+65,cx+78,cy-5);
+  ctx.closePath();
+  ctx.fillStyle=bodyGrad;ctx.fill();
+
+  // Rim
+  const rimGrad = ctx.createRadialGradient(cx-20,cy-18,5,cx,cy,82);
+  rimGrad.addColorStop(0,'#E0B088');rimGrad.addColorStop(1,'#8A5030');
+  ctx.beginPath();ctx.ellipse(cx,cy-5,80,18,0,0,Math.PI*2);
+  ctx.fillStyle=rimGrad;ctx.fill();
+
+  // Soup surface (animated wobble)
+  const t = Date.now()*0.002;
+  const soupGrad = ctx.createRadialGradient(cx-10,cy-8,5,cx,cy,70);
+  soupGrad.addColorStop(0,'#C83030');soupGrad.addColorStop(0.5,'#8B1A1A');soupGrad.addColorStop(1,'#5C0E0E');
+  ctx.beginPath();
+  ctx.save();
+  ctx.scale(1,1);
+  const wobble = Math.sin(t)*2;
+  ctx.ellipse(cx,cy-5+wobble*0.3,72,15+Math.sin(t*1.5)*1.5,0,0,Math.PI*2);
+  ctx.fillStyle=soupGrad;ctx.fill();
+  ctx.restore();
+
+  // Beet chunks
+  [[cx-20,cy-3,'#A02020'],[cx+5,cy-8,'#B02828'],[cx+25,cy-2,'#8B1A1A']].forEach(([x,y,c])=>{
+    ctx.fillStyle=c;ctx.beginPath();ctx.roundRect(x,y,13,10,3);ctx.fill();
+  });
+
+  // Potato
+  ctx.fillStyle='#D4B483';ctx.beginPath();ctx.ellipse(cx-32,cy-3,7,5,0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#C8A870';ctx.beginPath();ctx.ellipse(cx+42,cy-5,6,4,0,0,Math.PI*2);ctx.fill();
+
+  // Cabbage leaf
+  ctx.fillStyle='#5A8A50';
+  ctx.beginPath();ctx.moveTo(cx-5,cy-12);ctx.quadraticCurveTo(cx+5,cy-18,cx+14,cy-12);ctx.quadraticCurveTo(cx+8,cy-6,cx-5,cy-12);ctx.fill();
+
+  // Sour cream
+  ctx.fillStyle='rgba(245,240,232,0.95)';ctx.beginPath();ctx.ellipse(cx+12,cy-12,11,6,0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,0.7)';ctx.beginPath();ctx.ellipse(cx+12,cy-13,7,4,0,0,Math.PI*2);ctx.fill();
+
+  // Dill
+  ctx.strokeStyle='#4A7C3F';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(cx+20,cy-20);ctx.quadraticCurveTo(cx+24,cy-14,cx+20,cy-10);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx+21,cy-18);ctx.quadraticCurveTo(cx+25,cy-20,cx+27,cy-16);ctx.stroke();
+
+  // Shine
+  ctx.strokeStyle='rgba(255,255,255,0.18)';ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.ellipse(cx-5,cy-13,22,6,Math.PI*0.15,Math.PI*1.05,Math.PI*1.7);ctx.stroke();
+
+  // Bowl shine
+  ctx.strokeStyle='rgba(255,255,255,0.12)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(cx-65,cy+15);ctx.quadraticCurveTo(cx-55,cy+60,cx-35,cy+72);ctx.stroke();
+}
+
+// ── RECALCULATE ───────────────────────────────────────────────────
+function recalc() {
+  // Global multiplier from purchased upgrades
+  let gm = 1;
+  for (const u of UPGRADES) {
+    if (u.type==='global' && G.upgradesPurchased[u.id]) gm *= u.mult;
+  }
+
+  // Prestige tree global bonuses
+  if (G.prestigeNodes['d1']) gm *= 1.25;
+  if (G.prestigeNodes['d2']) gm *= 2;
+  if (G.prestigeNodes['d5']) gm *= 10;
+  if (G.prestigeNodes['v1']) gm *= 1.5;
+  if (G.prestigeNodes['v4']) gm *= 100;
+
+  // Prestige level bonus
+  const prestigeMult = 1 + G.heavenlySpoons * 0.01;
+  if (G.prestigeNodes['b3']) {
+    gm *= Math.pow(1.05, G.prestigeLevel);
+  }
+  gm *= prestigeMult;
+
+  // Research bonuses
+  if (G.researchDone['r_buildings']) gm *= 1.2;
+  if (G.researchDone['r_omega']) gm *= 2;
+
+  // Void: buildings scale with clicks
+  const voidClickBonus = G.prestigeNodes['v3'] ? (1 + Math.log10(Math.max(1,G.totalClicks))*0.1) : 1;
+
+  // Heavenly spoon BPS bonus (b4 node)
+  const spoonBpsMult = G.prestigeNodes['b4'] ? (1 + G.heavenlySpoons * 0.01) : 1;
+
+  // Active buff multipliers
+  let buffMult = 1;
+  const now = Date.now();
+  for (const [id, buff] of Object.entries(G.activeBuffs)) {
+    if (buff.end && now > buff.end) { delete G.activeBuffs[id]; continue; }
+    if (buff.type==='global'||buff.type==='bps') buffMult *= buff.mult;
+  }
+
+  // Artifact multipliers
+  let artGlobal = 1;
+  for (const aid of Object.keys(G.artifacts)) {
+    const art = ARTIFACTS.find(a=>a.id===aid);
+    if (art && art.effect==='global') artGlobal *= art.mult;
+  }
+  gm *= artGlobal;
+
+  // Minigame reward mult
+  gm *= G.mgRewardsMult;
+
+  // Challenge mode penalty
+  if (G.challengeMode) gm *= 0.1;
+
+  G.globalMult = gm;
+
+  // BPS
+  let bps = 0;
+  const bldTypes = totalBuildings();
+  const bldCountMult = G.upgradesPurchased['ps1'] ? (1 + bldTypes*0.001) : 1;
+
+  for (const b of BUILDINGS) {
+    const n = G.buildingCounts[b.id]||0; if(!n) continue;
+    let bm = 1;
+    for (const u of UPGRADES) {
+      if (u.type==='bld' && u.bld===b.id && G.upgradesPurchased[u.id]) bm *= u.mult;
+    }
+    if (G.prestigeNodes['c3']) bm *= 2;
+    if (G.prestigeNodes['c5']) bm *= 5;
+
+    // Artifact for specific building
+    for (const aid of Object.keys(G.artifacts)) {
+      const art = ARTIFACTS.find(a=>a.id===aid);
+      if (art && art.effect==='bld' && art.bld===b.id) bm *= art.mult;
+    }
+
+    // Cauldron path mastery: +2% per owned building type
+    if (G.prestigeNodes['c4']) bm *= (1 + BUILDINGS.filter(bb=>(G.buildingCounts[bb.id]||0)>0).length*0.02);
+
+    bps += b.baseBps * n * bm;
+  }
+
+  bps *= gm * bldCountMult * voidClickBonus * spoonBpsMult * buffMult;
+  if (G.upgradesPurchased['ps5']) bps *= (1 + G.prestigeLevel * 0.01 * BUILDINGS.filter(b=>(G.buildingCounts[b.id]||0)>0).length);
+
+  G.bps = bps;
+
+  // BPC
+  let bpc = G.clickMult;
+  for (const u of UPGRADES) {
+    if (u.type==='click' && G.upgradesPurchased[u.id]) bpc *= u.mult;
+  }
+  if (G.prestigeNodes['l2']) bpc *= 5;
+  if (G.prestigeNodes['l5']) bpc = bps * 0.1;
+
+  // Click buff
+  let clickBuffMult = 1;
+  for (const [id,buff] of Object.entries(G.activeBuffs)) {
+    if (buff.end && now > buff.end) continue;
+    if (buff.type==='click') clickBuffMult *= buff.mult;
+  }
+
+  // Artifact click
+  for (const aid of Object.keys(G.artifacts)) {
+    const art = ARTIFACTS.find(a=>a.id===aid);
+    if (art && art.effect==='click') bpc *= art.mult;
+  }
+
+  bpc *= gm * clickBuffMult;
+  if (G.upgradesPurchased['ps4']) bpc += bps * 0.01;
+  if (G.prestigeNodes['l1']) bpc += bps * 0.05;
+
+  G.bpc = bpc;
+}
+
+// ── STEW CRAFTING ─────────────────────────────────────────────────
+let stewSlots = [null,null,null,null];
+
+function renderStewUI() {
+  // Slots
+  const slotEl = document.getElementById('stew-slots');
+  slotEl.innerHTML = '';
+  for (let i=0;i<4;i++) {
+    const div = document.createElement('div');
+    div.className = 'stew-slot' + (stewSlots[i] ? ' filled' : '');
+    const ingr = stewSlots[i] ? INGREDIENTS.find(x=>x.id===stewSlots[i]) : null;
+    div.innerHTML = ingr ? `${ingr.icon}<div class="slot-clear" onclick="clearSlot(${i})">✕</div>` : `<span style="opacity:0.3;font-size:14px">${i+1}</span>`;
+    if (!ingr) div.onclick = () => {}; // clicks handled by ingredient shelf
+    slotEl.appendChild(div);
+  }
+
+  // Ingredient shelf
+  const shelf = document.getElementById('ingr-shelf');
+  shelf.innerHTML = '';
+  let total = 0;
+  for (const ingr of INGREDIENTS) {
+    const qty = G.ingredients[ingr.id]||0;
+    total += qty;
+    const div = document.createElement('div');
+    div.className = 'ingr' + (qty<=0 ? ' no-stock' : '');
+    div.innerHTML = `<div class="ingr-icon">${ingr.icon}</div><div class="ingr-name" style="color:${ingr.color}">${ingr.name}</div><div class="ingr-qty">${qty}</div>`;
+    if (qty>0) div.onclick = () => addToSlot(ingr.id);
+    shelf.appendChild(div);
+  }
+  document.getElementById('ingr-totals').textContent = `(${total} total)`;
+
+  // Recipe log
+  const rl = document.getElementById('recipe-log');
+  if (G.discoveredRecipes.length > 0) {
+    rl.innerHTML = G.discoveredRecipes.map(key => {
+      const r = RECIPES[key]; if(!r) return '';
+      return `<span style="color:var(--gold2)">${r.icon} ${r.name}</span>: ${r.desc}`;
+    }).join('<br>');
+  }
+}
+
+function addToSlot(ingrId) {
+  const slot = stewSlots.findIndex(s=>!s);
+  if (slot === -1) { logStew("⚠️ Cauldron full! Clear a slot first."); return; }
+  stewSlots[slot] = ingrId;
+  renderStewUI();
+}
+
+function clearSlot(i) { stewSlots[i]=null; renderStewUI(); }
+
+function brewStew() {
+  const used = stewSlots.filter(Boolean);
+  if (used.length < 2) { logStew("⚠️ Add at least 2 ingredients!"); return; }
+
+  // Check stock
+  const needed = {};
+  for (const id of used) needed[id] = (needed[id]||0)+1;
+  for (const [id,n] of Object.entries(needed)) {
+    if ((G.ingredients[id]||0) < n) { logStew(`⚠️ Not enough ${INGREDIENTS.find(x=>x.id===id).name}!`); return; }
+  }
+
+  // Consume
+  for (const [id,n] of Object.entries(needed)) G.ingredients[id] = (G.ingredients[id]||0) - n;
+
+  // Find recipe key (sorted unique)
+  const key = [...new Set(used)].sort().join('+');
+  const recipe = RECIPES[key];
+
+  stewSlots = [null,null,null,null];
+
+  if (!recipe) {
+    logStew(`💧 Unknown mix... nothing happened. (${key})`);
+    playBubble(); playBubble();
+    renderStewUI(); return;
+  }
+
+  // Discover
+  if (!G.discoveredRecipes.includes(key)) {
+    G.discoveredRecipes.push(key);
+    showMilestone(`📜 Recipe discovered: ${recipe.name}!`);
+    playMilestone();
+  }
+
+  playBrew();
+
+  // Apply effect
+  let effectText = '';
+  const durMult = G.upgradesPurchased['ps8'] || G.researchDone['r_stew'] ? 1.5 : 1;
+  if (G.prestigeNodes['d4']) { /* stews x2 handled in recalc buff */ }
+
+  if (recipe.effect === 'permanent') {
+    // Permanent global bonus (special recipes)
+    G.globalMult = (G.globalMult||1) * recipe.mult;
+    effectText = `✨ PERMANENT +${((recipe.mult-1)*100).toFixed(0)}% global production!`;
+    showMilestone(effectText);
+  } else if (recipe.effect === 'golden') {
+    showGolden(true);
+    effectText = '✨ Summoned a golden bowl!';
+  } else {
+    const dur = recipe.dur * durMult * (G.prestigeNodes['d4'] ? 2 : 1);
+    const bMult = G.prestigeNodes['d4'] ? recipe.mult * 2 : recipe.mult;
+    G.activeBuffs[key + '_' + Date.now()] = {
+      name: recipe.name, icon: recipe.icon,
+      mult: bMult, end: Date.now() + dur*1000,
+      type: recipe.effect,
+    };
+    effectText = `🔥 ${recipe.name}: ${recipe.desc}`;
+  }
+
+  document.getElementById('brew-result').innerHTML = `<span style="color:var(--gold2)">${recipe.icon} ${recipe.name}</span><br><span style="color:var(--dill2)">${effectText}</span>`;
+  logStew(`${recipe.icon} Brewed ${recipe.name} — ${recipe.desc}`);
+  renderStewUI(); renderBuffBar(); recalc();
+  checkAchievements();
+}
+
+function logStew(msg) {
+  const log = document.getElementById('stew-log');
+  log.innerHTML = `<div>${new Date().toLocaleTimeString()}: ${msg}</div>` + log.innerHTML;
+}
+
+// ── INGREDIENT DROPS ───────────────────────────────────────────────
+function dropIngredients(dt) {
+  G.ingredientDropTimer += dt;
+  const rate = (G.upgradesPurchased['ps6'] ? 3 : 1) * (G.researchDone['r_drops'] ? 2 : 1);
+  const interval = 30 / rate; // base: 1 ingredient per 30 seconds
+  if (G.ingredientDropTimer >= interval) {
+    G.ingredientDropTimer = 0;
+    // Drop rate scales with total buildings
+    const nDrops = Math.max(1, Math.floor(Math.log10(Math.max(1, totalBuildings()))));
+    for (let i=0; i<nDrops; i++) {
+      // Weight drops toward basic ingredients, rare ones need more buildings
+      const tb = totalBuildings();
+      let pool = INGREDIENTS.slice(0,4); // always basic
+      if (tb>=50) pool = INGREDIENTS.slice(0,7);
+      if (tb>=200) pool = INGREDIENTS.slice(0,9);
+      if (tb>=500) pool = INGREDIENTS.slice(0,10);
+      if (tb>=1000) pool = INGREDIENTS;
+      const pick = pool[Math.floor(Math.random()*pool.length)];
+      G.ingredients[pick.id] = (G.ingredients[pick.id]||0) + 1;
+    }
+    if (document.getElementById('cv-stew').classList.contains('active')) renderStewUI();
+  }
+}
+
+// ── ARTIFACT DROPS ────────────────────────────────────────────────
+function checkArtifactDrop(dt) {
+  const bld = totalBuildings();
+  if (bld < 10) return;
+  const chance = ART_DROP_CHANCE * dt * (bld/100);
+  if (Math.random() < chance) {
+    const unowned = ARTIFACTS.filter(a=>!G.artifacts[a.id]);
+    if (unowned.length === 0) return;
+    const art = unowned[Math.floor(Math.random()*unowned.length)];
+    G.artifacts[art.id] = true;
+    showArtifactPopup(art);
+    checkAchievements();
+  }
+}
+
+function showArtifactPopup(art) {
+  const rarColors = {rare:'#60C0FF',legendary:'#FFD700',mythic:'#FF40FF'};
+  const div = document.createElement('div');
+  div.className = 'artifact-popup';
+  div.innerHTML = `
+    <span class="art-icon">${art.icon}</span>
+    <div class="art-title" style="color:${rarColors[art.rarity]}">${art.name}</div>
+    <div style="font-size:10px;color:${rarColors[art.rarity]};letter-spacing:2px;margin:4px 0;">[${art.rarity.toUpperCase()}]</div>
+    <div class="art-desc">${art.desc}</div>
+    <button class="art-close" onclick="this.parentElement.remove();recalc();">CLAIM</button>
+  `;
+  document.body.appendChild(div);
+  playGolden();
+  setTimeout(()=>div.remove(), 15000);
+}
+
+// ── PRESTIGE TREE ─────────────────────────────────────────────────
+let ptreeHover = null, ptreeSelected = null;
+let ptreeDrag = {x:0,y:0,ox:0,oy:0,dragging:false};
+let ptreeOffset = {x:0, y:0};
+
+function drawPrestigeTree() {
+  const cv = document.getElementById('ptree-canvas');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  const W=280,H=360;
+  ctx.clearRect(0,0,W,H);
+
+  const ox = ptreeOffset.x, oy = ptreeOffset.y;
+
+  const branchColors = {root:'#D4A843',ladle:'#F0C870',cauldron:'#E07020',dill:'#6BA85E',beet:'#C23B3B',void:'#9040C0'};
+
+  // Draw edges
+  ctx.lineWidth=1.5;
+  for (const node of PTREE) {
+    for (const reqId of node.req) {
+      const parent = PTREE.find(n=>n.id===reqId);
+      if (!parent) continue;
+      const unlocked = G.prestigeNodes[node.id];
+      const parentUnlocked = G.prestigeNodes[parent.id];
+      ctx.strokeStyle = (unlocked&&parentUnlocked) ? 'rgba(212,168,67,0.7)' : 'rgba(100,50,50,0.4)';
+      ctx.setLineDash(unlocked ? [] : [4,4]);
+      ctx.beginPath();
+      ctx.moveTo(parent.x+ox, parent.y+oy);
+      ctx.lineTo(node.x+ox, node.y+oy);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  }
+
+  // Draw nodes
+  for (const node of PTREE) {
+    const unlocked = G.prestigeNodes[node.id];
+    const canBuy = canBuyPrestigeNode(node);
+    const isVoid = node.branch==='void';
+    const voidVisible = !isVoid || G.prestigeLevel >= (node.unlock||0);
+
+    if (!voidVisible) continue;
+
+    const x=node.x+ox, y=node.y+oy;
+    const r = node===ptreeSelected ? 16 : node===ptreeHover ? 14 : 12;
+
+    // Glow
+    if (unlocked) {
+      ctx.save();
+      ctx.shadowColor=branchColors[node.branch]||'#D4A843';
+      ctx.shadowBlur=12;
+      ctx.fillStyle=branchColors[node.branch];
+      ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+      ctx.restore();
+    } else if (canBuy) {
+      ctx.fillStyle=branchColors[node.branch]+'88';
+      ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle=branchColors[node.branch];ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.stroke();
+    } else {
+      ctx.fillStyle='rgba(50,20,20,0.8)';
+      ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle='rgba(100,50,50,0.4)';ctx.lineWidth=1;
+      ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.stroke();
+    }
+
+    // Icon
+    ctx.fillStyle = unlocked?'#fff' : canBuy?'#D4A843' : 'rgba(150,100,100,0.5)';
+    ctx.font=`${r-2}px Arial`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(node.icon,x,y);
+
+    // Cost
+    ctx.fillStyle='rgba(212,168,67,0.7)';
+    ctx.font='8px Roboto Mono, monospace';ctx.textAlign='center';
+    ctx.fillText(node.cost+'🥄',x,y+r+8);
+  }
+}
+
+function canBuyPrestigeNode(node) {
+  if (G.prestigeNodes[node.id]) return false; // already owned
+  if (node.unlock && G.prestigeLevel < node.unlock) return false;
+  if (G.heavenlySpoons < node.cost) return false;
+  if (node.req.length===0) return true;
+  return node.req.every(r=>G.prestigeNodes[r]);
+}
+
+function setupPrestigeTreeEvents() {
+  const cv = document.getElementById('ptree-canvas');
+  if (!cv) return;
+  cv.onmousemove = (e) => {
+    const r=cv.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top;
+    ptreeHover=null;
+    for (const node of PTREE) {
+      if (node.branch==='void' && G.prestigeLevel<(node.unlock||0)) continue;
+      const dx=node.x+ptreeOffset.x-mx, dy=node.y+ptreeOffset.y-my;
+      if (Math.sqrt(dx*dx+dy*dy)<16) { ptreeHover=node; break; }
+    }
+    if (ptreeHover) {
+      const info=document.getElementById('ptree-info');
+      info.innerHTML=`<div class="pt-name">${ptreeHover.icon} ${ptreeHover.name} <span style="color:#E0A0FF">[${ptreeHover.cost}🥄]</span></div><div class="pt-desc">${ptreeHover.desc}<br><span style="font-size:9px;opacity:0.5">${ptreeHover.branch.toUpperCase()} BRANCH</span></div>`;
+    }
+    drawPrestigeTree();
+  };
+  cv.onclick = (e) => {
+    if (ptreeHover) { ptreeSelected=ptreeHover; drawPrestigeTree(); }
+  };
+}
+
+function buyPrestigeNode() {
+  const node = ptreeSelected || ptreeHover;
+  if (!node) { showMilestone('Select a node first!'); return; }
+  if (!canBuyPrestigeNode(node)) { showMilestone('Cannot buy this node!'); return; }
+  G.heavenlySpoons -= node.cost;
+  G.prestigeNodes[node.id] = true;
+  recalc(); drawPrestigeTree(); updateTopBar();
+  showMilestone(`✦ ${node.name} unlocked!`);
+  playMilestone();
+  checkAchievements();
+}
+
+// ── RESEARCH ──────────────────────────────────────────────────────
+let researchTimers = {};
+
+function renderResearch() {
+  const view = document.getElementById('research-view');
+  view.innerHTML = `<div style="font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--cyan2);letter-spacing:2px;padding:6px 0 8px;border-bottom:1px solid var(--border);margin-bottom:8px;">🔬 BORTSCH RESEARCH LAB<br><span style="font-size:10px;color:var(--cream);opacity:0.5;font-family:'Roboto Mono',monospace;font-weight:300;">Research costs BPS × time. Active research takes time to complete.</span></div>`;
+  const grid = document.createElement('div');
+  grid.className = 'res-tree';
+
+  for (const res of RESEARCH) {
+    const done = G.researchDone[res.id];
+    const active = researchTimers[res.id];
+    const canStart = !done && !active && res.req.every(r=>G.researchDone[r]) && G.bps*60 >= res.cost_bps;
+    const locked = !done && !active && !(res.req.every(r=>G.researchDone[r]));
+
+    const div = document.createElement('div');
+    div.className = 'res-node' + (done?' unlocked':active?' researching':locked?' cannot':'');
+    div.title = res.desc;
+
+    const progress = active ? ((res.duration - researchTimers[res.id]/1000) / res.duration * 100) : (done ? 100 : 0);
+
+    div.innerHTML = `
+      <div class="res-icon">${res.icon}</div>
+      <div class="res-name">${res.name}</div>
+      <div class="res-desc">${res.desc}</div>
+      <div class="res-cost" style="color:${done?'var(--dill2)':active?'var(--orange2)':'var(--orange2)'}">
+        ${done?'✓ Done':active?`⏳ ${Math.ceil(researchTimers[res.id]/1000)}s`:`Cost: ${fmt(res.cost_bps)} BPS·min`}
+      </div>
+      <div class="res-progress" style="width:${progress}%"></div>
+    `;
+    if (canStart) {
+      div.onclick = () => startResearch(res);
+      div.style.cursor='pointer';
+    }
+    grid.appendChild(div);
+  }
+  view.appendChild(grid);
+}
+
+function startResearch(res) {
+  if (researchTimers[res.id] || G.researchDone[res.id]) return;
+  const speed = G.upgradesPurchased['ps8'] ? 0.5 : 1;
+  researchTimers[res.id] = res.duration * 1000 * speed;
+  showMilestone(`🔬 Researching: ${res.name}`);
+  renderResearch();
+}
+
+function tickResearch(dt) {
+  let changed = false;
+  for (const [id, rem] of Object.entries(researchTimers)) {
+    researchTimers[id] -= dt * 1000;
+    if (researchTimers[id] <= 0) {
+      delete researchTimers[id];
+      G.researchDone[id] = true;
+      const res = RESEARCH.find(r=>r.id===id);
+      showMilestone(`✅ Research complete: ${res.name}!`);
+      playMilestone(); changed=true;
+    }
+  }
+  if (changed) { renderResearch(); recalc(); checkAchievements(); }
+}
+
+// ── STOCK MARKET ──────────────────────────────────────────────────
+function tickStocks(dt) {
+  for (const s of STOCKS) {
+    const v = s.volatility * (G.challengeMode ? 2 : 1);
+    const change = (Math.random()-0.49) * v * stockPrices[s.id];
+    stockPrices[s.id] = Math.max(s.basePrice*0.1, stockPrices[s.id] + change);
+    stockHistory[s.id].push(stockPrices[s.id]);
+    if (stockHistory[s.id].length > 60) stockHistory[s.id].shift();
+  }
+}
+
+function renderStocks() {
+  const list = document.getElementById('stocks-list');
+  if (!list) return;
+  list.innerHTML = '';
+  document.getElementById('market-cash').textContent = '💰 '+fmt(G.stockCash);
+
+  let portfolioVal = 0;
+  for (const s of STOCKS) portfolioVal += (G.stockOwned[s.id]||0)*stockPrices[s.id];
+  document.getElementById('market-portfolio').textContent = `Portfolio: ${fmt(portfolioVal)} bortsch`;
+
+  for (const s of STOCKS) {
+    const hist = stockHistory[s.id];
+    const prev = hist.length>1 ? hist[hist.length-2] : s.basePrice;
+    const change = ((stockPrices[s.id]-prev)/prev*100);
+    const owned = G.stockOwned[s.id]||0;
+
+    const card = document.createElement('div');
+    card.className = 'stock-card';
+    card.innerHTML = `
+      <div class="stock-header">
+        <div class="stock-name" style="color:${s.color}">${s.icon} ${s.id} — ${s.name}</div>
+        <div>
+          <span class="stock-price" style="color:${s.color}">${fmt(stockPrices[s.id])}</span>
+          <span class="stock-change ${change>=0?'up':'dn'}">${change>=0?'+':''}${change.toFixed(1)}%</span>
+        </div>
+      </div>
+      <div class="stock-owned">Owned: ${owned} shares (value: ${fmt(owned*stockPrices[s.id])})</div>
+      <div class="stock-btns">
+        <button class="stock-btn buy-b" onclick="buyStock('${s.id}',1)">Buy 1</button>
+        <button class="stock-btn buy-b" onclick="buyStock('${s.id}',10)">Buy 10</button>
+        <button class="stock-btn sell-b" onclick="sellStock('${s.id}',1)">Sell 1</button>
+        <button class="stock-btn sell-b" onclick="sellStock('${s.id}',10)">Sell 10</button>
+      </div>
+    `;
+    list.appendChild(card);
+  }
+  drawStockChart();
+}
+
+function buyStock(id, n) {
+  const s = STOCKS.find(x=>x.id===id);
+  const cost = stockPrices[id]*n;
+  if (G.bortsch < cost) { showMilestone('❌ Not enough bortsch!'); return; }
+  G.bortsch -= cost;
+  G.stockCash -= cost;
+  G.totalBortschSpentOnStocks += cost;
+  G.stockOwned[id] = (G.stockOwned[id]||0)+n;
+  renderStocks(); updateTopBar(); checkAchievements();
+  playPurchase();
+}
+
+function sellStock(id, n) {
+  const owned = G.stockOwned[id]||0;
+  const actual = Math.min(n,owned);
+  if (actual<=0) { showMilestone('❌ No shares to sell!'); return; }
+  const revenue = stockPrices[id]*actual;
+  const bonus = G.upgradesPurchased['ps7'] ? 1.5 : 1;
+  const finalRev = revenue * bonus;
+  G.bortsch += finalRev;
+  G.totalBortsch += finalRev;
+  G.stockCash += finalRev;
+  G.stockProfit = (G.stockProfit||0)+finalRev-revenue;
+  G.stockOwned[id] = owned-actual;
+  renderStocks(); updateTopBar(); checkAchievements();
+  playPurchase();
+}
+
+function drawStockChart() {
+  const cv = document.getElementById('chart-canvas');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  ctx.clearRect(0,0,cv.width,cv.height);
+  for (const s of STOCKS) {
+    const hist = stockHistory[s.id];
+    if (hist.length<2) continue;
+    const mn=Math.min(...hist), mx=Math.max(...hist);
+    const range = mx-mn||1;
+    ctx.strokeStyle=s.color;ctx.lineWidth=1;ctx.globalAlpha=0.7;
+    ctx.beginPath();
+    hist.forEach((v,i)=>{
+      const x=i/(hist.length-1)*cv.width;
+      const y=cv.height-(v-mn)/range*cv.height*0.8-4;
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    });
+    ctx.stroke();ctx.globalAlpha=1;
+  }
+}
+
+// ── MINI-GAMES ────────────────────────────────────────────────────
+let currentGame = 'catch';
+let mgRunning = false;
+let mgState = {};
+
+const MG_INFO = {
+  catch: { title:'BEET CATCH', instructions:'Use LEFT/RIGHT arrows (or A/D) to move your bowl.\nCatch falling beets! Miss 3 and it\'s over.\nBonus: catch golden beets for x5 points!' },
+  rhythm: { title:'STIR RHYTHM', instructions:'Hit SPACE (or click) in time with the stirring rhythm!\nPerfect timing = more points. Miss 3 beats = game over.\nFaster tempo as you progress!' },
+  blitz: { title:'BORTSCH BLITZ', instructions:'Click the glowing bortsch bowls before they vanish!\nFaster spawning as score increases.\nMiss 5 = game over. Chain hits for combos!' },
+};
+
+function selectGame(id) {
+  if (mgRunning) stopMinigame();
+  currentGame=id;
+  document.querySelectorAll('.mg-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('gb-'+id).classList.add('active');
+  document.getElementById('mg-title').textContent=MG_INFO[id].title;
+  document.getElementById('mg-instructions').textContent=MG_INFO[id].instructions;
+  document.getElementById('mg-overlay').classList.remove('hidden');
+  const best = G.mgBestScores[id]||0;
+  document.getElementById('mg-score-display').textContent=`Score: 0 | Best: ${best}`;
+  document.getElementById('mg-reward-info').textContent=`Win rewards: +${getGameRewardText(id)}`;
+}
+
+function getGameRewardText(id) {
+  return id==='catch'?'ingredients + global x1.5 (60s)': id==='rhythm'?'ingredients + click x3 (30s)': 'bortsch lump sum!';
+}
+
+function startCurrentGame() {
+  document.getElementById('mg-overlay').classList.add('hidden');
+  mgRunning=true;
+  const cv=document.getElementById('mg-canvas');
+  cv.width=cv.offsetWidth||420; cv.height=260;
+  if (currentGame==='catch') startCatch();
+  else if (currentGame==='rhythm') startRhythm();
+  else startBlitz();
+}
+
+function stopMinigame(score=0) {
+  mgRunning=false;
+  if (score>0 && score>(G.mgBestScores[currentGame]||0)) {
+    G.mgBestScores[currentGame]=score;
+    showMilestone(`🏅 NEW HIGH SCORE: ${score}!`);
+    playGolden();
+  }
+  document.getElementById('mg-score-display').textContent=`Score: ${score} | Best: ${G.mgBestScores[currentGame]||0}`;
+  document.getElementById('mg-overlay').classList.remove('hidden');
+  if (score>=50) awardMinigameReward(score);
+  checkAchievements();
+}
+
+function awardMinigameReward(score) {
+  const mult = Math.ceil(score/50);
+  if (currentGame==='catch') {
+    for (let i=0;i<mult;i++) {
+      const pick=INGREDIENTS[Math.floor(Math.random()*7)];
+      G.ingredients[pick.id]=(G.ingredients[pick.id]||0)+1;
+    }
+    G.activeBuffs['mg_catch_'+Date.now()]={name:'Catch Frenzy',icon:'🥕',mult:1.5,end:Date.now()+60000,type:'global'};
+    showMilestone(`🥕 +${mult} ingredients & 1.5x global for 60s!`);
+  } else if (currentGame==='rhythm') {
+    for (let i=0;i<mult;i++) {
+      const pick=INGREDIENTS[Math.floor(Math.random()*9)];
+      G.ingredients[pick.id]=(G.ingredients[pick.id]||0)+1;
+    }
+    G.activeBuffs['mg_rhythm_'+Date.now()]={name:'Stir Boost',icon:'🥄',mult:3,end:Date.now()+30000,type:'click'};
+    showMilestone(`🥄 +${mult} ingredients & 3x clicks for 30s!`);
+  } else {
+    const lump = G.bps * score * 5;
+    G.bortsch+=lump; G.totalBortsch+=lump;
+    showMilestone(`⚡ Blitz bonus: +${fmt(lump)} bortsch!`);
+  }
+  recalc(); renderBuffBar();
+}
+
+// BEET CATCH
+function startCatch() {
+  const cv=document.getElementById('mg-canvas');
+  const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  mgState={
+    bowlX:W/2,bowlW:60,bowlSpd:6,
+    beets:[],score:0,lives:3,frame:0,
+    keys:{left:false,right:false}
+  };
+
+  const kd=e=>{if(e.key==='ArrowLeft'||e.key==='a')mgState.keys.left=true;if(e.key==='ArrowRight'||e.key==='d')mgState.keys.right=true;};
+  const ku=e=>{if(e.key==='ArrowLeft'||e.key==='a')mgState.keys.left=false;if(e.key==='ArrowRight'||e.key==='d')mgState.keys.right=false;};
+  document.addEventListener('keydown',kd);document.addEventListener('keyup',ku);
+  mgState.cleanup=()=>{document.removeEventListener('keydown',kd);document.removeEventListener('keyup',ku);};
+
+  function loop() {
+    if (!mgRunning){mgState.cleanup&&mgState.cleanup();return;}
+    const s=mgState;
+    ctx.clearRect(0,0,W,H);
+
+    // Move bowl
+    if (s.keys.left) s.bowlX=Math.max(s.bowlW/2,s.bowlX-s.bowlSpd);
+    if (s.keys.right) s.bowlX=Math.min(W-s.bowlW/2,s.bowlX+s.bowlSpd);
+
+    // Spawn beets
+    if (s.frame%Math.max(20,60-Math.floor(s.score/5))===0) {
+      const golden=Math.random()<0.1;
+      s.beets.push({x:Math.random()*(W-30)+15,y:-15,spd:2+Math.random()*3+s.score*0.02,golden});
+    }
+    s.frame++;
+
+    // Update beets
+    s.beets=s.beets.filter(b=>{
+      b.y+=b.spd;
+      if (b.y>H+20) { s.lives--; if(s.lives<=0){mgState.cleanup&&mgState.cleanup();stopMinigame(s.score);}return false;}
+      // Catch
+      if (Math.abs(b.x-s.bowlX)<s.bowlW/2+10&&b.y>H-40&&b.y<H-5) {
+        s.score+=b.golden?50:10; playClick(0.1); return false;
+      }
+      return true;
+    });
+
+    // Draw background
+    ctx.fillStyle='#110606';ctx.fillRect(0,0,W,H);
+
+    // Draw beets
+    for (const b of s.beets) {
+      ctx.font='22px Arial';ctx.textAlign='center';
+      ctx.fillText(b.golden?'⭐':'🥝',b.x,b.y);
+    }
+
+    // Draw bowl
+    ctx.fillStyle='#C8864A';ctx.beginPath();ctx.ellipse(s.bowlX,H-20,s.bowlW/2,12,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#8B1A1A';ctx.beginPath();ctx.ellipse(s.bowlX,H-22,s.bowlW/2-4,8,0,0,Math.PI*2);ctx.fill();
+
+    // HUD
+    ctx.fillStyle='rgba(212,168,67,0.9)';ctx.font="bold 14px 'VT323',monospace";ctx.textAlign='left';
+    ctx.fillText(`SCORE: ${s.score}`,8,20);ctx.textAlign='right';
+    ctx.fillText('❤️'.repeat(s.lives),W-8,20);
+
+    document.getElementById('mg-score-display').textContent=`Score: ${s.score} | Best: ${G.mgBestScores.catch||0}`;
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+}
+
+// STIR RHYTHM
+function startRhythm() {
+  const cv=document.getElementById('mg-canvas');
+  const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  let baseInterval=1000,score=0,misses=0,maxMisses=3,beatTime=Date.now()+baseInterval,beatWindow=250,frame=0,combo=0;
+  mgState={score,misses,beatTime,frame};
+
+  const hitBeat=()=>{
+    const now=Date.now();
+    const diff=Math.abs(now-beatTime);
+    if(diff<beatWindow){score+=10+combo*2;combo++;playClick(0.2);}
+    else{misses++;combo=0;playBubble();if(misses>=maxMisses){stopMinigame(score);}}
+    mgState.score=score;mgState.misses=misses;
+  };
+  const kd=e=>{if(e.key===' '||e.code==='Space'){e.preventDefault();hitBeat();}};
+  document.addEventListener('keydown',kd);
+  cv.addEventListener('click',hitBeat);
+  mgState.cleanup=()=>{document.removeEventListener('keydown',kd);cv.removeEventListener('click',hitBeat);};
+
+  function loop() {
+    if (!mgRunning){mgState.cleanup&&mgState.cleanup();return;}
+    const now=Date.now();
+    frame++;
+    baseInterval=Math.max(350,1000-score*5);
+    if(now>beatTime){beatTime=now+baseInterval;}
+
+    ctx.clearRect(0,0,W,H);ctx.fillStyle='#0A0404';ctx.fillRect(0,0,W,H);
+
+    // Draw stir ring
+    const prog=(now%baseInterval)/baseInterval;
+    const cx2=W/2,cy2=H/2,r=Math.min(W,H)*0.35;
+    ctx.strokeStyle='rgba(212,168,67,0.15)';ctx.lineWidth=8;
+    ctx.beginPath();ctx.arc(cx2,cy2,r,0,Math.PI*2);ctx.stroke();
+
+    ctx.strokeStyle=prog>0.85?'#FF4040':'rgba(212,168,67,0.7)';ctx.lineWidth=8;
+    ctx.beginPath();ctx.arc(cx2,cy2,r,-Math.PI/2,-Math.PI/2+prog*Math.PI*2);ctx.stroke();
+
+    // Bowl in center
+    ctx.font='40px Arial';ctx.textAlign='center';ctx.textBaseline='middle';
+    const pulse=prog>0.9?1.2:1;
+    ctx.save();ctx.translate(cx2,cy2);ctx.scale(pulse,pulse);ctx.fillText('🫕',0,0);ctx.restore();
+
+    // Beat flash
+    if(Math.abs(now-beatTime)<100){ctx.fillStyle='rgba(212,168,67,0.2)';ctx.fillRect(0,0,W,H);}
+
+    // HUD
+    ctx.fillStyle='rgba(212,168,67,0.9)';ctx.font="14px 'VT323',monospace";ctx.textAlign='left';ctx.textBaseline='top';
+    ctx.fillText(`SCORE: ${score}  COMBO: x${combo}`,8,8);
+    ctx.textAlign='right';ctx.fillText('💔'.repeat(misses)+'❤️'.repeat(maxMisses-misses),W-8,8);
+    ctx.fillStyle='rgba(255,255,255,0.4)';ctx.font="10px monospace";ctx.textAlign='center';ctx.textBaseline='bottom';
+    ctx.fillText('SPACE or CLICK on the beat!',cx2,H-8);
+
+    document.getElementById('mg-score-display').textContent=`Score: ${score} | Best: ${G.mgBestScores.rhythm||0}`;
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+}
+
+// BORTSCH BLITZ
+function startBlitz() {
+  const cv=document.getElementById('mg-canvas');
+  const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  let score=0,misses=0,maxMisses=5,targets=[],frame=0,nextSpawn=60;
+  mgState={score,misses};
+
+  cv.onclick=e=>{
+    const r=cv.getBoundingClientRect();
+    const mx=e.clientX-r.left,my=e.clientY-r.top;
+    let hit=false;
+    targets=targets.filter(t=>{
+      const dx=t.x-mx,dy=t.y-my;
+      if(Math.sqrt(dx*dx+dy*dy)<t.r){score+=Math.ceil(100/Math.max(1,t.life/60));hit=true;playClick(0.15);return false;}
+      return true;
+    });
+    if(!hit){/* miss on click is ok */}
+  };
+  mgState.cleanup=()=>{cv.onclick=null;};
+
+  function loop() {
+    if (!mgRunning){mgState.cleanup&&mgState.cleanup();return;}
+    frame++;
+    if(frame>=nextSpawn){
+      targets.push({x:Math.random()*(W-60)+30,y:Math.random()*(H-60)+30,r:20+Math.random()*15,life:180-Math.min(120,score/5),maxLife:180-Math.min(120,score/5),emoji:['🍲','🥣','🫕','🍵'][Math.floor(Math.random()*4)]});
+      nextSpawn=Math.max(15,50-Math.floor(score/20));frame=0;
+    }
+
+    targets=targets.filter(t=>{t.life--;if(t.life<=0){misses++;if(misses>=maxMisses){stopMinigame(score);}return false;}return true;});
+
+    ctx.clearRect(0,0,W,H);ctx.fillStyle='#0A0404';ctx.fillRect(0,0,W,H);
+
+    for(const t of targets){
+      const p=t.life/t.maxLife;
+      ctx.globalAlpha=0.3;ctx.fillStyle=p>0.5?'#D4A843':'#FF4040';
+      ctx.beginPath();ctx.arc(t.x,t.y,t.r+4,0,Math.PI*2);ctx.fill();
+      ctx.globalAlpha=1;ctx.strokeStyle=p>0.5?'rgba(212,168,67,0.8)':'rgba(255,64,64,0.8)';
+      ctx.lineWidth=2;ctx.beginPath();ctx.arc(t.x,t.y,t.r,-Math.PI/2,-Math.PI/2+p*Math.PI*2);ctx.stroke();
+      ctx.font=`${t.r*1.2}px Arial`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(t.emoji,t.x,t.y);
+    }
+
+    ctx.fillStyle='rgba(212,168,67,0.9)';ctx.font="14px 'VT323',monospace";ctx.textAlign='left';ctx.textBaseline='top';
+    ctx.fillText(`SCORE: ${score}`,8,8);ctx.textAlign='right';ctx.fillText('Miss:'+misses+'/'+maxMisses,W-8,8);
+
+    document.getElementById('mg-score-display').textContent=`Score: ${score} | Best: ${G.mgBestScores.blitz||0}`;
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+}
+
+// ── BUILDINGS SHOP ────────────────────────────────────────────────
+function renderBuildings() {
+  const list=document.getElementById('bld-list');
+  list.innerHTML='';
+  let totalB=0;
+  for (const b of BUILDINGS) {
+    const n=G.buildingCounts[b.id]||0; totalB+=n;
+    const cost=getBldCost(b,n);
+    // Cost reduction from prestige
+    const actualCost = G.prestigeNodes['c2'] ? Math.ceil(cost*0.9) : cost;
+    const can=G.bortsch>=actualCost;
+    const idx=BUILDINGS.indexOf(b);
+    const unlocked=idx===0||(G.buildingCounts[BUILDINGS[idx-1].id]||0)>=1||n>0;
+
+    const div=document.createElement('div');
+    div.className='bld '+(unlocked?(can?'can':'cannot'):'locked');
+    const bps = b.baseBps*n;
+    div.innerHTML=`<div class="bld-icon">${b.icon}</div><div class="bld-mid"><div class="bld-name">${b.name}</div><div class="bld-sub">${unlocked?b.desc:'???'}</div>${n>0?`<div class="bld-bps">${fmt(bps)}/s raw</div>`:''}</div><div class="bld-right"><div class="bld-cnt">${n}</div><div class="bld-cost">${unlocked?fmt(actualCost):'???'}</div></div>${n>0?`<div class="bld-bar" style="width:${Math.min(n,100)}%"></div>`:''}`;
+    if (unlocked&&can) div.onclick=()=>buyBuilding(b);
+    list.appendChild(div);
+  }
+  document.getElementById('total-bld-count').textContent=totalB+' buildings';
+
+  // Start with some babushkas if b1 prestige node
+  if (G.prestigeNodes['b1'] && totalB===0) {
+    for(let i=0;i<10;i++) G.buildingCounts.babushka=(G.buildingCounts.babushka||0)+1;
+  }
+}
+
+function buyBuilding(b) {
+  const n=G.buildingCounts[b.id]||0;
+  let cost=getBldCost(b,n);
+  if (G.prestigeNodes['c2']) cost=Math.ceil(cost*0.9);
+  if (G.bortsch<cost) return;
+  G.bortsch-=cost; G.buildingCounts[b.id]=(n+1);
+  recalc(); renderBuildings(); renderUpgrades(); updateTopBar();
+  playPurchase(); checkAchievements(); checkMilestones();
+}
+
+// ── UPGRADES ──────────────────────────────────────────────────────
+function renderUpgrades() {
+  const list=document.getElementById('upg-list');
+  list.innerHTML='';
+  const avail=UPGRADES.filter(u=>!G.upgradesPurchased[u.id]&&isUpgVisible(u));
+  const done=UPGRADES.filter(u=>G.upgradesPurchased[u.id]);
+
+  if(avail.length){
+    const h=document.createElement('div');h.className='sect-hdr';h.textContent='AVAILABLE';list.appendChild(h);
+    for(const u of avail){
+      const can=G.bortsch>=u.cost;
+      const div=document.createElement('div');div.className='upg '+(can?'':'cannot');
+      div.innerHTML=`<div class="upg-ico">${u.icon}</div><div class="upg-info"><div class="upg-name">${u.name}</div><div class="upg-desc">${u.desc}</div></div><div class="upg-cost">${fmt(u.cost)}</div>`;
+      if(can)div.onclick=()=>buyUpgrade(u);
+      list.appendChild(div);
+    }
+  }
+  if(done.length){
+    const h=document.createElement('div');h.className='sect-hdr';h.textContent='PURCHASED';list.appendChild(h);
+    for(const u of done){
+      const div=document.createElement('div');div.className='upg done';
+      div.innerHTML=`<div class="upg-ico">${u.icon}</div><div class="upg-info"><div class="upg-name">${u.name}</div><div class="upg-desc">${u.desc}</div></div><div class="upg-cost" style="color:var(--dill2)">✓</div>`;
+      list.appendChild(div);
+    }
+  }
+}
+
+function isUpgVisible(u) {
+  if(!u.req) return true;
+  if(u.req.tb&&G.totalBortsch<u.req.tb) return false;
+  if(u.req.bld){for(const[id,n]of Object.entries(u.req.bld))if((G.buildingCounts[id]||0)<n)return false;}
+  return true;
+}
+
+function buyUpgrade(u) {
+  if(G.bortsch<u.cost||G.upgradesPurchased[u.id])return;
+  G.bortsch-=u.cost; G.upgradesPurchased[u.id]=true;
+  recalc(); renderUpgrades(); updateTopBar();
+  showMilestone(`${u.icon} ${u.name} purchased!`);
+  playPurchase(); checkAchievements();
+}
+
+// ── ACHIEVEMENTS ──────────────────────────────────────────────────
+function renderAchievements() {
+  const grid=document.getElementById('ach-grid'); if(!grid)return;
+  grid.innerHTML='';
+  let unlocked=0;
+  for(const a of ACHIEVEMENTS){
+    const got=G.achievementsUnlocked[a.id];
+    if(got)unlocked++;
+    const div=document.createElement('div');div.className='ach '+(got?'got':'nope');div.title=a.desc;
+    div.innerHTML=`<div class="ach-ico">${a.icon}</div><div class="ach-name">${a.name}</div><div class="ach-desc">${got?a.desc:'???'}</div>`;
+    grid.appendChild(div);
+  }
+  document.getElementById('ach-counter').textContent=`${unlocked} / ${ACHIEVEMENTS.length} unlocked`;
+  const rtab=document.querySelector('.rtab[onclick="setRTab(\'achieve\')"]');
+  if(rtab)rtab.textContent=`Medals(${unlocked})`;
+}
+
+function checkAchievements() {
+  for(const a of ACHIEVEMENTS){
+    if(!G.achievementsUnlocked[a.id]&&a.chk()){
+      G.achievementsUnlocked[a.id]=true;
+      showMilestone(`🏅 ${a.name}: ${a.desc}`);
+      playMilestone();
+      renderAchievements();
+    }
+  }
+}
+
+// ── PRESTIGE ──────────────────────────────────────────────────────
+function calcPrestigeReward(){return Math.max(1,Math.floor(Math.sqrt(G.totalBortsch/1e6)));}
+
+function doPrestige() {
+  if(G.totalBortsch<1e6){showMilestone('❌ Need 1M total bortsch!');return;}
+  const reward=calcPrestigeReward();
+  if(!confirm(`Prestige reset for ${reward} Heavenly Spoons?\n(All buildings & upgrades reset. Prestige tree persists.)`))return;
+
+  const keepUpgrades = G.prestigeNodes['b5'];
+  const keepSomeUpgrades = G.prestigeNodes['b2'];
+
+  G.heavenlySpoons+=reward;
+  G.prestigeLevel++;
+  G.bortsch=0;G.totalBortsch=0;
+  G.buildingCounts={};
+  if(!keepUpgrades){
+    if(keepSomeUpgrades){
+      // Keep 20% randomly
+      const kept={};const keys=Object.keys(G.upgradesPurchased);
+      keys.forEach(k=>{if(Math.random()<0.2)kept[k]=true;});
+      G.upgradesPurchased=kept;
+    } else {
+      G.upgradesPurchased={};
+    }
+  }
+  G.activeBuffs={};G.globalMult=1;G.combo=1;
+
+  // Start babushkas if b1 node
+  if(G.prestigeNodes['b1']){G.buildingCounts.babushka=10;}
+
+  recalc(); renderBuildings(); renderUpgrades(); renderAchievements();
+  updateTopBar(); drawPrestigeTree();
+  document.getElementById('spoons-display').textContent=`🥄 ${G.heavenlySpoons} spoons`;
+  showMilestone(`✨ PRESTIGE ${G.prestigeLevel}! +${reward} Heavenly Spoons!`);
+  playGolden();
+}
+
+// ── GOLDEN BOWL ───────────────────────────────────────────────────
+let goldenTimer=null;
+function scheduleGolden(){
+  const freq=G.researchDone['r_golden']?0.67:1;
+  const delay=(30000+Math.random()*120000)*freq;
+  goldenTimer=setTimeout(()=>showGolden(),delay);
+}
+function showGolden(immediate=false){
+  const el=document.getElementById('golden-bowl');
+  el.style.display='block';
+  el.style.left=(Math.random()*(window.innerWidth-100))+'px';
+  el.style.top=(65+Math.random()*(window.innerHeight-150))+'px';
+  const dur=G.upgradesPurchased['ps2']?30000:15000;
+  if(!immediate)setTimeout(()=>{el.style.display='none';scheduleGolden();},dur);
+}
+
+const EVENTS=[
+  {name:"Bortsch Frenzy!",icon:'🔥',desc:"7x ALL production 15s",eff:()=>{G.activeBuffs['frenzy_'+Date.now()]={name:'Bortsch Frenzy',icon:'🔥',mult:7,end:Date.now()+15000,type:'global'};}},
+  {name:"Click Overload!",icon:'⚡',desc:"x777 clicks for 13s",eff:()=>{G.activeBuffs['click777_'+Date.now()]={name:'Click Overload',icon:'⚡',mult:777,end:Date.now()+13000,type:'click'};}},
+  {name:"Lucky Dill!",icon:'🍀',desc:"+300s of BPS as bortsch",eff:()=>{const b=G.bps*300;G.bortsch+=b;G.totalBortsch+=b;}},
+  {name:"Beet Harvest!",icon:'🌾',desc:"5x all for 30s",eff:()=>{G.activeBuffs['harvest_'+Date.now()]={name:'Beet Harvest',icon:'🌾',mult:5,end:Date.now()+30000,type:'global'};}},
+  {name:"Ingredient Rain!",icon:'🌧️',desc:"20 random ingredients!",eff:()=>{for(let i=0;i<20;i++){const p=INGREDIENTS[Math.floor(Math.random()*INGREDIENTS.length)];G.ingredients[p.id]=(G.ingredients[p.id]||0)+1;}}},
+  {name:"Cosmic Alignment!",icon:'🌌',desc:"x100 all for 5s",eff:()=>{G.activeBuffs['cosmic_'+Date.now()]={name:'Cosmic Alignment',icon:'🌌',mult:100,end:Date.now()+5000,type:'global'};}},
+];
+
+function clickGolden(e){
+  e.stopPropagation();
+  G.goldenClicks++;
+  document.getElementById('golden-bowl').style.display='none';
+  const event=EVENTS[Math.floor(Math.random()*EVENTS.length)];
+  event.eff(); playGolden();
+  showEventNotif(event.name,event.icon,event.desc);
+  recalc(); renderBuffBar(); scheduleGolden();
+  checkAchievements();
+  const artMult=G.artifacts['art_golden']?5:1;
+  const lump=G.bps*15*artMult;G.bortsch+=lump;G.totalBortsch+=lump;
+}
+
+function showEventNotif(name,icon,desc){
+  const old=document.querySelector('.event-notif');if(old)old.remove();
+  const div=document.createElement('div');div.className='event-notif';
+  div.innerHTML=`<div style="font-size:28px">${icon}</div><div class="en-title">${name}</div><div class="en-desc">${desc}</div>`;
+  document.body.appendChild(div);
+  setTimeout(()=>div.remove(),4000);
+}
+
+// ── BUFF BAR ──────────────────────────────────────────────────────
+function renderBuffBar(){
+  const bar=document.getElementById('buffs-bar');
+  bar.innerHTML='';
+  const now=Date.now();
+  for(const[id,b]of Object.entries(G.activeBuffs)){
+    if(b.end&&now>b.end){delete G.activeBuffs[id];continue;}
+    const rem=b.end?Math.ceil((b.end-now)/1000):null;
+    const chip=document.createElement('div');
+    chip.className='buff-chip '+(b.type==='global'?'buff-frenzy':b.type==='click'?'buff-golden':'buff-dill');
+    chip.innerHTML=`${b.icon} ${b.name} x${b.mult}${rem?` <span class="buff-time">${rem}s</span>`:''}`;
+    bar.appendChild(chip);
+  }
+}
+
+// ── CHALLENGE MODE ─────────────────────────────────────────────────
+function toggleChallenge(){
+  G.challengeMode=!G.challengeMode;
+  const badge=document.getElementById('challenge-badge');
+  badge.textContent=G.challengeMode?'⚔️CHALLENGE':'NORMAL';
+  badge.classList.toggle('active',G.challengeMode);
+  if(G.challengeMode)showMilestone('⚔️ CHALLENGE MODE: 10x production to prestige! All drops x3!');
+  recalc();
+}
+
+// ── DISPLAY ───────────────────────────────────────────────────────
+function updateTopBar(){
+  document.getElementById('ts-bortsch').textContent=fmt(G.bortsch);
+  document.getElementById('ts-total').textContent=fmt(G.totalBortsch);
+  document.getElementById('ts-bps').textContent=fmt(G.bps);
+  document.getElementById('ts-bpc').textContent=fmt(G.bpc);
+  document.getElementById('ts-spoons').textContent=G.heavenlySpoons;
+  document.getElementById('ts-prestige').textContent=G.prestigeLevel;
+  document.getElementById('big-count').textContent=fmt(G.bortsch);
+  document.getElementById('bps-line').textContent=fmt(G.bps)+' bowls/sec';
+  document.getElementById('bpc-line').textContent=fmt(G.bpc)+' per click';
+  document.getElementById('spoons-display').textContent='🥄 '+G.heavenlySpoons+' spoons';
+}
+
+// ── STATS ─────────────────────────────────────────────────────────
+function renderStats(){
+  const grid=document.getElementById('stats-grid');if(!grid)return;
+  const el=(Date.now()-G.gameStart)/1000;
+  const rows=[
+    ['Bortsch','',fmt(G.bortsch)],
+    ['All-Time Bortsch','',fmt(G.totalBortsch)],
+    ['BPS','',fmt(G.bps)],
+    ['Per Click','',fmt(G.bpc)],
+    ['Total Clicks','',G.totalClicks.toLocaleString()],
+    ['Global Multiplier','',G.globalMult.toFixed(2)+'x'],
+    ['Time Played','',fmtTime(el)],
+    ['Buildings','',totalBuildings()],
+    ['Upgrades','',Object.keys(G.upgradesPurchased).length+'/'+UPGRADES.length],
+    ['Achievements','',Object.keys(G.achievementsUnlocked).length+'/'+ACHIEVEMENTS.length],
+    ['Prestige Level','',G.prestigeLevel],
+    ['Heavenly Spoons','',G.heavenlySpoons],
+    ['Prestige Nodes','',Object.keys(G.prestigeNodes).length+'/'+PTREE.length],
+    ['Golden Bowls','',G.goldenClicks],
+    ['Recipes Found','',G.discoveredRecipes.length+'/'+Object.keys(RECIPES).length],
+    ['Artifacts','',Object.keys(G.artifacts).length+'/'+ARTIFACTS.length],
+    ['Research Done','',Object.keys(G.researchDone).length+'/'+RESEARCH.length],
+    ['Stock Profit','',fmt(G.stockProfit||0)],
+    ['MG Best (Catch)','',G.mgBestScores.catch||0],
+    ['MG Best (Rhythm)','',G.mgBestScores.rhythm||0],
+    ['MG Best (Blitz)','',G.mgBestScores.blitz||0],
+    ['Ingredients','',Object.values(G.ingredients).reduce((a,b)=>a+b,0)],
+    ['Challenge Mode','',G.challengeMode?'ON':'OFF'],
+  ];
+  grid.innerHTML=rows.map(([k,,v])=>`<div class="stat-r"><span class="sk">${k}</span><span class="sv">${v}</span></div>`).join('');
+}
+
+// ── MILESTONES ────────────────────────────────────────────────────
+const M_TB=[100,1000,10000,1e5,1e6,1e9,1e12,1e15,1e18,1e21,1e30,1e50];
+const M_BPS=[1,10,100,1000,1e5,1e6,1e8,1e10,1e12,1e15];
+const shownTB=new Set(),shownBPS=new Set();
+
+function checkMilestones(){
+  for(const v of M_TB){if(G.totalBortsch>=v&&!shownTB.has(v)){shownTB.add(v);showMilestone(`🍲 ${fmt(v)} total bortsch!`);}}
+  for(const v of M_BPS){if(G.bps>=v&&!shownBPS.has(v)){shownBPS.add(v);showMilestone(`🌊 ${fmt(v)} bowls/sec!`);}}
+}
+
+let mQueue=[],mShowing=false;
+function showMilestone(txt){mQueue.push(txt);if(!mShowing)nextMilestone();}
+function nextMilestone(){
+  if(!mQueue.length){mShowing=false;return;}
+  mShowing=true;const txt=mQueue.shift();
+  const el=document.getElementById('milestone-bar');
+  el.textContent=txt;el.classList.add('show');
+  setTimeout(()=>{el.classList.remove('show');setTimeout(nextMilestone,500);},2600);
+}
+
+// ── CLICK HANDLER ────────────────────────────────────────────────
+let fxEnabled=true;
+function toggleFX(){fxEnabled=!fxEnabled;}
+
+function clickBortsch(e){
+  const now=Date.now();
+  const dt=now-G.lastClickTime;
+  if(dt<500)G.combo=Math.min(G.combo+(G.researchDone['r_click']?1.5:1),G.researchDone['r_combo']?200:100);
+  else if(dt>2000)G.combo=1;
+  G.lastClickTime=now;
+  clearTimeout(G.comboTimer);
+  G.comboTimer=setTimeout(()=>{G.combo=1;updateComboUI();},2000);
+
+  const comboMult=G.upgradesPurchased['ps3']?Math.pow(G.combo,1.2):G.combo;
+  // Thunder click: every 100th
+  const thunderBonus=(G.prestigeNodes['l3']&&G.totalClicks%100===0)?50:1;
+  const earned=G.bpc*comboMult*thunderBonus;
+  G.bortsch+=earned;G.totalBortsch+=earned;G.totalClicks++;
+
+  spawnFloat(e.clientX,e.clientY,'+'+fmt(earned),'var(--gold2)');
+  if(fxEnabled&&Math.random()<0.4)spawnParticle(e.clientX,e.clientY);
+  playClick();
+  updateComboUI();updateTopBar();checkAchievements();checkMilestones();
+}
+
+function updateComboUI(){
+  const el=document.getElementById('combo-num');
+  if(G.combo>1.4){el.style.opacity=1;el.textContent='x'+G.combo.toFixed(1);el.style.fontSize=Math.min(18+G.combo,60)+'px';el.style.color=G.combo>20?'#FF6060':G.combo>10?'#FFD700':'var(--gold2)';}
+  else el.style.opacity=0;
+}
+
+function spawnFloat(x,y,txt,color='var(--gold2)'){
+  const el=document.createElement('div');el.className='float-txt';el.textContent=txt;
+  el.style.left=(x-20)+'px';el.style.top=(y-20)+'px';el.style.color=color;
+  document.body.appendChild(el);setTimeout(()=>el.remove(),1300);
+}
+function spawnParticle(x,y){
+  const emojis=['🥣','🍲','🌿','🥕','🍅','🧅','💨','✨','🫕','🧄','🥝','⭐'];
+  const el=document.createElement('div');el.className='particle';
+  el.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+  el.style.left=(x+(Math.random()-0.5)*60)+'px';el.style.top=y+'px';
+  document.body.appendChild(el);setTimeout(()=>el.remove(),3500);
+}
+
+// ── CENTER TABS ───────────────────────────────────────────────────
+function setCenterTab(id){
+  document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.cview').forEach(v=>v.classList.remove('active'));
+  document.querySelector(`.ctab[onclick="setCenterTab('${id}')"]`).classList.add('active');
+  document.getElementById('cv-'+id).classList.add('active');
+  if(id==='stew')renderStewUI();
+  if(id==='market')renderStocks();
+  if(id==='mini')selectGame(currentGame);
+}
+
+// ── RIGHT TABS ────────────────────────────────────────────────────
+function setRTab(id){
+  document.querySelectorAll('.rtab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.rtab-content').forEach(c=>c.classList.remove('active'));
+  document.querySelector(`.rtab[onclick="setRTab('${id}')"]`).classList.add('active');
+  document.getElementById('rt-'+id).classList.add('active');
+  if(id==='stats')renderStats();
+  if(id==='achieve')renderAchievements();
+  if(id==='research')renderResearch();
+  if(id==='prestige'){drawPrestigeTree();setupPrestigeTreeEvents();}
+}
+
+// ── SAVE/LOAD ─────────────────────────────────────────────────────
+function exportSave(){
+  const s={...G,researchTimers:Object.fromEntries(Object.entries(researchTimers).map(([k,v])=>[k,v])),stockPrices,stockHistory,version:2};
+  const encoded=btoa(JSON.stringify(s));
+  try{const ta=document.createElement('textarea');ta.value=encoded;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();}catch(e){}
+  showMilestone('💾 Save copied to clipboard!');
+}
+
+function importSave(){
+  const code=prompt('Paste save:');if(!code)return;
+  try{
+    const s=JSON.parse(atob(code));
+    Object.assign(G,s);
+    if(s.researchTimers)Object.assign(researchTimers,s.researchTimers);
+    if(s.stockPrices)Object.assign(stockPrices,s.stockPrices);
+    if(s.stockHistory)Object.assign(stockHistory,s.stockHistory);
+    recalc();renderBuildings();renderUpgrades();renderAchievements();updateTopBar();renderResearch();drawPrestigeTree();
+    showMilestone('📂 Save loaded!');
+  }catch(e){showMilestone('❌ Invalid save!');}
+}
+
+function autoSave(){
+  try{
+    const s={...G,stockPrices,stockHistory,version:2};
+    localStorage.setItem('bortsch2_save',JSON.stringify(s));
+  }catch(e){}
+}
+
+function loadAutoSave(){
+  try{
+    const raw=localStorage.getItem('bortsch2_save');if(!raw)return;
+    const s=JSON.parse(raw);Object.assign(G,s);
+    if(s.stockPrices)Object.assign(stockPrices,s.stockPrices);
+    if(s.stockHistory)Object.assign(stockHistory,s.stockHistory);
+    recalc();showMilestone('💾 Game restored!');
+  }catch(e){}
+}
+
+// ── TICKER ────────────────────────────────────────────────────────
+const NEWS_TICKERS=[
+  "BREAKING: Local babushka discovers 47th secret ingredient ★ MARKETS: Beet futures up 4000% ★ SCIENCE: Dark matter confirmed to be bortsch ★ WEATHER: 100% chance of bortsch ★ VOID: Scientists detect bortsch emanating from black holes ★",
+  "URGENT: UN declares bortsch a human right ★ SPORTS: Bortsch eating contest record shattered ★ TECH: New AI trained solely on bortsch recipes ★ ECONOMY: GDP replaced by GBP (Gross Bortsch Product) ★ SPACE: Mars colony survives on bortsch alone ★",
+  "FLASH: Ancient cave paintings depict bortsch ★ PHYSICS: Bortschiton particle confirmed ★ RELIGION: All faiths united by bortsch ★ CULTURE: Mona Lisa was actually eating bortsch ★ RESEARCH: Bortsch cures 7 unknown diseases ★",
+  "STOCK ALERT: $BEET up 4000% ★ PHILOSOPHY: Existence itself is a form of bortsch ★ BIOLOGY: Bortsch found in DNA ★ ASTRONOMY: Distant star smells of dill ★ POLITICS: All parties agree — more bortsch ★",
+  "VOID: Portal to bortsch dimension discovered ★ BABUSHKA UNION: Strike demands more dill ★ ECONOMY: BortschCoin surpasses all currencies ★ SCIENCE: Heat death of universe delayed by bortsch ★ TIME: Scientists confirm bortsch predates time ★",
+];
+let tickerIdx=0;
+function rotateTicker(){document.getElementById('ticker-inner').textContent=NEWS_TICKERS[tickerIdx++%NEWS_TICKERS.length];}
+
+// ── LORE / MISC ────────────────────────────────────────────────────
+function showLore(){document.getElementById('lore-modal').style.display='flex';G.readLore=true;checkAchievements();}
+function hideLore(){document.getElementById('lore-modal').style.display='none';}
+
+// ── GAME LOOP ─────────────────────────────────────────────────────
+let lastTick=Date.now(), tickN=0;
+
+function tick(){
+  const now=Date.now();
+  const dt=(now-lastTick)/1000;
+  lastTick=now; tickN++;
+
+  // Earn bortsch
+  const earned=G.bps*dt;
+  G.bortsch+=earned; G.totalBortsch+=earned;
+
+  // Drop ingredients
+  dropIngredients(dt);
+
+  // Artifact drops
+  checkArtifactDrop(dt);
+
+  // Research
+  tickResearch(dt);
+
+  // Stocks (every 3 seconds)
+  if(tickN%180===0){tickStocks(dt*180);}
+
+  // Display
+  if(tickN%4===0){updateTopBar();}
+  if(tickN%8===0){renderBuffBar();}
+  if(tickN%60===0){
+    checkAchievements();checkMilestones();renderBuildings();renderUpgrades();
+    recalc();
+    // Buff cleanup
+    const n2=Date.now();
+    for(const[id,b]of Object.entries(G.activeBuffs)){if(b.end&&n2>b.end)delete G.activeBuffs[id];}
+  }
+  if(tickN%300===0){autoSave();}
+  if(tickN%600===0&&document.getElementById('rt-stats').classList.contains('active'))renderStats();
+  if(tickN%120===0&&document.getElementById('rt-research').classList.contains('active'))renderResearch();
+  if(tickN%30===0&&document.getElementById('cv-market').classList.contains('active'))renderStocks();
+  if(tickN%30===0) drawPrestigeTree();
+  if(tickN%3===0) drawBowl();
+
+  requestAnimationFrame(tick);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+function init(){
+  loadAutoSave();
+  recalc();
+  renderBuildings();
+  renderUpgrades();
+  renderAchievements();
+  renderResearch();
+  renderStewUI();
+  updateTopBar();
+  rotateTicker();
+  setInterval(rotateTicker,55000);
+  scheduleGolden();
+  setupPrestigeTreeEvents();
+  drawPrestigeTree();
+  startBubbling();
+  selectGame('catch');
+
+  // Canvas resize handler
+  window.addEventListener('resize',()=>{
+    const cv=document.getElementById('mg-canvas');
+    if(cv)cv.width=cv.offsetWidth||420;
+  });
+
+  setTimeout(()=>showMilestone('🍲 BORTSCH CLICKER v2 — THE GRAND STEW! Click the bowl!'),700);
+  setTimeout(()=>showMilestone('🫕 NEW: Stew Crafting! 📈 Stock Market! 🎮 Minigames! ✦ Prestige Tree!'),3500);
+
+  requestAnimationFrame(tick);
+}
+
+init();
+</script>
+</body>
+</html>
