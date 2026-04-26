@@ -1890,7 +1890,15 @@ const sv = d => {
     try { localStorage.setItem(KEY+'_bak', JSON.stringify(d)); } catch(e) {}
   } catch(e) {}
 };
-const today = () => new Date().toISOString().slice(0,10);
+// Use local calendar date, not UTC — avoids timezone-caused off-by-one where UTC midnight
+// can be "tomorrow" for users in negative-offset timezones (e.g. US), stamping state.start
+// as a future date and making daysSinceStart() return 2 on what the user considers Day 1.
+const today = () => {
+  const d = new Date();
+  return d.getFullYear() + '-' +
+    String(d.getMonth() + 1).padStart(2, '0') + '-' +
+    String(d.getDate()).padStart(2, '0');
+};
 
 // Try to recover from backup key if primary is missing/corrupt
 attemptRecovery_early();
@@ -3070,7 +3078,11 @@ function updateAllStats() {
   const chapters=state.items.filter(i=>i.type==='chapter').length;
   const notes=state.items.filter(i=>i.type==='note').length;
   const daysElapsed=daysSinceStart();
-  const avg=daysElapsed>0?Math.round(total/daysElapsed):0;
+  // Average over days that actually have writing data, not raw days-since-start.
+  // This prevents a stale/incorrect state.start from distorting the average, and
+  // also gives a more meaningful "words per day you actually wrote" figure.
+  const daysWritten=Math.max(1,Object.keys(state.daily).filter(k=>(state.daily[k]||0)>0).length);
+  const avg=Math.round(total/daysWritten);
   const dailyRate=Math.ceil(goal/state.days);
 
   // Daily bar: today's words vs fixed 1500
