@@ -1900,7 +1900,30 @@ const today = () => {
     String(d.getDate()).padStart(2, '0');
 };
 
-// Try to recover from backup key if primary is missing/corrupt
+// ══════════════════════════════════════════════════
+// DATE FORMAT MIGRATION
+// Fixes state that was saved when today() used UTC instead of local date.
+// UTC and local dates can differ by 1 day (e.g. 11pm EST = next day UTC).
+// This migrates affected keys so no words are filed under the wrong date.
+// ══════════════════════════════════════════════════
+function migrateDateFormats() {
+  const utcToday = new Date().toISOString().slice(0, 10);
+  const localToday = today();
+  if (utcToday === localToday) return; // same date — nothing to do
+  let changed = false;
+  // Fix state.start if it was stamped with UTC date
+  if (state.start === utcToday) { state.start = localToday; changed = true; }
+  // Fix baselineDate
+  if (state.baselineDate === utcToday) { state.baselineDate = localToday; changed = true; }
+  // Merge daily entry filed under UTC date into local date
+  // (words written late at night local time got filed under next-day UTC key)
+  if (state.daily[utcToday] !== undefined) {
+    state.daily[localToday] = (state.daily[localToday] || 0) + state.daily[utcToday];
+    delete state.daily[utcToday];
+    changed = true;
+  }
+  if (changed) sv(state);
+}
 attemptRecovery_early();
 function attemptRecovery_early() {
   try {
@@ -1939,6 +1962,7 @@ let focusModeOn = false;
 // BOOT
 // ══════════════════════════════════════════════════
 function boot() {
+  migrateDateFormats(); // must run before any date-dependent reads
   applyTheme(state.theme);
   if(state.theme==='custom'&&state.customTheme) {
     setTimeout(()=>{
@@ -2309,7 +2333,13 @@ function onTitleChange() {
 function updateTodayDaily() {
   const total=totalChapterWords();
   const todayKey=today();
-  if(state.baselineDate!==todayKey){
+  // Day-1 rule: if the project started today, ALL accumulated words are "today's" words.
+  // This prevents a mid-session baseline reset (caused by the old UTC today() returning a
+  // different string from the local today()) from hiding words under the wrong count.
+  if(state.start===todayKey){
+    state.dailyBaseline=0;
+    state.baselineDate=todayKey;
+  } else if(state.baselineDate!==todayKey){
     state.baselineDate=todayKey;
     state.dailyBaseline=total;
   }
