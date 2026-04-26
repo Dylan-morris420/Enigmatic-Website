@@ -566,6 +566,18 @@ body.focus-mode-active .left-panel,body.focus-mode-active .right-panel{opacity:0
 .daily-goal-bar{height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;margin-top:4px}
 .daily-goal-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.5s;width:0%}
 
+/* ─ Staircase chart ─ */
+.staircase-wrap{position:relative;margin-top:8px}
+.staircase-chart{display:flex;align-items:flex-end;gap:1px;height:72px;position:relative}
+.sc-bar{flex:1;border-radius:1px 1px 0 0;min-width:2px;position:relative;transition:opacity 0.2s}
+.sc-bar.sc-past{background:var(--accent);opacity:0.25}
+.sc-bar.sc-current{background:var(--accent);opacity:1}
+.sc-bar.sc-ahead{background:var(--green);opacity:0.7}
+.sc-bar.sc-future{background:var(--surface3)}
+.sc-line{position:absolute;left:0;right:0;height:1px;background:var(--green);opacity:0.8;pointer-events:none}
+.sc-axis{display:flex;justify-content:space-between;margin-top:3px}
+.sc-axis span{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3)}
+
 /* ─ Heatmap ─ */
 .heatmap-mini{display:flex;gap:2px;flex-wrap:wrap;margin-top:6px}
 .hm{width:10px;height:10px;border-radius:2px;background:var(--surface3)}
@@ -1038,7 +1050,7 @@ input[type=color]{width:22px;height:22px;border-radius:50%;border:2px solid var(
         </div>
 
         <div class="tool-section">
-          <div class="tool-label">Today's Goal</div>
+          <div class="tool-label" id="daily-goal-label">Today's Goal</div>
           <div style="display:flex;justify-content:space-between;margin-bottom:4px">
             <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2)" id="today-progress-label">0 / 1,667</span>
             <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent)" id="today-pct">0%</span>
@@ -1204,6 +1216,22 @@ input[type=color]{width:22px;height:22px;border-radius:50%;border:2px solid var(
             </div>
           </div>
         </div>
+        <div class="tool-section">
+          <div class="tool-label">Challenge Staircase</div>
+          <div class="staircase-wrap">
+            <div class="staircase-chart" id="staircase-chart"></div>
+            <div class="sc-axis">
+              <span>Day 1</span>
+              <span id="sc-mid-label"></span>
+              <span id="sc-end-label">Day 30</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:6px;flex-wrap:wrap">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3)" id="sc-legend-target"></span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--green)" id="sc-legend-current"></span>
+          </div>
+        </div>
+
         <div class="tool-section">
           <div class="tool-label">Writing History</div>
           <div id="hist-list"><div class="empty-msg">Start writing to see history</div></div>
@@ -1539,6 +1567,7 @@ function boot() {
   renderHeatmap();
   renderHistory();
   renderBadges();
+  renderStaircase();
   // Restore milestone tracker so we don't re-fire on reload
   _lastMilestoneFired = state._lastMilestone || -1;
   updateLastBackupLabel();
@@ -1692,8 +1721,6 @@ function onTitleChange() {
 function updateTodayDaily() {
   const total=totalChapterWords();
   const todayKey=today();
-  // If it's a new day (or first ever run), reset the baseline to current total
-  // so today starts counting from 0
   if(state.baselineDate!==todayKey){
     state.baselineDate=todayKey;
     state.dailyBaseline=total;
@@ -2282,25 +2309,49 @@ function streak() {
 }
 function daysSinceStart(){return Math.max(1,Math.floor((new Date(today())-new Date(state.start))/86400000)+1);}
 
+function getCumulativeTarget(rung) {
+  return Math.ceil(state.goal / state.days * rung);
+}
+
+function getRungDate(rung) {
+  const start = new Date(state.start + 'T00:00:00');
+  start.setDate(start.getDate() + rung - 1);
+  return (start.getMonth()+1) + '/' + start.getDate() + '/' + String(start.getFullYear()).slice(2);
+}
+
 function updateAllStats() {
   const total=totalChapterWords();
   const goal=state.goal;
   const pct=Math.min(100,Math.round(total/goal*100));
-  const dailyGoal=Math.ceil(goal/state.days);
   const todayWC=state.daily[today()]||0;
   const str=streak();
   const chapters=state.items.filter(i=>i.type==='chapter').length;
   const notes=state.items.filter(i=>i.type==='note').length;
   const days=daysSinceStart();
   const avg=days>0?Math.round(total/days):0;
-  const todayPct=Math.min(100,Math.round(todayWC/dailyGoal*100));
+  const dailyRate=Math.ceil(goal/state.days);
+
+  // Find the active rung: the lowest day whose cumulative target we haven't hit yet.
+  // Start from today's day number, then advance if we're already ahead.
+  let activeRung=Math.min(state.days, daysSinceStart());
+  while(activeRung < state.days && total >= getCumulativeTarget(activeRung)) activeRung++;
+  const rungTarget=getCumulativeTarget(activeRung);
+  const prevTarget=activeRung>1?getCumulativeTarget(activeRung-1):0;
+  const rungRange=Math.max(1,rungTarget-prevTarget);
+  const rungProgress=Math.max(0,total-prevTarget);
+  const todayPct=Math.min(100,Math.round(rungProgress/rungRange*100));
+  const rungLabel=getRungDate(activeRung);
+
+  // Update daily goal label with the target date
+  const goalLabelEl=document.getElementById('daily-goal-label');
+  if(goalLabelEl) goalLabelEl.textContent='Goal for '+rungLabel;
 
   document.getElementById('book-wc-display').textContent=total.toLocaleString()+' words';
   document.getElementById('mini-prog-bar').style.width=pct+'%';
   document.getElementById('mini-prog-left').textContent=total.toLocaleString()+' / '+goal.toLocaleString();
   document.getElementById('mini-prog-pct').textContent=pct+'%';
   document.getElementById('stat-today').textContent=todayWC.toLocaleString();
-  document.getElementById('stat-goal-sub').textContent=dailyGoal.toLocaleString()+' / day';
+  document.getElementById('stat-goal-sub').textContent=dailyRate.toLocaleString()+' / day';
   document.getElementById('stat-streak').textContent=str;
   document.getElementById('stat-streak-sub').textContent=str===1?'day':'days';
   document.getElementById('big-pct').textContent=pct+'%';
@@ -2310,7 +2361,7 @@ function updateAllStats() {
   document.getElementById('st-notes').textContent=notes;
   document.getElementById('st-streak').textContent=str;
   document.getElementById('st-avg').textContent=avg.toLocaleString();
-  document.getElementById('today-progress-label').textContent=todayWC.toLocaleString()+' / '+dailyGoal.toLocaleString();
+  document.getElementById('today-progress-label').textContent=total.toLocaleString()+' / '+rungTarget.toLocaleString();
   document.getElementById('today-pct').textContent=todayPct+'%';
   document.getElementById('daily-goal-fill').style.width=todayPct+'%';
   document.getElementById('book-title-display').textContent=state.title;
@@ -2318,7 +2369,70 @@ function updateAllStats() {
 
   checkMilestones(total);
   updateDailyFlavor(todayPct);
-  renderHistory(); renderBadges();
+  renderHistory(); renderBadges(); renderStaircase();
+}
+
+function renderStaircase() {
+  const el=document.getElementById('staircase-chart');
+  if(!el) return;
+  const total=totalChapterWords();
+  const goal=state.goal;
+  const days=state.days;
+  const maxTarget=getCumulativeTarget(days);
+  const chartH=72;
+  const todayRung=Math.min(days,daysSinceStart());
+
+  el.innerHTML='';
+
+  // Show up to 60 days; if more, sample evenly
+  const showDays=Math.min(days,60);
+  const step=days/showDays;
+
+  // Find active rung (same logic as updateAllStats)
+  let activeRung=todayRung;
+  while(activeRung<days && total>=getCumulativeTarget(activeRung)) activeRung++;
+
+  for(let i=0;i<showDays;i++){
+    const rung=Math.round((i+1)*step);
+    const target=getCumulativeTarget(rung);
+    const barH=Math.max(2,Math.round((target/maxTarget)*chartH));
+    const bar=document.createElement('div');
+    bar.className='sc-bar';
+    bar.style.height=barH+'px';
+    if(rung<activeRung && total>=target){
+      bar.classList.add('sc-ahead'); // ahead of schedule
+    } else if(rung<todayRung){
+      bar.classList.add('sc-past');
+    } else if(rung===activeRung){
+      bar.classList.add('sc-current');
+    } else {
+      bar.classList.add('sc-future');
+    }
+    bar.title='Day '+rung+': '+target.toLocaleString()+' words';
+    el.appendChild(bar);
+  }
+
+  // Current progress line
+  if(total>0){
+    const lineY=chartH-Math.round((Math.min(total,maxTarget)/maxTarget)*chartH);
+    const line=document.createElement('div');
+    line.className='sc-line';
+    line.style.bottom=Math.round((Math.min(total,maxTarget)/maxTarget)*chartH)+'px';
+    el.appendChild(line);
+  }
+
+  // Axis labels
+  const endEl=document.getElementById('sc-end-label');
+  const midEl=document.getElementById('sc-mid-label');
+  if(endEl) endEl.textContent='Day '+days;
+  if(midEl) midEl.textContent=Math.round(days/2).toLocaleString()+'d / '+getCumulativeTarget(Math.round(days/2)).toLocaleString()+'w';
+
+  // Legend
+  const tEl=document.getElementById('sc-legend-target');
+  const cEl=document.getElementById('sc-legend-current');
+  if(tEl) tEl.textContent='▮ active target: '+getCumulativeTarget(activeRung).toLocaleString()+' words';
+  if(cEl && total>0) cEl.textContent='— current: '+total.toLocaleString();
+  else if(cEl) cEl.textContent='';
 }
 
 function renderHistory(){
@@ -3018,7 +3132,7 @@ if (!state._welcomed) {
 }
 
 window.addEventListener('beforeunload',saveCurrentContent);
-setInterval(()=>{updateTodayDaily();sv(state);updateAllStats();renderHeatmap();rotateStatsQuote();silentBackup();},30000);
+setInterval(()=>{updateTodayDaily();sv(state);updateAllStats();renderHeatmap();rotateStatsQuote();silentBackup();renderStaircase();},30000);
 rotateStatsQuote();
 
 // Request notification permission for timer
