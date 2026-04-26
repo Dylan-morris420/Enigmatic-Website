@@ -3219,7 +3219,8 @@ function renderStaircase(){
   } else {
     el.style.width = '';
   }
-  const avg=daysSinceStart()>0?Math.round(total/daysSinceStart()):0;
+  const daysWritten=Math.max(1,Object.keys(state.daily).filter(k=>(state.daily[k]||0)>0).length);
+  const avg=daysWritten>0?Math.round(total/daysWritten):0;
 
   // Container needs to allow tooltip events
   el.style.position='relative';
