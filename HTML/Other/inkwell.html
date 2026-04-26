@@ -1534,6 +1534,7 @@ function boot() {
   let toActivate = state.items.find(i=>i.id===state.activeId)||state.items[0];
   renderTree();
   activateItem(toActivate.id);
+  updateTodayDaily();
   updateAllStats();
   renderHeatmap();
   renderHistory();
@@ -1690,7 +1691,14 @@ function onTitleChange() {
 
 function updateTodayDaily() {
   const total=totalChapterWords();
-  state.daily[today()]=total;
+  const todayKey=today();
+  // If it's a new day (or first ever run), reset the baseline to current total
+  // so today starts counting from 0
+  if(state.baselineDate!==todayKey){
+    state.baselineDate=todayKey;
+    state.dailyBaseline=total;
+  }
+  state.daily[todayKey]=Math.max(0,total-state.dailyBaseline);
 }
 
 function wordCount(html) {
