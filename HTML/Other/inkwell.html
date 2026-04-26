@@ -237,6 +237,123 @@
   --red:#8a3050;
 }
 
+/* Neon */
+[data-theme="neon"] {
+  --bg:#0a0a0f;
+  --panel-l:#0e0e16;
+  --panel-m:#080810;
+  --panel-r:#0e0e16;
+  --sidebar-bg:#060608;
+  --sidebar2:#08080c;
+  --s-text:#a040ff;
+  --s-text2:#5020a0;
+  --s-text3:#280f50;
+  --surface:#0e0e16;
+  --surface2:#141420;
+  --surface3:#1c1c2c;
+  --border:rgba(140,40,255,0.15);
+  --border2:rgba(140,40,255,0.07);
+  --text:#d0b0ff;
+  --text2:#8050c0;
+  --text3:#3a1870;
+  --green:#20d080;
+  --red:#ff2060;
+  --shadow:rgba(0,0,0,0.5);
+  --shadow2:rgba(0,0,0,0.3);
+}
+
+/* Coffee */
+[data-theme="coffee"] {
+  --bg:#f2ebe3;
+  --panel-l:#faf6f1;
+  --panel-m:#f2ebe3;
+  --panel-r:#faf6f1;
+  --sidebar-bg:#1c1008;
+  --sidebar2:#24160c;
+  --s-text:#b09070;
+  --s-text2:#6a4830;
+  --s-text3:#3a2818;
+  --surface:#faf6f1;
+  --surface2:#e8ddd2;
+  --surface3:#d4c4b0;
+  --border:rgba(80,45,20,0.12);
+  --border2:rgba(80,45,20,0.06);
+  --text:#1c1008;
+  --text2:#4a3020;
+  --text3:#8a6848;
+  --green:#5a7a2a;
+  --red:#b04030;
+}
+
+/* Dusk */
+[data-theme="dusk"] {
+  --bg:#1a1428;
+  --panel-l:#201830;
+  --panel-m:#161022;
+  --panel-r:#201830;
+  --sidebar-bg:#0e0c18;
+  --sidebar2:#120e1e;
+  --s-text:#a090d0;
+  --s-text2:#504880;
+  --s-text3:#282040;
+  --surface:#201830;
+  --surface2:#261e3a;
+  --surface3:#2e2448;
+  --border:rgba(180,160,220,0.1);
+  --border2:rgba(180,160,220,0.05);
+  --text:#d0c8f0;
+  --text2:#8880c0;
+  --text3:#404070;
+  --green:#6090d0;
+  --red:#d06080;
+}
+
+/* Crimson */
+[data-theme="crimson"] {
+  --bg:#180808;
+  --panel-l:#200e0e;
+  --panel-m:#180808;
+  --panel-r:#200e0e;
+  --sidebar-bg:#0c0404;
+  --sidebar2:#100606;
+  --s-text:#d04040;
+  --s-text2:#701818;
+  --s-text3:#380c0c;
+  --surface:#200e0e;
+  --surface2:#281414;
+  --surface3:#301a1a;
+  --border:rgba(200,40,40,0.12);
+  --border2:rgba(200,40,40,0.06);
+  --text:#e8c0c0;
+  --text2:#b08080;
+  --text3:#604040;
+  --green:#4a8a4a;
+  --red:#e04040;
+}
+
+/* Arctic */
+[data-theme="arctic"] {
+  --bg:#edf4fa;
+  --panel-l:#f8fcff;
+  --panel-m:#edf4fa;
+  --panel-r:#f8fcff;
+  --sidebar-bg:#0c1828;
+  --sidebar2:#101e30;
+  --s-text:#70a8d8;
+  --s-text2:#306888;
+  --s-text3:#143448;
+  --surface:#f8fcff;
+  --surface2:#d8eaf8;
+  --surface3:#bcd8ee;
+  --border:rgba(20,80,140,0.1);
+  --border2:rgba(20,80,140,0.05);
+  --text:#0c1828;
+  --text2:#1a3c60;
+  --text3:#4a7898;
+  --green:#2a9a7a;
+  --red:#a03050;
+}
+
 html,body{height:100%;overflow:hidden;background:#0d1117}
 
 body{
@@ -563,18 +680,55 @@ body.focus-mode-active .left-panel,body.focus-mode-active .right-panel{opacity:0
 .t-btn.primary:hover{opacity:0.88}
 
 /* ─ Daily chart ─ */
-.daily-goal-bar{height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;margin-top:4px}
-.daily-goal-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.5s;width:0%}
+.daily-goal-bar{height:7px;background:var(--surface3);border-radius:4px;overflow:hidden;margin-top:4px;position:relative}
+.daily-goal-fill{height:100%;background:var(--accent);border-radius:4px;transition:width 0.5s ease;width:0%;position:absolute;top:0;left:0}
+.daily-overflow-fill{height:100%;background:rgba(255,255,255,0.45);border-radius:4px;transition:width 0.5s ease;width:0%;position:absolute;top:0;left:0;mix-blend-mode:overlay}
+@keyframes goalPulse{0%,100%{opacity:1}50%{opacity:0.7}}
+.daily-goal-bar.complete .daily-goal-fill{animation:goalPulse 2s ease-in-out infinite}
 
-/* ─ Staircase chart ─ */
-.staircase-wrap{position:relative;margin-top:8px}
-.staircase-chart{display:flex;align-items:flex-end;gap:1px;height:72px;position:relative}
-.sc-bar{flex:1;border-radius:1px 1px 0 0;min-width:2px;position:relative;transition:opacity 0.2s}
-.sc-bar.sc-past{background:var(--accent);opacity:0.25}
-.sc-bar.sc-current{background:var(--accent);opacity:1}
-.sc-bar.sc-ahead{background:var(--green);opacity:0.7}
+/* ─ Chapter color chips ─ */
+.ch-color-chip{width:10px;height:10px;border-radius:3px;flex-shrink:0;cursor:pointer;border:1px solid rgba(255,255,255,0.15);transition:transform 0.1s}
+.ch-color-chip:hover{transform:scale(1.3)}
+.tree-item.colored{border-left:3px solid var(--ch-color,transparent)}
+
+/* ─ Chapter icon ─ */
+.item-icon-btn{background:none;border:none;padding:0;cursor:pointer;font-size:12px;line-height:1;opacity:0.75;flex-shrink:0;border-radius:3px;transition:opacity 0.15s}
+.item-icon-btn:hover{opacity:1;background:rgba(255,255,255,0.08)}
+
+/* ─ Streak calendar ─ */
+.streak-day{border-radius:3px;aspect-ratio:1;min-height:14px;cursor:default;transition:transform 0.1s;position:relative}
+.streak-day:hover{transform:scale(1.2)}
+.streak-day.wrote{background:var(--accent);opacity:0.9}
+.streak-day.none{background:var(--surface3);opacity:0.5}
+.streak-day.today{outline:2px solid var(--accent);outline-offset:1px}
+
+/* ─ Staircase tooltip ─ */
+.sc-tooltip{
+  position:fixed;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  padding:7px 11px;font-family:'JetBrains Mono',monospace;font-size:9px;line-height:1.6;
+  color:var(--text2);pointer-events:none;z-index:500;box-shadow:0 4px 16px var(--shadow);
+  opacity:0;transition:opacity 0.1s;white-space:nowrap;
+}
+.sc-tooltip.visible{opacity:1}
+.sc-tooltip strong{color:var(--accent);display:block;margin-bottom:2px}
+
+
+/* Genre tags */
+.genre-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;background:var(--accent-l);color:var(--accent);border:1px solid var(--accent);font-family:'JetBrains Mono',monospace;font-size:9px;cursor:default}
+.genre-tag .genre-x{cursor:pointer;opacity:0.6;font-size:10px;transition:opacity 0.15s}
+.genre-tag .genre-x:hover{opacity:1}
+
+.staircase-wrap{position:relative;margin-top:8px;overflow-x:auto;overflow-y:visible;padding-bottom:4px;scrollbar-width:thin;scrollbar-color:var(--surface3) transparent}
+.staircase-wrap::-webkit-scrollbar{height:3px}
+.staircase-wrap::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:2px}
+.staircase-chart{display:flex;align-items:flex-end;gap:1px;height:68px;position:relative;overflow:visible;min-width:100%}
+.sc-bar{flex:1;border-radius:1px 1px 0 0;min-width:3px;transition:opacity 0.2s,transform 0.1s;cursor:default}
+.sc-bar:hover{transform:scaleY(1.05);transform-origin:bottom}
+.sc-bar.sc-past{background:var(--accent);opacity:0.3}
+.sc-bar.sc-current{background:var(--accent);opacity:1;box-shadow:0 0 6px var(--accent)}
+.sc-bar.sc-ahead{background:var(--green);opacity:0.8}
 .sc-bar.sc-future{background:var(--surface3)}
-.sc-line{position:absolute;left:0;right:0;height:1px;background:var(--green);opacity:0.8;pointer-events:none}
+.sc-line{position:absolute;left:0;right:0;height:2px;background:var(--green);opacity:0.85;pointer-events:none;border-radius:1px}
 .sc-axis{display:flex;justify-content:space-between;margin-top:3px}
 .sc-axis span{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3)}
 
@@ -966,17 +1120,34 @@ input[type=color]{width:22px;height:22px;border-radius:50%;border:2px solid var(
       <div class="fmt-sep"></div>
       <select class="fmt-select" id="inline-font-sel" onmousedown="saveSelection()" onchange="applyInlineFont(this.value)" title="Font for selection">
         <option value="">— Font —</option>
-        <option value="'Lora',serif">Lora</option>
-        <option value="'Playfair Display',serif">Playfair</option>
-        <option value="'EB Garamond',serif">Garamond</option>
-        <option value="'Merriweather',serif">Merriweather</option>
-        <option value="'Crimson Pro',serif">Crimson</option>
-        <option value="'JetBrains Mono',monospace">Mono</option>
-        <option value="'Nunito',sans-serif">Nunito</option>
-        <option value="Arial,sans-serif">Arial</option>
+        <optgroup label="Serif">
+          <option value="'Lora',serif">Lora</option>
+          <option value="'Playfair Display',serif">Playfair</option>
+          <option value="'EB Garamond',serif">Garamond</option>
+          <option value="'Merriweather',serif">Merriweather</option>
+          <option value="'Crimson Pro',serif">Crimson</option>
+          <option value="Georgia,serif">Georgia</option>
+          <option value="'Times New Roman',serif">Times New Roman</option>
+          <option value="'Libre Baskerville',serif">Baskerville</option>
+        </optgroup>
+        <optgroup label="Sans-serif">
+          <option value="'Nunito',sans-serif">Nunito</option>
+          <option value="Arial,sans-serif">Arial</option>
+          <option value="'Trebuchet MS',sans-serif">Trebuchet</option>
+          <option value="Verdana,sans-serif">Verdana</option>
+          <option value="Impact,sans-serif">Impact</option>
+        </optgroup>
+        <optgroup label="Monospace">
+          <option value="'JetBrains Mono',monospace">JetBrains Mono</option>
+          <option value="'Courier New',monospace">Courier New</option>
+          <option value="'Space Mono',monospace">Space Mono</option>
+        </optgroup>
+        <optgroup label="Fun">
+          <option value="'Comic Sans MS','Comic Sans',cursive">Comic Sans</option>
+        </optgroup>
       </select>
-      <select class="fmt-select" id="font-size-sel" onmousedown="saveSelection()" onchange="setFontSize(this.value)" title="Font size">
-        <option value="">Size</option>
+      <select class="fmt-select" id="font-size-sel" onmousedown="saveSelection()" onchange="setFontSize(this.value)" title="Resize selected text only">
+        <option value="">Sel. Size</option>
         <option value="12px">12</option><option value="14px">14</option>
         <option value="16px">16</option><option value="18px" selected>18</option>
         <option value="20px">20</option><option value="22px">22</option>
@@ -1013,19 +1184,18 @@ input[type=color]{width:22px;height:22px;border-radius:50%;border:2px solid var(
   </div>
 
   <!-- ═══ RIGHT PANEL ═══ -->
-  <div class="right-panel">
+  <div class="right-panel" id="right-panel">
     <div class="right-tabs">
       <button class="right-tab active" onclick="showRTab('tools')" data-rtab="tools">Tools</button>
-      <button class="right-tab" onclick="showRTab('ideas')" data-rtab="ideas">Ideas</button>
-      <button class="right-tab" onclick="showRTab('spark')" data-rtab="spark">⚡ Spark</button>
-      <button class="right-tab" onclick="showRTab('stats')" data-rtab="stats">Stats</button>
+      <button class="right-tab" onclick="showRTab('ideas')" data-rtab="ideas">✦ Ideas</button>
       <button class="right-tab" onclick="showRTab('book')" data-rtab="book">Book</button>
     </div>
     <div class="right-content">
 
-      <!-- TOOLS tab -->
+      <!-- TOOLS tab (includes all stats) -->
       <div class="rtab-pane active" id="rtab-tools">
 
+        <!-- Sprint Timer -->
         <div class="tool-section">
           <div class="tool-label">Focus Timer</div>
           <div class="timer-ring-wrap">
@@ -1049,21 +1219,103 @@ input[type=color]{width:22px;height:22px;border-radius:50%;border:2px solid var(
           </div>
         </div>
 
+        <!-- Daily goal progress -->
         <div class="tool-section">
-          <div class="tool-label" id="daily-goal-label">Today's Goal</div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-            <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2)" id="today-progress-label">0 / 1,667</span>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <div class="tool-label" style="margin-bottom:0" id="daily-goal-label">Today's Goal</div>
             <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent)" id="today-pct">0%</span>
           </div>
-          <div class="daily-goal-bar"><div class="daily-goal-fill" id="daily-goal-fill"></div></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2)" id="today-progress-label">0 / 1,500</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--green)" id="today-overflow-label"></span>
+          </div>
+          <div class="daily-goal-bar" id="daily-goal-bar-wrap">
+            <div class="daily-goal-fill" id="daily-goal-fill"></div>
+            <div class="daily-overflow-fill" id="daily-overflow-fill"></div>
+          </div>
           <div id="daily-flavor" style="font-family:'Lora',serif;font-style:italic;font-size:10px;color:var(--text3);margin-top:5px;min-height:14px"></div>
         </div>
 
+        <!-- Overall progress -->
         <div class="tool-section">
-          <div class="tool-label">Activity — 30 days</div>
-          <div class="heatmap-mini" id="heatmap-mini"></div>
+          <div class="tool-label">Overall Progress</div>
+          <div style="margin-bottom:10px">
+            <div style="font-family:'Lora',serif;font-style:italic;font-size:28px;color:var(--text)" id="big-pct">0%</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3)" id="big-pct-sub">toward your goal</div>
+          </div>
+          <div style="height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;margin-bottom:12px">
+            <div style="height:100%;background:var(--accent);border-radius:2px;transition:width 0.5s" id="stats-prog-bar"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            <div style="background:var(--surface2);border-radius:7px;padding:7px 10px;border:1px solid var(--border2)">
+              <div style="font-family:'Lora',serif;font-style:italic;font-size:16px" id="st-chapters">0</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em">chapters</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:7px;padding:7px 10px;border:1px solid var(--border2)">
+              <div style="font-family:'Lora',serif;font-style:italic;font-size:16px" id="st-notes">0</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em">notes</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:7px;padding:7px 10px;border:1px solid var(--border2)">
+              <div style="font-family:'Lora',serif;font-style:italic;font-size:16px" id="st-streak">0</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em">day streak</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:7px;padding:7px 10px;border:1px solid var(--border2)">
+              <div style="font-family:'Lora',serif;font-style:italic;font-size:16px" id="st-avg">0</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em">avg/day</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:7px;padding:7px 10px;border:1px solid var(--border2)">
+              <div style="font-family:'Lora',serif;font-style:italic;font-size:16px" id="st-wpm">—</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em">avg wpm</div>
+            </div>
+          </div>
+          <div id="projection-text" style="font-family:'Lora',serif;font-style:italic;font-size:11px;color:var(--text3);margin-top:10px;line-height:1.6;padding:8px 10px;background:var(--surface2);border-radius:7px;border:1px solid var(--border2)">Keep writing to see your projection.</div>
         </div>
 
+        <!-- Staircase chart -->
+        <div class="tool-section">
+          <div class="tool-label">Challenge Staircase</div>
+          <div class="staircase-wrap">
+            <div class="staircase-chart" id="staircase-chart"></div>
+            <div class="sc-axis">
+              <span>Day 1</span>
+              <span id="sc-mid-label"></span>
+              <span id="sc-end-label">Day 30</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:5px;flex-wrap:wrap">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3)" id="sc-legend-target"></span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--green)" id="sc-legend-current"></span>
+          </div>
+        </div>
+
+        <!-- Writing Streak Calendar -->
+        <div class="tool-section">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div class="tool-label" style="margin-bottom:0">Writing Streak</div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--accent)" id="streak-label">0 days</span>
+          </div>
+          <div id="streak-calendar" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px"></div>
+          <div style="display:flex;gap:10px;margin-top:3px">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3)">■ wrote today</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3)">□ no writing</span>
+          </div>
+        </div>
+
+        <!-- Writing history -->
+        <div class="tool-section">
+          <div class="tool-label">Writing History</div>
+          <div id="hist-list"><div class="empty-msg">Start writing to see history</div></div>
+        </div>
+
+        <!-- Badges -->
+        <div class="tool-section">
+          <div class="tool-label">Badges</div>
+          <div class="badges-grid" id="badges-grid"></div>
+        </div>
+
+        <div class="flavor-quote" id="stats-flavor-quote">Every word you write is a word that didn't exist yesterday.</div>
+
+        <!-- Writing tools -->
         <div class="tool-section sub-section">
           <div class="tool-label">Word Lookup</div>
           <div style="display:flex;gap:6px">
@@ -1085,163 +1337,73 @@ input[type=color]{width:22px;height:22px;border-radius:50%;border:2px solid var(
 
       </div>
 
-      <!-- IDEAS tab -->
+      <!-- IDEAS + SPARK merged tab -->
       <div class="rtab-pane" id="rtab-ideas">
+
+        <!-- What happens next — single random button -->
         <div class="tool-section">
-          <div class="tool-label">Story Spark ✦</div>
-          <p style="font-family:'Lora',serif;font-style:italic;font-size:11px;color:var(--text3);line-height:1.6;margin-bottom:8px">Every great story started as a single strange idea.</p>
+          <div class="tool-label" style="color:var(--red)">⚡ What Happens Next?</div>
+          <div id="spark-result" class="spark-result" style="margin-bottom:8px"></div>
+          <button class="spark-btn" style="width:100%;text-align:center;background:var(--accent-l);color:var(--accent);border-color:var(--accent);font-size:11px;padding:10px 12px;border-radius:8px" onclick="throwSpark('random')">🎲 Throw something at my story</button>
+        </div>
+
+        <!-- Writing prompts -->
+        <div class="tool-section sub-section">
+          <div class="tool-label">Story Prompt ✦</div>
           <div class="idea-card" id="idea-card">
             <span class="idea-tag" id="idea-tag">Prompt</span>
             <span id="idea-text">Click below for a writing prompt…</span>
           </div>
-          <button class="idea-shuffle" onclick="shuffleIdea()">✦ New Idea</button>
-          <button class="idea-shuffle" style="margin-top:4px" onclick="insertIdeaIntoWriter()">↩ Insert into story</button>
+          <div style="display:flex;gap:5px">
+            <button class="idea-shuffle" style="flex:1" onclick="shuffleIdea()">✦ New Prompt</button>
+            <button class="idea-shuffle" style="flex:1" onclick="insertIdeaIntoWriter()">↩ Insert</button>
+          </div>
         </div>
 
+        <!-- Generators -->
         <div class="tool-section sub-section">
-          <div class="tool-label">Character Name</div>
-          <div class="idea-card" style="min-height:auto;padding:8px 12px">
-            <span id="char-name" style="font-size:14px;font-style:normal;font-family:'Lora',serif;color:var(--text)">—</span>
-          </div>
-          <div style="display:flex;gap:5px;margin-top:6px">
-            <button class="idea-shuffle" style="flex:1" onclick="genName()">Generate</button>
-            <select class="fmt-select" id="name-style" style="flex:1">
+          <div class="tool-label">Generators</div>
+          <div style="display:flex;gap:5px;margin-bottom:6px;align-items:center">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3)">Name style:</span>
+            <select id="name-style" class="fmt-select" style="flex:1">
               <option value="fantasy">Fantasy</option>
               <option value="modern">Modern</option>
               <option value="classic">Classic</option>
               <option value="scifi">Sci-Fi</option>
             </select>
           </div>
-        </div>
-
-        <div class="tool-section sub-section">
-          <div class="tool-label">First Line Generator</div>
-          <div class="idea-card" id="firstline-card">
-            <span id="firstline-text" style="font-style:italic">Click to get a first line…</span>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:8px">
+            <button class="idea-shuffle" onclick="genName()" style="margin:0">👤 Character Name</button>
+            <button class="idea-shuffle" onclick="genFirstLine()" style="margin:0">✍ First Line</button>
+            <button class="idea-shuffle" onclick="genSetting()" style="margin:0">🗺 Setting</button>
+            <button class="idea-shuffle" onclick="genConflict()" style="margin:0">⚔ Conflict</button>
           </div>
-          <button class="idea-shuffle" onclick="genFirstLine()">New First Line</button>
-        </div>
-
-        <div class="tool-section sub-section">
-          <div class="tool-label">Setting Generator</div>
-          <div class="idea-card" id="setting-card">
-            <span id="setting-text" style="font-style:italic">Click to generate a setting…</span>
-          </div>
-          <button class="idea-shuffle" onclick="genSetting()">Generate Setting</button>
-        </div>
-
-        <div class="tool-section sub-section">
-          <div class="tool-label">Conflict Generator</div>
-          <div class="idea-card" id="conflict-card">
-            <span id="conflict-text" style="font-style:italic">Click to generate a conflict…</span>
-          </div>
-          <button class="idea-shuffle" onclick="genConflict()">Generate Conflict</button>
-        </div>
-      </div>
-
-      <!-- SPARK tab (Writer's Block) -->
-      <div class="rtab-pane" id="rtab-spark">
-        <div class="tool-section">
-          <div class="tool-label" style="color:var(--red)">⚡ Unstick Your Story</div>
-          <p style="font-family:'Lora',serif;font-style:italic;font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:12px">
-            Stuck? Drop one of these into your story and see what happens.
-          </p>
-          <div id="spark-result" class="spark-result"></div>
-          <div style="display:flex;flex-wrap:wrap;gap:5px">
-            <button class="spark-btn" onclick="throwSpark('chaos')">💥 Something explodes</button>
-            <button class="spark-btn" onclick="throwSpark('stranger')">🚪 Stranger arrives</button>
-            <button class="spark-btn" onclick="throwSpark('secret')">🤫 Secret is revealed</button>
-            <button class="spark-btn" onclick="throwSpark('weather')">🌩 Weather changes everything</button>
-            <button class="spark-btn" onclick="throwSpark('death')">💀 Someone dies (unexpectedly)</button>
-            <button class="spark-btn" onclick="throwSpark('letter')">✉️ A letter arrives</button>
-            <button class="spark-btn" onclick="throwSpark('betrayal')">🗡 Betrayal</button>
-            <button class="spark-btn" onclick="throwSpark('love')">❤ Love interest appears</button>
-            <button class="spark-btn" onclick="throwSpark('missing')">❓ Something goes missing</button>
-            <button class="spark-btn" onclick="throwSpark('time')">⏰ A deadline appears</button>
-            <button class="spark-btn" onclick="throwSpark('power')">⚡ Power goes out</button>
-            <button class="spark-btn" onclick="throwSpark('animal')">🐦 An animal intervenes</button>
-            <button class="spark-btn" onclick="throwSpark('memory')">🧠 Lost memory returns</button>
-            <button class="spark-btn" onclick="throwSpark('fire')">🔥 Fire breaks out</button>
-            <button class="spark-btn" onclick="throwSpark('doppelganger')">👥 Someone who looks familiar</button>
-            <button class="spark-btn" onclick="throwSpark('weapon')">🔫 A weapon is discovered</button>
-            <button class="spark-btn" onclick="throwSpark('money')">💰 Large sum of money found</button>
-            <button class="spark-btn" onclick="throwSpark('accident')">🚗 An accident occurs</button>
-            <button class="spark-btn" onclick="throwSpark('random')">🎲 Totally random event</button>
+          <div class="idea-card" id="gen-result-card" style="display:none;min-height:auto">
+            <span class="idea-tag" id="gen-result-tag">Result</span>
+            <span id="gen-result-text"></span>
+            <button onclick="insertGenResult()" style="margin-top:6px;display:block;font-family:'JetBrains Mono',monospace;font-size:8px;background:none;border:1px solid var(--border);border-radius:4px;padding:2px 7px;color:var(--text3);cursor:pointer">↩ Insert into chapter</button>
           </div>
         </div>
 
+        <!-- Scene starter -->
         <div class="tool-section sub-section">
-          <div class="tool-label">Scene Starters</div>
-          <div id="scene-result" class="spark-result"></div>
+          <div class="tool-label">Scene Starter</div>
+          <div id="scene-result" class="spark-result" style="margin-bottom:8px"></div>
           <button class="idea-shuffle" onclick="genSceneStarter()">🎬 Random Scene Starter</button>
         </div>
 
+        <!-- Character Reacts -->
         <div class="tool-section sub-section">
-          <div class="tool-label">What Would Your Character Do?</div>
-          <div style="display:flex;gap:6px;margin-bottom:6px">
-            <input class="find-input" style="flex:1" id="char-input" placeholder="Character trait (e.g. brave)"/>
+          <div class="tool-label">Character Reacts</div>
+          <div style="display:flex;gap:5px">
+            <input class="find-input" id="char-input" style="flex:1" placeholder="Enter a trait (brave, angry, calm…)" onkeydown="if(event.key==='Enter')genCharAction()"/>
+            <button class="t-btn" style="flex:0 0 auto;padding:4px 10px" onclick="genCharAction()">Go</button>
           </div>
-          <div id="char-action-result" class="spark-result"></div>
-          <button class="idea-shuffle" onclick="genCharAction()">Generate Reaction</button>
-        </div>
-      </div>
-
-      <!-- STATS tab -->
-      <div class="rtab-pane" id="rtab-stats">
-        <div class="tool-section">
-          <div class="tool-label">Progress</div>
-          <div style="margin-bottom:12px">
-            <div style="font-family:'Lora',serif;font-style:italic;font-size:32px;color:var(--text)" id="big-pct">0%</div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3)" id="big-pct-sub">toward your goal</div>
-          </div>
-          <div style="height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;margin-bottom:12px">
-            <div style="height:100%;background:var(--accent);border-radius:2px;transition:width 0.5s" id="stats-prog-bar"></div>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-            <div style="background:var(--surface2);border-radius:7px;padding:8px 10px;border:1px solid var(--border2)">
-              <div style="font-family:'Lora',serif;font-style:italic;font-size:18px" id="st-chapters">0</div>
-              <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em">chapters</div>
-            </div>
-            <div style="background:var(--surface2);border-radius:7px;padding:8px 10px;border:1px solid var(--border2)">
-              <div style="font-family:'Lora',serif;font-style:italic;font-size:18px" id="st-notes">0</div>
-              <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em">notes</div>
-            </div>
-            <div style="background:var(--surface2);border-radius:7px;padding:8px 10px;border:1px solid var(--border2)">
-              <div style="font-family:'Lora',serif;font-style:italic;font-size:18px" id="st-streak">0</div>
-              <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em">day streak</div>
-            </div>
-            <div style="background:var(--surface2);border-radius:7px;padding:8px 10px;border:1px solid var(--border2)">
-              <div style="font-family:'Lora',serif;font-style:italic;font-size:18px" id="st-avg">0</div>
-              <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em">avg/day</div>
-            </div>
-          </div>
-        </div>
-        <div class="tool-section">
-          <div class="tool-label">Challenge Staircase</div>
-          <div class="staircase-wrap">
-            <div class="staircase-chart" id="staircase-chart"></div>
-            <div class="sc-axis">
-              <span>Day 1</span>
-              <span id="sc-mid-label"></span>
-              <span id="sc-end-label">Day 30</span>
-            </div>
-          </div>
-          <div style="display:flex;gap:10px;margin-top:6px;flex-wrap:wrap">
-            <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3)" id="sc-legend-target"></span>
-            <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--green)" id="sc-legend-current"></span>
-          </div>
+          <div id="char-action-result" class="spark-result" style="margin-top:6px"></div>
         </div>
 
-        <div class="tool-section">
-          <div class="tool-label">Writing History</div>
-          <div id="hist-list"><div class="empty-msg">Start writing to see history</div></div>
-        </div>
-        <div class="tool-section">
-          <div class="tool-label">Badges</div>
-          <div class="badges-grid" id="badges-grid"></div>
-        </div>
-        <div class="flavor-quote" id="stats-flavor-quote">Every word you write is a word that didn't exist yesterday.</div>
-      </div>
+      </div><!-- /rtab-ideas -->
+      <div class="rtab-pane" id="rtab-spark" style="display:none!important"></div>
 
       <!-- BOOK tab -->
       <div class="rtab-pane" id="rtab-book">
@@ -1263,12 +1425,28 @@ input[type=color]{width:22px;height:22px;border-radius:50%;border:2px solid var(
           <input class="set-input" id="set-author" placeholder="Your name" oninput="onBookMetaChange()"/>
         </div>
         <div class="set-row">
-          <div class="set-lbl">Genre</div>
-          <select class="set-input" id="set-genre" onchange="onBookMetaChange()">
-            <option>Fantasy</option><option>Sci-Fi</option><option>Romance</option>
-            <option>Mystery</option><option>Thriller</option><option>Literary Fiction</option>
-            <option>Horror</option><option>Historical Fiction</option><option>Other</option>
-          </select>
+          <div class="set-lbl">Book Description <span style="font-weight:400;opacity:0.6">(back cover blurb)</span></div>
+          <textarea class="set-input" id="set-description" rows="4" placeholder="A brief description of your book…" oninput="onBookMetaChange()" style="resize:vertical;font-family:'Lora',serif;font-style:italic;font-size:12px;line-height:1.6"></textarea>
+        </div>
+        <div class="set-row">
+          <div class="set-lbl">Genres</div>
+          <div id="genre-tags" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px"></div>
+          <div style="display:flex;gap:5px">
+            <select id="genre-add-select" class="set-input" style="flex:1">
+              <option value="">Add a genre…</option>
+              <option>Fantasy</option><option>Sci-Fi</option><option>Romance</option>
+              <option>Mystery</option><option>Thriller</option><option>Literary Fiction</option>
+              <option>Horror</option><option>Historical Fiction</option><option>Young Adult</option>
+              <option>Contemporary</option><option>Adventure</option><option>Dystopian</option>
+              <option>Paranormal</option><option>Crime</option><option>Humor</option>
+              <option>Memoir</option><option>Non-fiction</option><option>Other</option>
+            </select>
+            <button class="t-btn" style="flex:0 0 auto;padding:4px 10px" onclick="addGenreFromSelect()">+</button>
+          </div>
+          <div style="display:flex;gap:5px;margin-top:5px">
+            <input class="set-input" id="genre-custom-input" placeholder="Custom genre…" style="flex:1" onkeydown="if(event.key==='Enter')addCustomGenre()"/>
+            <button class="t-btn" style="flex:0 0 auto;padding:4px 10px" onclick="addCustomGenre()">Add</button>
+          </div>
         </div>
         <div class="set-row">
           <div class="set-lbl">Word Goal</div>
@@ -1355,6 +1533,64 @@ input[type=color]{width:22px;height:22px;border-radius:50%;border:2px solid var(
               </div>
               <div class="ts-name">Slate</div>
             </div>
+            <div class="theme-swatch" data-theme="neon" onclick="pickTheme(this)">
+              <div class="ts-preview">
+                <span style="background:#060608"></span>
+                <span style="background:#0e0e16"></span>
+                <span style="background:#a040ff"></span>
+              </div>
+              <div class="ts-name">Neon</div>
+            </div>
+            <div class="theme-swatch" data-theme="coffee" onclick="pickTheme(this)">
+              <div class="ts-preview">
+                <span style="background:#1c1008"></span>
+                <span style="background:#f2ebe3"></span>
+                <span style="background:#faf6f1"></span>
+              </div>
+              <div class="ts-name">Coffee</div>
+            </div>
+            <div class="theme-swatch" data-theme="dusk" onclick="pickTheme(this)">
+              <div class="ts-preview">
+                <span style="background:#0e0c18"></span>
+                <span style="background:#1a1428"></span>
+                <span style="background:#a090d0"></span>
+              </div>
+              <div class="ts-name">Dusk</div>
+            </div>
+            <div class="theme-swatch" data-theme="crimson" onclick="pickTheme(this)">
+              <div class="ts-preview">
+                <span style="background:#0c0404"></span>
+                <span style="background:#180808"></span>
+                <span style="background:#d04040"></span>
+              </div>
+              <div class="ts-name">Crimson</div>
+            </div>
+            <div class="theme-swatch" data-theme="arctic" onclick="pickTheme(this)">
+              <div class="ts-preview">
+                <span style="background:#0c1828"></span>
+                <span style="background:#edf4fa"></span>
+                <span style="background:#f8fcff"></span>
+              </div>
+              <div class="ts-name">Arctic</div>
+            </div>
+          </div>
+          <!-- Custom theme builder -->
+          <button class="set-btn" onclick="toggleCustomThemeBuilder()" style="margin-top:4px;font-size:9px">🎨 Build Custom Theme</button>
+          <div id="custom-theme-builder" style="display:none;margin-top:10px;padding:10px;background:var(--surface2);border-radius:8px;border:1px solid var(--border2)">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em">Custom Theme Colors</div>
+            <div class="custom-theme-fields">
+              <div class="ctf-item"><div class="ctf-label">Background</div><input type="color" class="ctf-color" id="ct-bg" value="#1a1a2e" oninput="liveCustomTheme()"/></div>
+              <div class="ctf-item"><div class="ctf-label">Panel</div><input type="color" class="ctf-color" id="ct-panel" value="#16213e" oninput="liveCustomTheme()"/></div>
+              <div class="ctf-item"><div class="ctf-label">Sidebar</div><input type="color" class="ctf-color" id="ct-sidebar" value="#0f3460" oninput="liveCustomTheme()"/></div>
+              <div class="ctf-item"><div class="ctf-label">Text</div><input type="color" class="ctf-color" id="ct-text" value="#e8e8f0" oninput="liveCustomTheme()"/></div>
+              <div class="ctf-item"><div class="ctf-label">Text Dim</div><input type="color" class="ctf-color" id="ct-text2" value="#9090b0" oninput="liveCustomTheme()"/></div>
+              <div class="ctf-item"><div class="ctf-label">Surface</div><input type="color" class="ctf-color" id="ct-surface" value="#1e2a50" oninput="liveCustomTheme()"/></div>
+            </div>
+            <div style="display:flex;gap:6px;margin-top:8px">
+              <button class="set-btn primary" onclick="applyCustomTheme()" style="flex:1">Apply Theme</button>
+              <button class="set-btn" onclick="resetCustomTheme()" style="flex:0 0 auto">Reset</button>
+            </div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3);margin-top:6px">Tip: also set your Accent Color below to complete the palette.</div>
           </div>
         </div>
 
@@ -1404,7 +1640,7 @@ input[type=color]{width:22px;height:22px;border-radius:50%;border:2px solid var(
 
         <!-- EDITOR SIZE -->
         <div class="set-row">
-          <div class="set-lbl">Editor Font Size</div>
+          <div class="set-lbl">Editor Size <span style="font-weight:400;opacity:0.6">(whole editor)</span></div>
           <input class="set-input" type="range" min="13" max="26" value="17" step="1" id="editor-size-range" oninput="setEditorSize(this.value)"/>
           <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);margin-top:3px;text-align:right" id="editor-size-label">17px</div>
         </div>
@@ -1442,6 +1678,7 @@ input[type=color]{width:22px;height:22px;border-radius:50%;border:2px solid var(
 </div>
 
 <!-- TOAST -->
+<div class="sc-tooltip" id="sc-tooltip"></div>
 <div class="inkwell-toast" id="inkwell-toast">
   <span class="toast-label" id="toast-label"></span>
   <span id="toast-msg"></span>
@@ -1471,7 +1708,7 @@ input[type=color]{width:22px;height:22px;border-radius:50%;border:2px solid var(
 
 <!-- EXPORT MODAL -->
 <div class="modal-backdrop" id="export-modal">
-  <div class="modal">
+  <div class="modal" style="max-width:560px">
     <h2>Export your writing</h2>
     <div class="modal-field">
       <label>What to export</label>
@@ -1482,15 +1719,160 @@ input[type=color]{width:22px;height:22px;border-radius:50%;border:2px solid var(
     </div>
     <div class="modal-field">
       <label>Format</label>
-      <select class="modal-input" id="export-format">
+      <select class="modal-input" id="export-format" onchange="toggleExportHtmlOptions()">
         <option value="txt">Plain Text (.txt)</option>
         <option value="html">Rich HTML (.html)</option>
         <option value="md">Markdown (.md)</option>
       </select>
     </div>
+    <!-- HTML-specific options -->
+    <div id="export-html-options" style="display:none">
+      <div style="border-top:1px solid var(--border2);margin:12px 0 10px;padding-top:10px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">HTML Export Options</div>
+        <div class="modal-field">
+          <label>Theme</label>
+          <select class="modal-input" id="export-html-theme">
+            <option value="current">Match current Inkwell theme</option>
+            <option value="minimal">Clean Minimal (light)</option>
+            <option value="elegant">Elegant Dark</option>
+            <option value="print">Print-Ready (white)</option>
+            <option value="parchment">Parchment</option>
+            <option value="neon">Neon Dark</option>
+          </select>
+        </div>
+        <div class="modal-field">
+          <label>Font Family</label>
+          <select class="modal-input" id="export-html-font">
+            <option value="Georgia,serif">Georgia (classic)</option>
+            <option value="'Palatino Linotype',serif">Palatino (literary)</option>
+            <option value="'Times New Roman',serif">Times New Roman</option>
+            <option value="'Courier New',monospace">Courier New (typewriter)</option>
+            <option value="'Comic Sans MS','Comic Sans',cursive">Comic Sans</option>
+            <option value="Arial,sans-serif">Arial (clean)</option>
+            <option value="'Trebuchet MS',sans-serif">Trebuchet (modern)</option>
+          </select>
+        </div>
+        <div class="modal-field">
+          <label>Page Width</label>
+          <select class="modal-input" id="export-html-width">
+            <option value="480px">Narrow (480px) — pocket / e-reader</option>
+            <option value="640px">Mid (640px) — comfortable read</option>
+            <option value="780px" selected>Wide (780px) — default</option>
+            <option value="1040px">XL (1040px) — full-page</option>
+          </select>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div class="modal-field">
+            <label>Font Size</label>
+            <select class="modal-input" id="export-html-size">
+              <option value="15px">Small (15px)</option>
+              <option value="17px" selected>Medium (17px)</option>
+              <option value="19px">Large (19px)</option>
+              <option value="21px">Extra Large (21px)</option>
+            </select>
+          </div>
+          <div class="modal-field">
+            <label>Line Spacing</label>
+            <select class="modal-input" id="export-html-lh">
+              <option value="1.6">Tight (1.6)</option>
+              <option value="1.8" selected>Comfortable (1.8)</option>
+              <option value="2.1">Spacious (2.1)</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-field">
+          <label>Include</label>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">
+            <label style="display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer">
+              <input type="checkbox" id="exp-toc" checked> Table of Contents
+            </label>
+            <label style="display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer">
+              <input type="checkbox" id="exp-title-page" checked> Title Page
+            </label>
+            <label style="display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer">
+              <input type="checkbox" id="exp-description"> Description/Blurb
+            </label>
+            <label style="display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer">
+              <input type="checkbox" id="exp-wc"> Word Count Stats
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="modal-btns">
       <button class="modal-btn" onclick="closeModal('export-modal')">Cancel</button>
-      <button class="modal-btn primary" onclick="doExport()">Export</button>
+      <button class="modal-btn primary" onclick="doExport()">Export ↓</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHAPTER ICON EDIT MODAL -->
+<div class="modal-backdrop" id="icon-edit-modal">
+  <div class="modal">
+    <h2>Chapter Icon</h2>
+    <input type="hidden" id="icon-edit-id"/>
+    <div class="modal-field">
+      <label>Choose emoji</label>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px" id="icon-edit-picker">
+        <span style="font-size:20px;cursor:pointer;padding:4px;border-radius:5px;border:2px solid transparent;transition:border-color 0.15s" onclick="pickEditIcon(this,'📄')" title="Default">📄</span>
+        <span style="font-size:20px;cursor:pointer;padding:4px;border-radius:5px;border:2px solid transparent" onclick="pickEditIcon(this,'⚔')">⚔</span>
+        <span style="font-size:20px;cursor:pointer;padding:4px;border-radius:5px;border:2px solid transparent" onclick="pickEditIcon(this,'❤')">❤</span>
+        <span style="font-size:20px;cursor:pointer;padding:4px;border-radius:5px;border:2px solid transparent" onclick="pickEditIcon(this,'💀')">💀</span>
+        <span style="font-size:20px;cursor:pointer;padding:4px;border-radius:5px;border:2px solid transparent" onclick="pickEditIcon(this,'🔮')">🔮</span>
+        <span style="font-size:20px;cursor:pointer;padding:4px;border-radius:5px;border:2px solid transparent" onclick="pickEditIcon(this,'🌙')">🌙</span>
+        <span style="font-size:20px;cursor:pointer;padding:4px;border-radius:5px;border:2px solid transparent" onclick="pickEditIcon(this,'🔥')">🔥</span>
+        <span style="font-size:20px;cursor:pointer;padding:4px;border-radius:5px;border:2px solid transparent" onclick="pickEditIcon(this,'🌿')">🌿</span>
+        <span style="font-size:20px;cursor:pointer;padding:4px;border-radius:5px;border:2px solid transparent" onclick="pickEditIcon(this,'🗝')">🗝</span>
+        <span style="font-size:20px;cursor:pointer;padding:4px;border-radius:5px;border:2px solid transparent" onclick="pickEditIcon(this,'⚡')">⚡</span>
+        <span style="font-size:20px;cursor:pointer;padding:4px;border-radius:5px;border:2px solid transparent" onclick="pickEditIcon(this,'🌊')">🌊</span>
+        <span style="font-size:20px;cursor:pointer;padding:4px;border-radius:5px;border:2px solid transparent" onclick="pickEditIcon(this,'🏔')">🏔</span>
+        <span style="font-size:20px;cursor:pointer;padding:4px;border-radius:5px;border:2px solid transparent" onclick="pickEditIcon(this,'🕊')">🕊</span>
+        <span style="font-size:20px;cursor:pointer;padding:4px;border-radius:5px;border:2px solid transparent" onclick="pickEditIcon(this,'🐉')">🐉</span>
+        <span style="font-size:20px;cursor:pointer;padding:4px;border-radius:5px;border:2px solid transparent" onclick="pickEditIcon(this,'💎')">💎</span>
+        <span style="font-size:20px;cursor:pointer;padding:4px;border-radius:5px;border:2px solid transparent" onclick="pickEditIcon(this,'⭐')">⭐</span>
+        <span style="font-size:20px;cursor:pointer;padding:4px;border-radius:5px;border:2px solid transparent" onclick="pickEditIcon(this,'🎭')">🎭</span>
+        <span style="font-size:20px;cursor:pointer;padding:4px;border-radius:5px;border:2px solid transparent" onclick="pickEditIcon(this,'🗡')">🗡</span>
+        <span style="font-size:20px;cursor:pointer;padding:4px;border-radius:5px;border:2px solid transparent" onclick="pickEditIcon(this,'🌸')">🌸</span>
+        <span style="font-size:20px;cursor:pointer;padding:4px;border-radius:5px;border:2px solid transparent" onclick="pickEditIcon(this,'👁')">👁</span>
+        <span style="font-size:20px;cursor:pointer;padding:4px;border-radius:5px;border:2px solid transparent" onclick="pickEditIcon(this,'🏰')">🏰</span>
+        <span style="font-size:20px;cursor:pointer;padding:4px;border-radius:5px;border:2px solid transparent" onclick="pickEditIcon(this,'☠')">☠</span>
+        <span style="font-size:20px;cursor:pointer;padding:4px;border-radius:5px;border:2px solid transparent" onclick="pickEditIcon(this,'🧿')">🧿</span>
+        <span style="font-size:20px;cursor:pointer;padding:4px;border-radius:5px;border:2px solid transparent" onclick="pickEditIcon(this,'🌑')">🌑</span>
+      </div>
+      <input type="hidden" id="icon-edit-val" value="📄"/>
+      <!-- Custom image upload -->
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border2)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">Or use a custom image</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <button class="modal-btn" onclick="document.getElementById('chapter-icon-img-input').click()" style="padding:5px 12px;font-size:10px">📷 Upload Image</button>
+          <div id="chapter-icon-img-preview"></div>
+          <button id="chapter-icon-img-clear" onclick="clearChapterIconImg()" style="display:none;background:none;border:none;color:var(--red);cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:9px">✕ Remove</button>
+        </div>
+        <input type="file" id="chapter-icon-img-input" accept="image/*" style="display:none" onchange="onChapterIconImgUpload(event)"/>
+      </div>
+    </div>
+    <div class="modal-field">
+      <label style="margin-bottom:8px;display:block">Chapter Color</label>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center" id="chapter-color-picker">
+        <div style="width:22px;height:22px;border-radius:5px;background:#4f86c6;cursor:pointer;border:2px solid transparent;transition:transform 0.1s" onclick="pickChapterColor(this,'#4f86c6')" title="Blue"></div>
+        <div style="width:22px;height:22px;border-radius:5px;background:#c0683a;cursor:pointer;border:2px solid transparent;transition:transform 0.1s" onclick="pickChapterColor(this,'#c0683a')" title="Rust"></div>
+        <div style="width:22px;height:22px;border-radius:5px;background:#5a8a5e;cursor:pointer;border:2px solid transparent;transition:transform 0.1s" onclick="pickChapterColor(this,'#5a8a5e')" title="Green"></div>
+        <div style="width:22px;height:22px;border-radius:5px;background:#9a5a8a;cursor:pointer;border:2px solid transparent;transition:transform 0.1s" onclick="pickChapterColor(this,'#9a5a8a')" title="Purple"></div>
+        <div style="width:22px;height:22px;border-radius:5px;background:#c04848;cursor:pointer;border:2px solid transparent;transition:transform 0.1s" onclick="pickChapterColor(this,'#c04848')" title="Red"></div>
+        <div style="width:22px;height:22px;border-radius:5px;background:#d4a020;cursor:pointer;border:2px solid transparent;transition:transform 0.1s" onclick="pickChapterColor(this,'#d4a020')" title="Gold"></div>
+        <div style="width:22px;height:22px;border-radius:5px;background:#2a9a8a;cursor:pointer;border:2px solid transparent;transition:transform 0.1s" onclick="pickChapterColor(this,'#2a9a8a')" title="Teal"></div>
+        <div style="width:22px;height:22px;border-radius:5px;background:#cc7830;cursor:pointer;border:2px solid transparent;transition:transform 0.1s" onclick="pickChapterColor(this,'#cc7830')" title="Orange"></div>
+        <div style="width:22px;height:22px;border-radius:5px;background:#6a5aaa;cursor:pointer;border:2px solid transparent;transition:transform 0.1s" onclick="pickChapterColor(this,'#6a5aaa')" title="Indigo"></div>
+        <div style="width:22px;height:22px;border-radius:5px;background:#a06050;cursor:pointer;border:2px solid transparent;transition:transform 0.1s" onclick="pickChapterColor(this,'#a06050')" title="Brown"></div>
+        <div style="width:22px;height:22px;border-radius:5px;background:#d060a0;cursor:pointer;border:2px solid transparent;transition:transform 0.1s" onclick="pickChapterColor(this,'#d060a0')" title="Pink"></div>
+        <div style="width:22px;height:22px;border-radius:5px;background:#708090;cursor:pointer;border:2px solid transparent;transition:transform 0.1s" onclick="pickChapterColor(this,'#708090')" title="Steel"></div>
+        <button onclick="clearChapterColor()" style="font-family:'JetBrains Mono',monospace;font-size:9px;padding:4px 8px;background:none;border:1px solid var(--border);border-radius:5px;color:var(--text3);cursor:pointer">✕ Clear</button>
+      </div>
+      <input type="hidden" id="chapter-color-val" value=""/>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-btn" onclick="closeModal('icon-edit-modal')">Cancel</button>
+      <button class="modal-btn primary" onclick="confirmIconEdit()">Save</button>
     </div>
   </div>
 </div>
@@ -1550,6 +1932,15 @@ let focusModeOn = false;
 // ══════════════════════════════════════════════════
 function boot() {
   applyTheme(state.theme);
+  if(state.theme==='custom'&&state.customTheme) {
+    setTimeout(()=>{
+      const ct=state.customTheme;
+      const ids=['ct-bg','ct-panel','ct-sidebar','ct-text','ct-text2','ct-surface'];
+      const vals=[ct.bg,ct.panel,ct.sidebar,ct.text,ct.text2,ct.surface];
+      ids.forEach((id,i)=>{const el=document.getElementById(id);if(el)el.value=vals[i]||el.value;});
+      applyCustomThemeVars();
+    },0);
+  }
   applyAccent(accentHex);
   applyEditorFont(state.editorFont);
   applyEditorSize(state.editorSize);
@@ -1564,7 +1955,7 @@ function boot() {
   activateItem(toActivate.id);
   updateTodayDaily();
   updateAllStats();
-  renderHeatmap();
+  renderStreakCalendar();
   renderHistory();
   renderBadges();
   renderStaircase();
@@ -1576,7 +1967,10 @@ function boot() {
   document.getElementById('set-author').value=state.author;
   document.getElementById('set-goal').value=state.goal;
   document.getElementById('set-days').value=state.days;
-  document.getElementById('set-genre').value=state.genre||'Fantasy';
+  if(document.getElementById('set-description')) document.getElementById('set-description').value=state.description||'';
+  // Migrate single genre to array
+  if(!state.genres) state.genres=state.genre?[state.genre]:['Fantasy'];
+  renderGenreTags();
   document.getElementById('editor-font-sel').value=state.editorFont;
   document.getElementById('editor-size-range').value=state.editorSize;
   document.getElementById('editor-size-label').textContent=state.editorSize+'px';
@@ -1602,16 +1996,46 @@ function uid(){return Math.random().toString(36).slice(2,10);}
 // ══════════════════════════════════════════════════
 // THEME
 // ══════════════════════════════════════════════════
+// Theme-specific accent color suggestions
+const THEME_ACCENTS = {
+  light:      ['#4f86c6','#c0683a','#5a8a5e','#9a5a8a','#c04848','#d4a020'],
+  dark:       ['#6a9fd8','#e07850','#5aaa6e','#c080d0','#e05050','#d4b040'],
+  parchment:  ['#8a5a28','#c07840','#5a7a3a','#9a5050','#6a4a8a','#4a7a8a'],
+  midnight:   ['#4060d8','#8040c0','#20a0c0','#6080ff','#c040a0','#20c080'],
+  forest:     ['#3a8a4a','#8a7030','#4a8a6a','#5a9040','#3a7860','#9a6030'],
+  'sepia-dark':['#c8904a','#e07840','#8a9a5a','#b08050','#9a7a40','#c8a060'],
+  rose:       ['#c04060','#e06080','#9a4060','#d050a0','#a05070','#c07080'],
+  ocean:      ['#3a90c8','#2a80a8','#2ab8c8','#4a70d0','#2aa880','#5090c8'],
+  slate:      ['#5080a8','#6070a0','#5090b0','#4a80c0','#6080b0','#7090a0'],
+  neon:       ['#a040ff','#ff2060','#20d080','#40c0ff','#ff8020','#d020ff'],
+  coffee:     ['#b08040','#c07030','#8a7050','#a06030','#9a8040','#c09050'],
+  dusk:       ['#a090d0','#d060a0','#6090d0','#c080d8','#80a0d0','#d090c0'],
+  crimson:    ['#e04040','#c02020','#d06060','#b03040','#e06050','#c04050'],
+  arctic:     ['#3090d0','#4080c0','#20a0d0','#5090b8','#3aA0c0','#4070d8'],
+};
+
 function pickTheme(el) {
   document.querySelectorAll('.theme-swatch').forEach(s=>s.classList.remove('active'));
   el.classList.add('active');
-  applyTheme(el.dataset.theme);
-  state.theme=el.dataset.theme;
+  const name = el.dataset.theme;
+  applyTheme(name);
+  state.theme=name;
+  // Suggest theme-specific accent swatches
+  const swatches = THEME_ACCENTS[name] || THEME_ACCENTS.light;
+  document.querySelectorAll('.sw').forEach((s,i) => {
+    if(swatches[i]) { s.style.background=swatches[i]; s.dataset.hex=swatches[i]; }
+  });
+  // Auto-apply first accent of new theme
+  pickSwatch(document.querySelectorAll('.sw')[0]);
   sv(state);
 }
 
 function applyTheme(name) {
+  if(name==='custom') return; // custom theme is applied via applyCustomThemeVars
   document.documentElement.setAttribute('data-theme',name||'light');
+  // Reset any inline overrides from custom theme
+  document.getElementById('app').style.cssText='';
+  applyAccent(accentHex);
 }
 
 // ══════════════════════════════════════════════════
@@ -1629,9 +2053,16 @@ function renderTree() {
   if(!chapters.length) html+=`<div style="padding:6px 22px;font-size:10px;color:var(--s-text3);font-family:'Lora',serif;font-style:italic;">Your story begins with a single chapter…</div>`;
   chapters.forEach(ch=>{
     const wc=wordCount(ch.content);
-    html+=`<div class="tree-item ${ch.id===state.activeId?'active':''}" onclick="activateItem('${ch.id}')" id="ti-${ch.id}">
-      <span class="item-icon">📄</span>
-      <span class="item-name">${escHtml(ch.title)}</span>
+    const icon=ch.icon||'📄';
+    const iconHtml=ch.customIconImg
+      ? `<img src="${ch.customIconImg}" style="width:14px;height:14px;object-fit:cover;border-radius:2px;display:block;flex-shrink:0"/>`
+      : icon;
+    const colorStyle=ch.color?`background:${ch.color}28;border-left:3px solid ${ch.color};`:'';
+    const colorDot='';
+    html+=`<div class="tree-item ${ch.id===state.activeId?'active':''}" onclick="activateItem('${ch.id}')" ondblclick="startRename('${ch.id}')" id="ti-${ch.id}" style="${colorStyle}">
+      ${colorDot}
+      <button class="item-icon-btn" onclick="event.stopPropagation();openIconEdit('${ch.id}')" title="Click to change icon/color">${iconHtml}</button>
+      <span class="item-name" id="iname-${ch.id}">${escHtml(ch.title)}</span>
       <span class="item-wc">${wc>0?wc.toLocaleString():''}</span>
       <button class="item-del" onclick="event.stopPropagation();deleteItem('${ch.id}')" title="Delete">✕</button>
     </div>`;
@@ -1644,9 +2075,9 @@ function renderTree() {
     </div><div class="tree-items">`;
   if(!notes.length) html+=`<div style="padding:6px 22px;font-size:10px;color:var(--s-text3);font-family:'Lora',serif;font-style:italic;">Notes are where characters breathe…</div>`;
   notes.forEach(n=>{
-    html+=`<div class="tree-item ${n.id===state.activeId?'active':''}" onclick="activateItem('${n.id}')" id="ti-${n.id}">
+    html+=`<div class="tree-item ${n.id===state.activeId?'active':''}" onclick="activateItem('${n.id}')" ondblclick="startRename('${n.id}')" id="ti-${n.id}">
       <span class="item-icon">🗒</span>
-      <span class="item-name">${escHtml(n.title)}</span>
+      <span class="item-name" id="iname-${n.id}">${escHtml(n.title)}</span>
       <button class="item-del" onclick="event.stopPropagation();deleteItem('${n.id}')" title="Delete">✕</button>
     </div>`;
   });
@@ -1657,6 +2088,155 @@ function renderTree() {
 
 function toggleSection(id){document.getElementById(id).classList.toggle('collapsed');}
 function escHtml(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function startRename(id) {
+  const item=state.items.find(i=>i.id===id);
+  if(!item) return;
+  const nameEl=document.getElementById('iname-'+id);
+  if(!nameEl) return;
+  const orig=item.title;
+  nameEl.contentEditable='true';
+  nameEl.style.outline='1px solid var(--accent)';
+  nameEl.style.borderRadius='3px';
+  nameEl.style.padding='0 3px';
+  nameEl.focus();
+  const range=document.createRange();
+  range.selectNodeContents(nameEl);
+  window.getSelection().removeAllRanges();
+  window.getSelection().addRange(range);
+  const finish=()=>{
+    nameEl.contentEditable='false';
+    nameEl.style.outline='';
+    nameEl.style.borderRadius='';
+    nameEl.style.padding='';
+    const newTitle=nameEl.textContent.trim()||orig;
+    item.title=newTitle;
+    nameEl.textContent=newTitle;
+    if(state.activeId===id) document.getElementById('chapter-title-input').value=newTitle;
+    sv(state);
+  };
+  nameEl.addEventListener('blur',finish,{once:true});
+  nameEl.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){e.preventDefault();nameEl.blur();}
+    if(e.key==='Escape'){nameEl.textContent=orig;nameEl.blur();}
+    e.stopPropagation();
+  });
+}
+
+let _iconEditChapterId=null;
+let _iconEditSelectedColor=null;
+let _editIconImgData=null; // holds base64 of a pending custom chapter icon image
+
+function onChapterIconImgUpload(e) {
+  const file=e.target.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    _editIconImgData=ev.target.result;
+    document.getElementById('chapter-icon-img-preview').innerHTML=
+      `<img src="${_editIconImgData}" style="width:32px;height:32px;object-fit:cover;border-radius:4px"/>`;
+    document.getElementById('chapter-icon-img-clear').style.display='inline';
+    // Clear emoji selection since image takes over
+    document.querySelectorAll('#icon-edit-picker span').forEach(s=>s.style.borderColor='transparent');
+    document.getElementById('icon-edit-val').value='';
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearChapterIconImg() {
+  _editIconImgData=null;
+  // Also clear the stored customIconImg from the item
+  const id=document.getElementById('icon-edit-id').value;
+  const item=state.items.find(i=>i.id===id);
+  if(item) item.customIconImg=null;
+  document.getElementById('chapter-icon-img-preview').innerHTML='';
+  document.getElementById('chapter-icon-img-clear').style.display='none';
+  document.getElementById('chapter-icon-img-input').value='';
+  // Restore default emoji highlight
+  document.getElementById('icon-edit-val').value='📄';
+  document.querySelectorAll('#icon-edit-picker span').forEach(s=>{
+    s.style.borderColor=s.textContent==='📄'?'var(--accent)':'transparent';
+  });
+}
+
+function openIconEdit(id) {
+  const item=state.items.find(i=>i.id===id);
+  if(!item) return;
+  _iconEditChapterId=id;
+  _iconEditSelectedColor=item.color||null;
+  _editIconImgData=null; // reset any pending upload
+  document.getElementById('icon-edit-id').value=id;
+  document.getElementById('icon-edit-val').value=item.icon||'📄';
+  document.getElementById('chapter-color-val').value=item.color||'';
+  // Show existing custom image if any
+  const prevEl=document.getElementById('chapter-icon-img-preview');
+  const clearBtn=document.getElementById('chapter-icon-img-clear');
+  if(item.customIconImg){
+    prevEl.innerHTML=`<img src="${item.customIconImg}" style="width:32px;height:32px;object-fit:cover;border-radius:4px"/>`;
+    clearBtn.style.display='inline';
+  } else {
+    prevEl.innerHTML='';
+    clearBtn.style.display='none';
+  }
+  document.getElementById('chapter-icon-img-input').value='';
+  // Highlight current icon
+  document.querySelectorAll('#icon-edit-picker span').forEach(s=>{
+    s.style.borderColor=s.textContent===(item.icon||'📄')?'var(--accent)':'transparent';
+  });
+  // Rebuild color picker with theme colors
+  const swatches = THEME_ACCENTS[state.theme||'light'] || THEME_ACCENTS.light;
+  const extraColors = ['#4f86c6','#c0683a','#5a8a5e','#9a5a8a','#c04848','#d4a020','#2a9a8a','#cc7830','#6a5aaa','#a06050','#d060a0','#708090'];
+  const allColors = [...new Set([...swatches,...extraColors])].slice(0,12);
+  const picker = document.getElementById('chapter-color-picker');
+  picker.innerHTML = allColors.map(c =>
+    `<div style="width:22px;height:22px;border-radius:5px;background:${c};cursor:pointer;border:2px solid ${item.color===c?'var(--accent)':'transparent'};transition:transform 0.1s,border-color 0.1s" onclick="pickChapterColor(this,'${c}')" title="${c}"></div>`
+  ).join('')+`<button onclick="clearChapterColor()" style="font-family:'JetBrains Mono',monospace;font-size:9px;padding:4px 8px;background:none;border:1px solid var(--border);border-radius:5px;color:var(--text3);cursor:pointer">✕ Clear</button>`;
+  document.getElementById('icon-edit-modal').classList.add('open');
+}
+
+function pickEditIcon(el, icon) {
+  document.querySelectorAll('#icon-edit-picker span').forEach(s=>s.style.borderColor='transparent');
+  el.style.borderColor='var(--accent)';
+  document.getElementById('icon-edit-val').value=icon;
+  // Clear pending custom image when an emoji is chosen
+  _editIconImgData=null;
+  document.getElementById('chapter-icon-img-preview').innerHTML='';
+  document.getElementById('chapter-icon-img-clear').style.display='none';
+}
+
+function pickChapterColor(el, color) {
+  document.querySelectorAll('#chapter-color-picker div').forEach(d=>{d.style.transform='scale(1)';d.style.borderColor='transparent';});
+  el.style.transform='scale(1.3)';
+  el.style.borderColor='var(--accent)';
+  _iconEditSelectedColor=color;
+  document.getElementById('chapter-color-val').value=color;
+}
+
+function clearChapterColor() {
+  document.querySelectorAll('#chapter-color-picker div').forEach(d=>{d.style.transform='scale(1)';d.style.borderColor='transparent';});
+  _iconEditSelectedColor=null;
+  document.getElementById('chapter-color-val').value='';
+}
+
+function confirmIconEdit() {
+  const id=document.getElementById('icon-edit-id').value;
+  const item=state.items.find(i=>i.id===id);
+  if(!item) return;
+  if(_editIconImgData){
+    // Custom image takes priority
+    item.customIconImg=_editIconImgData;
+    item.icon='';
+  } else {
+    // Emoji icon chosen (or default)
+    item.icon=document.getElementById('icon-edit-val').value||'📄';
+    // Only clear customIconImg if user explicitly chose an emoji
+    // (If they opened modal and didn't touch it, keep existing customIconImg)
+  }
+  item.color=document.getElementById('chapter-color-val').value||'';
+  sv(state); renderTree();
+  _editIconImgData=null;
+  closeModal('icon-edit-modal');
+}
 
 // ══════════════════════════════════════════════════
 // ACTIVATE ITEM
@@ -2007,20 +2587,19 @@ function toggleType() {
 function toggleFocusMode() {
   focusModeOn=!focusModeOn;
   const btn=document.getElementById('focus-btn');
+  const lp=document.getElementById('left-panel');
+  const rp=document.getElementById('right-panel');
+  const tb=document.getElementById('format-toolbar');
   if(focusModeOn){
-    document.getElementById('left-panel').style.opacity='0';
-    document.getElementById('left-panel').style.pointerEvents='none';
-    document.getElementById('right-panel').style.opacity='0';
-    document.getElementById('right-panel').style.pointerEvents='none';
-    document.getElementById('format-toolbar').style.display='none';
+    lp.style.cssText='opacity:0;pointer-events:none;transition:opacity 0.4s;min-width:0;width:0;overflow:hidden';
+    rp.style.cssText='opacity:0;pointer-events:none;transition:opacity 0.4s;min-width:0;width:0;overflow:hidden';
+    tb.style.display='none';
     btn.classList.add('active-mode');
     btn.textContent='⊞ Exit Focus';
   } else {
-    document.getElementById('left-panel').style.opacity='1';
-    document.getElementById('left-panel').style.pointerEvents='';
-    document.getElementById('right-panel').style.opacity='1';
-    document.getElementById('right-panel').style.pointerEvents='';
-    document.getElementById('format-toolbar').style.display='';
+    lp.style.cssText='opacity:1;pointer-events:;transition:opacity 0.4s';
+    rp.style.cssText='opacity:1;pointer-events:;transition:opacity 0.4s';
+    tb.style.display='';
     btn.classList.remove('active-mode');
     btn.textContent='⊡ Focus';
   }
@@ -2185,30 +2764,180 @@ function deleteItem(id) {
 // ══════════════════════════════════════════════════
 // EXPORT
 // ══════════════════════════════════════════════════
-function exportDoc() {
-  document.getElementById('export-modal').classList.add('open');
+function toggleExportHtmlOptions() {
+  const fmt = document.getElementById('export-format').value;
+  document.getElementById('export-html-options').style.display = fmt === 'html' ? 'block' : 'none';
 }
+
+// Theme palettes for export
+const EXPORT_THEMES = {
+  current: null, // computed at export time
+  minimal: { bg:'#fff', text:'#1a1a1a', text2:'#555', accent:'#2a6abc', border:'#e0e0e0', panel:'#f9f9f9', heading:'#111' },
+  elegant: { bg:'#0f1117', text:'#d8e0eb', text2:'#8a9ab0', accent:'#6a9fd8', border:'rgba(255,255,255,0.1)', panel:'#161b24', heading:'#e8edf4' },
+  print:   { bg:'#ffffff', text:'#000000', text2:'#333', accent:'#000', border:'#ccc', panel:'#f5f5f5', heading:'#000' },
+  parchment:{ bg:'#f5efe0', text:'#2c1f0e', text2:'#5a4028', accent:'#8a5a28', border:'#d4c0a0', panel:'#fdf8f0', heading:'#1a0e00' },
+  neon:    { bg:'#0a0a0f', text:'#d0b0ff', text2:'#8050c0', accent:'#a040ff', border:'rgba(140,40,255,0.3)', panel:'#0e0e16', heading:'#e0c0ff' },
+};
+
+function getCurrentThemePalette() {
+  const t = state.theme || 'light';
+  const style = getComputedStyle(document.documentElement);
+  return {
+    bg: style.getPropertyValue('--bg').trim() || '#f0f4f8',
+    text: style.getPropertyValue('--text').trim() || '#1a2333',
+    text2: style.getPropertyValue('--text2').trim() || '#4a5568',
+    accent: accentHex,
+    border: style.getPropertyValue('--border').trim() || 'rgba(0,0,0,0.07)',
+    panel: style.getPropertyValue('--surface').trim() || '#fff',
+    heading: style.getPropertyValue('--text').trim() || '#1a2333',
+  };
+}
+
 function doExport() {
   const scope=document.getElementById('export-scope').value;
   const format=document.getElementById('export-format').value;
   const items=scope==='all'?state.items.filter(i=>i.type==='chapter'):[activeItem].filter(Boolean);
 
-  let content='';
   if(format==='txt'){
-    content=items.map(i=>i.title+'\n\n'+stripHtml(i.content)).join('\n\n---\n\n');
+    const content=items.map(i=>i.title+'\n\n'+stripHtml(i.content)).join('\n\n---\n\n');
     downloadFile(state.title+'.txt',content,'text/plain');
   } else if(format==='html'){
-    content=`<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>${state.title}</title><style>body{font-family:Georgia,serif;max-width:700px;margin:40px auto;line-height:1.8;color:#222;padding:0 20px}h1{font-style:italic}hr{border:none;text-align:center}hr::after{content:"✦ ✦ ✦";color:#888}</style></head><body><h1>${state.title}</h1><p><em>by ${state.author}</em></p>`;
-    items.forEach(i=>{content+=`<h2>${escHtml(i.title)}</h2>${i.content}<hr/>`;});
-    content+=`</body></html>`;
-    downloadFile(state.title+'.html',content,'text/html');
+    const themeKey = document.getElementById('export-html-theme').value;
+    const pal = themeKey === 'current' ? getCurrentThemePalette() : EXPORT_THEMES[themeKey];
+    const font = document.getElementById('export-html-font').value;
+    const size = document.getElementById('export-html-size').value;
+    const lh = document.getElementById('export-html-lh').value;
+    const pageWidth = document.getElementById('export-html-width').value || '780px';
+    const doToc = document.getElementById('exp-toc').checked;
+    const doTitlePage = document.getElementById('exp-title-page').checked;
+    const doDesc = document.getElementById('exp-description').checked;
+    const doWc = document.getElementById('exp-wc').checked;
+    const totalWc = items.reduce((a,i)=>a+wordCount(i.content),0);
+    const genres = (state.genres||[state.genre||'']).filter(Boolean).join(', ');
+
+    let html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>${escHtml(state.title)}</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:${font};
+  font-size:${size};
+  line-height:${lh};
+  color:${pal.text};
+  background:${pal.bg};
+  padding:0;
+}
+.page-wrap{max-width:${pageWidth};margin:0 auto;padding:40px 32px 80px}
+h1.book-title{
+  font-size:2.8em;font-style:italic;font-weight:600;
+  color:${pal.heading};margin-bottom:0.2em;line-height:1.15;
+}
+.book-author{font-size:1.1em;color:${pal.text2};margin-bottom:0.3em}
+.book-genre{font-size:0.8em;color:${pal.accent};letter-spacing:0.08em;text-transform:uppercase;margin-bottom:1em;font-family:monospace}
+.divider{border:none;height:1px;background:${pal.border};margin:2em 0}
+.blurb{font-style:italic;color:${pal.text2};line-height:1.7;padding:16px 20px;border-left:3px solid ${pal.accent};background:${pal.panel};border-radius:0 6px 6px 0;margin:1.5em 0}
+.toc{background:${pal.panel};border:1px solid ${pal.border};border-radius:10px;padding:20px 24px;margin:2em 0}
+.toc h2{font-size:0.75em;text-transform:uppercase;letter-spacing:0.12em;color:${pal.text2};margin-bottom:12px;font-style:normal}
+.toc ol{padding-left:1.4em}
+.toc li{margin-bottom:6px}
+.toc a{color:${pal.accent};text-decoration:none;font-size:0.95em}
+.toc a:hover{text-decoration:underline}
+.toc .toc-wc{font-size:0.75em;color:${pal.text2};margin-left:8px;font-family:monospace}
+.chapter{margin:3em 0;padding-top:2em;border-top:1px solid ${pal.border}}
+.chapter:first-of-type{border-top:none;margin-top:0;padding-top:0}
+.chapter h2{font-size:1.6em;font-style:italic;color:${pal.heading};margin-bottom:0.2em;line-height:1.25}
+.chapter-num{font-family:monospace;font-size:0.7em;color:${pal.text2};letter-spacing:0.1em;text-transform:uppercase;display:block;margin-bottom:4px}
+.chapter-content{margin-top:1.4em}
+.chapter-content p{margin-bottom:1em}
+.chapter-content h1,.chapter-content h2,.chapter-content h3{margin:1.5em 0 0.5em;color:${pal.heading}}
+.chapter-content ul,.chapter-content ol{padding-left:1.6em;margin-bottom:1em}
+.wc-note{font-family:monospace;font-size:0.7em;color:${pal.text2};margin-top:8px}
+.scene-break{text-align:center;color:${pal.text2};margin:2em 0;letter-spacing:0.3em;font-size:0.9em}
+.stats-box{background:${pal.panel};border:1px solid ${pal.border};border-radius:10px;padding:16px 20px;margin:2em 0;display:flex;flex-wrap:wrap;gap:16px}
+.stat-item{flex:1;min-width:100px}
+.stat-item .sn{font-family:monospace;font-size:1.6em;color:${pal.accent};font-weight:600;display:block}
+.stat-item .sl{font-family:monospace;font-size:0.65em;text-transform:uppercase;letter-spacing:0.1em;color:${pal.text2}}
+footer{text-align:center;padding:40px 0 20px;font-family:monospace;font-size:0.7em;color:${pal.text2};border-top:1px solid ${pal.border};margin-top:4em}
+@media print{body{background:#fff;color:#000}.toc,.stats-box{break-inside:avoid}.chapter{break-before:auto}}
+@media(max-width:600px){.page-wrap{padding:20px 16px 60px}h1.book-title{font-size:2em}}
+</style>
+</head>
+<body>
+<div class="page-wrap">`;
+
+    if(doTitlePage) {
+      html += `
+<header style="text-align:center;padding:3em 0 2em">
+  <h1 class="book-title">${escHtml(state.title)}</h1>
+  <div class="book-author">by ${escHtml(state.author)}</div>
+  ${genres?`<div class="book-genre">${escHtml(genres)}</div>`:''}
+</header>
+<hr class="divider"/>`;
+    }
+
+    if(doDesc && state.description) {
+      html += `<div class="blurb">${escHtml(state.description)}</div>`;
+    }
+
+    if(doWc) {
+      const chCount = items.length;
+      const avgWc = chCount > 0 ? Math.round(totalWc/chCount) : 0;
+      html += `<div class="stats-box">
+  <div class="stat-item"><span class="sn">${totalWc.toLocaleString()}</span><span class="sl">Total Words</span></div>
+  <div class="stat-item"><span class="sn">${chCount}</span><span class="sl">Chapters</span></div>
+  <div class="stat-item"><span class="sn">${avgWc.toLocaleString()}</span><span class="sl">Avg / Chapter</span></div>
+  <div class="stat-item"><span class="sn">${Math.ceil(totalWc/238).toLocaleString()} min</span><span class="sl">Est. Read Time</span></div>
+</div>`;
+    }
+
+    if(doToc && items.length > 1) {
+      html += `<nav class="toc"><h2>Contents</h2><ol>`;
+      items.forEach((ch,i) => {
+        const wc = wordCount(ch.content);
+        html += `<li><a href="#ch-${i+1}">${escHtml(ch.title)}</a>${doWc?`<span class="toc-wc">${wc.toLocaleString()} w</span>`:''}</li>`;
+      });
+      html += `</ol></nav>`;
+    }
+
+    items.forEach((ch,i) => {
+      const wc = wordCount(ch.content);
+      // Clean the content — fix scene breaks
+      const cleaned = (ch.content||'').replace(/✦\s*✦\s*✦/g,'<div class="scene-break">✦ ✦ ✦</div>');
+      html += `
+<section class="chapter" id="ch-${i+1}">
+  <span class="chapter-num">Chapter ${i+1}</span>
+  <h2>${escHtml(ch.title)}</h2>
+  ${doWc?`<div class="wc-note">${wc.toLocaleString()} words</div>`:''}
+  <div class="chapter-content">${cleaned}</div>
+</section>`;
+    });
+
+    html += `
+<footer>
+  <em>${escHtml(state.title)}</em> by ${escHtml(state.author)}
+  ${genres?` · ${escHtml(genres)}`:''}
+  · Exported from Inkwell
+</footer>
+</div>
+</body>
+</html>`;
+    downloadFile(state.title+'.html', html, 'text/html');
+
   } else if(format==='md'){
-    content=`# ${state.title}\n*by ${state.author}*\n\n`;
+    let content=`# ${state.title}\n*by ${state.author}*\n\n`;
+    if(state.description) content+=`> ${state.description}\n\n`;
     content+=items.map(i=>`## ${i.title}\n\n${stripHtml(i.content)}`).join('\n\n---\n\n');
     downloadFile(state.title+'.md',content,'text/markdown');
   }
   closeModal('export-modal');
 }
+
+function exportDoc() { document.getElementById('export-modal').classList.add('open'); }
 
 function stripHtml(html){return(html||'').replace(/<br\s*\/?>/gi,'\n').replace(/<\/p>/gi,'\n\n').replace(/<[^>]*>/g,'').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').trim();}
 
@@ -2309,17 +3038,30 @@ function streak() {
 }
 function daysSinceStart(){return Math.max(1,Math.floor((new Date(today())-new Date(state.start))/86400000)+1);}
 
-function getCumulativeTarget(rung) {
-  return Math.ceil(state.goal / state.days * rung);
+function getCumulativeTarget(rung){
+  return Math.ceil(state.goal/state.days*rung);
 }
 
-function getRungDate(rung) {
-  const start = new Date(state.start + 'T00:00:00');
-  start.setDate(start.getDate() + rung - 1);
-  return (start.getMonth()+1) + '/' + start.getDate() + '/' + String(start.getFullYear()).slice(2);
+function getRungDate(rung){
+  const d=new Date(state.start+'T00:00:00');
+  d.setDate(d.getDate()+rung-1);
+  return (d.getMonth()+1)+'/'+d.getDate()+'/'+String(d.getFullYear()).slice(2);
+}
+
+function getDayLabel(offset) {
+  const d=new Date();
+  d.setDate(d.getDate()+offset);
+  const names=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const today_=new Date();
+  const diff=Math.round((d-today_)/86400000);
+  if(diff===0) return "Today's Goal";
+  if(diff===1) return "Tomorrow's Goal";
+  if(diff>1&&diff<7) return names[d.getDay()]+"'s Goal";
+  return 'Goal for '+(d.getMonth()+1)+'/'+d.getDate();
 }
 
 function updateAllStats() {
+  const DAILY=1500;
   const total=totalChapterWords();
   const goal=state.goal;
   const pct=Math.min(100,Math.round(total/goal*100));
@@ -2327,31 +3069,26 @@ function updateAllStats() {
   const str=streak();
   const chapters=state.items.filter(i=>i.type==='chapter').length;
   const notes=state.items.filter(i=>i.type==='note').length;
-  const days=daysSinceStart();
-  const avg=days>0?Math.round(total/days):0;
+  const daysElapsed=daysSinceStart();
+  const avg=daysElapsed>0?Math.round(total/daysElapsed):0;
   const dailyRate=Math.ceil(goal/state.days);
 
-  // Find the active rung: the lowest day whose cumulative target we haven't hit yet.
-  // Start from today's day number, then advance if we're already ahead.
-  let activeRung=Math.min(state.days, daysSinceStart());
-  while(activeRung < state.days && total >= getCumulativeTarget(activeRung)) activeRung++;
-  const rungTarget=getCumulativeTarget(activeRung);
-  const prevTarget=activeRung>1?getCumulativeTarget(activeRung-1):0;
-  const rungRange=Math.max(1,rungTarget-prevTarget);
-  const rungProgress=Math.max(0,total-prevTarget);
-  const todayPct=Math.min(100,Math.round(rungProgress/rungRange*100));
-  const rungLabel=getRungDate(activeRung);
+  // Daily bar: today's words vs fixed 1500
+  const todayPct=Math.min(100,Math.round(todayWC/DAILY*100));
+  const overflowWC=Math.max(0,todayWC-DAILY);
+  const overflowPct=overflowWC>0?Math.min(100,Math.round(overflowWC/DAILY*100)):0;
 
-  // Update daily goal label with the target date
-  const goalLabelEl=document.getElementById('daily-goal-label');
-  if(goalLabelEl) goalLabelEl.textContent='Goal for '+rungLabel;
+  // Label: today/tomorrow/day-name
+  const dayOffset=todayWC>=DAILY?1:0;
+  const labelEl=document.getElementById('daily-goal-label');
+  if(labelEl) labelEl.textContent=getDayLabel(dayOffset);
 
   document.getElementById('book-wc-display').textContent=total.toLocaleString()+' words';
   document.getElementById('mini-prog-bar').style.width=pct+'%';
   document.getElementById('mini-prog-left').textContent=total.toLocaleString()+' / '+goal.toLocaleString();
   document.getElementById('mini-prog-pct').textContent=pct+'%';
   document.getElementById('stat-today').textContent=todayWC.toLocaleString();
-  document.getElementById('stat-goal-sub').textContent=dailyRate.toLocaleString()+' / day';
+  document.getElementById('stat-goal-sub').textContent=DAILY.toLocaleString()+' / day';
   document.getElementById('stat-streak').textContent=str;
   document.getElementById('stat-streak-sub').textContent=str===1?'day':'days';
   document.getElementById('big-pct').textContent=pct+'%';
@@ -2361,78 +3098,175 @@ function updateAllStats() {
   document.getElementById('st-notes').textContent=notes;
   document.getElementById('st-streak').textContent=str;
   document.getElementById('st-avg').textContent=avg.toLocaleString();
-  document.getElementById('today-progress-label').textContent=total.toLocaleString()+' / '+rungTarget.toLocaleString();
-  document.getElementById('today-pct').textContent=todayPct+'%';
-  document.getElementById('daily-goal-fill').style.width=todayPct+'%';
+
+  // Avg WPM from tracked sessions
+  const wpm=state._avgWpm||0;
+  const wpmEl=document.getElementById('st-wpm');
+  if(wpmEl) wpmEl.textContent=wpm>0?wpm:'—';
+
+  // Daily bar elements
+  const progressLabel=document.getElementById('today-progress-label');
+  const pctLabel=document.getElementById('today-pct');
+  const fillEl=document.getElementById('daily-goal-fill');
+  const overflowEl=document.getElementById('daily-overflow-fill');
+  const barWrap=document.getElementById('daily-goal-bar-wrap');
+  const overflowLabel=document.getElementById('today-overflow-label');
+  if(progressLabel) progressLabel.textContent=todayWC.toLocaleString()+' / '+DAILY.toLocaleString();
+  if(pctLabel) pctLabel.textContent=todayPct+'%';
+  if(fillEl) fillEl.style.width=todayPct+'%';
+  if(overflowEl) overflowEl.style.width=overflowWC>0?overflowPct+'%':'0%';
+  if(barWrap) barWrap.classList.toggle('complete',todayPct>=100);
+  if(overflowLabel) overflowLabel.textContent=overflowWC>0?'+'+overflowWC.toLocaleString()+' ahead of today':'';
+
   document.getElementById('book-title-display').textContent=state.title;
   document.getElementById('book-author-display').textContent='by '+state.author;
+
+  // Congrats toast when daily goal first hit
+  if(todayWC>=DAILY&&!state._dailyDoneToday){
+    state._dailyDoneToday=today(); sv(state);
+    const msgs=["You hit 1,500 today. That's a real writing day.","Daily goal: done. The story moved forward.","1,500 words. Every single one earned.","Goal complete. The page didn't win today."];
+    showToast('Daily Goal ✦',msgs[Math.floor(Math.random()*msgs.length)],'🎉');
+  }
+  if(state._dailyDoneToday&&state._dailyDoneToday!==today()){delete state._dailyDoneToday;sv(state);}
+
+  // Projection text
+  updateProjection(avg,goal,total,daysElapsed);
 
   checkMilestones(total);
   updateDailyFlavor(todayPct);
   renderHistory(); renderBadges(); renderStaircase();
 }
 
-function renderStaircase() {
+function updateProjection(avg, goal, total, daysElapsed) {
+  const el=document.getElementById('projection-text');
+  if(!el) return;
+  if(total>=goal){el.textContent='🏆 Goal reached! You wrote a novel.';return;}
+  if(avg<=0){el.textContent='Keep writing to see your projection.';return;}
+  const projectedTotal=avg*state.days;
+  const wordsLeft=goal-total;
+  const daysNeeded=Math.ceil(wordsLeft/avg);
+  if(projectedTotal>=goal*0.95&&projectedTotal<=goal*1.1){
+    el.textContent='📖 At this pace you\'ll finish right around your goal. Keep it up.';
+  } else if(projectedTotal>goal*1.1){
+    el.textContent='✨ At this pace you\'re on track to write more than your goal — you\'re ahead!';
+  } else {
+    const shortfall=Math.round(goal-projectedTotal);
+    el.textContent='⚠ At this pace you\'d fall about '+shortfall.toLocaleString()+' words short. You need ~'+Math.ceil(goal/state.days).toLocaleString()+'/day to finish on time.';
+  }
+}
+
+function renderStaircase(){
   const el=document.getElementById('staircase-chart');
   if(!el) return;
   const total=totalChapterWords();
-  const goal=state.goal;
   const days=state.days;
   const maxTarget=getCumulativeTarget(days);
-  const chartH=72;
+  const chartH=68;
   const todayRung=Math.min(days,daysSinceStart());
+  let activeRung=todayRung;
+  while(activeRung<days&&total>=getCumulativeTarget(activeRung)) activeRung++;
 
   el.innerHTML='';
+  // For long challenges, give each bar a minimum width and let the container scroll
+  const MIN_BAR_W = 6; // px — ensures each bar is always legible
+  const showDays = days;
+  const totalMinWidth = showDays * (MIN_BAR_W + 1); // bar + gap
+  // If bars would overflow the container, set explicit width so it scrolls
+  if (totalMinWidth > el.parentElement.offsetWidth) {
+    el.style.width = totalMinWidth + 'px';
+  } else {
+    el.style.width = '';
+  }
+  const avg=daysSinceStart()>0?Math.round(total/daysSinceStart()):0;
 
-  // Show up to 60 days; if more, sample evenly
-  const showDays=Math.min(days,60);
-  const step=days/showDays;
-
-  // Find active rung (same logic as updateAllStats)
-  let activeRung=todayRung;
-  while(activeRung<days && total>=getCumulativeTarget(activeRung)) activeRung++;
+  // Container needs to allow tooltip events
+  el.style.position='relative';
+  el.style.gap=days>50?'1px':days>30?'1px':'2px';
 
   for(let i=0;i<showDays;i++){
-    const rung=Math.round((i+1)*step);
+    const rung=i+1;
     const target=getCumulativeTarget(rung);
     const barH=Math.max(2,Math.round((target/maxTarget)*chartH));
     const bar=document.createElement('div');
     bar.className='sc-bar';
     bar.style.height=barH+'px';
-    if(rung<activeRung && total>=target){
-      bar.classList.add('sc-ahead'); // ahead of schedule
-    } else if(rung<todayRung){
-      bar.classList.add('sc-past');
-    } else if(rung===activeRung){
-      bar.classList.add('sc-current');
-    } else {
-      bar.classList.add('sc-future');
-    }
-    bar.title='Day '+rung+': '+target.toLocaleString()+' words';
+    // Always use a legible min-width; parent scrolls if needed
+    bar.style.minWidth = MIN_BAR_W + 'px';
+    bar.style.flex = '0 0 ' + MIN_BAR_W + 'px';
+
+    if(rung===activeRung) bar.classList.add('sc-current');
+    else if(rung<activeRung&&total>=target) bar.classList.add('sc-ahead');
+    else if(rung<todayRung) bar.classList.add('sc-past');
+    else bar.classList.add('sc-future');
+
+    // Projected words at this day based on current avg
+    const projectedAtRung=avg>0?avg*rung:0;
+    const dayDate=getRungDate(rung);
+    bar.dataset.rung=rung;
+    bar.dataset.target=target;
+    bar.dataset.projected=projectedAtRung;
+    bar.dataset.date=dayDate;
+
+    // Tooltip on hover
+    bar.addEventListener('mouseenter',e=>showScTooltip(e,bar));
+    bar.addEventListener('mousemove',e=>moveScTooltip(e));
+    bar.addEventListener('mouseleave',hideScTooltip);
     el.appendChild(bar);
   }
 
   // Current progress line
   if(total>0){
-    const lineY=chartH-Math.round((Math.min(total,maxTarget)/maxTarget)*chartH);
     const line=document.createElement('div');
     line.className='sc-line';
     line.style.bottom=Math.round((Math.min(total,maxTarget)/maxTarget)*chartH)+'px';
     el.appendChild(line);
   }
 
-  // Axis labels
   const endEl=document.getElementById('sc-end-label');
   const midEl=document.getElementById('sc-mid-label');
   if(endEl) endEl.textContent='Day '+days;
-  if(midEl) midEl.textContent=Math.round(days/2).toLocaleString()+'d / '+getCumulativeTarget(Math.round(days/2)).toLocaleString()+'w';
+  if(midEl){const mid=Math.round(days/2);midEl.textContent=mid+'d / '+getCumulativeTarget(mid).toLocaleString()+'w';}
 
-  // Legend
   const tEl=document.getElementById('sc-legend-target');
   const cEl=document.getElementById('sc-legend-current');
-  if(tEl) tEl.textContent='▮ active target: '+getCumulativeTarget(activeRung).toLocaleString()+' words';
-  if(cEl && total>0) cEl.textContent='— current: '+total.toLocaleString();
-  else if(cEl) cEl.textContent='';
+  if(tEl) tEl.textContent='▮ target: '+getCumulativeTarget(activeRung).toLocaleString()+' words';
+  if(cEl) cEl.textContent=total>0?'— current: '+total.toLocaleString():'';
+}
+
+let scTooltipTimeout=null;
+function showScTooltip(e, bar) {
+  const tip=document.getElementById('sc-tooltip');
+  if(!tip) return;
+  const rung=parseInt(bar.dataset.rung);
+  const target=parseInt(bar.dataset.target);
+  const proj=parseInt(bar.dataset.projected)||0;
+  const date=bar.dataset.date;
+  const total=totalChapterWords();
+  const diff=total-target;
+  const status=rung===parseInt(bar.dataset.rung)&&diff>=0?`<span style="color:var(--green)">✓ ${diff.toLocaleString()} ahead</span>`:rung<daysSinceStart()&&total<target?`<span style="color:var(--red)">↓ ${Math.abs(diff).toLocaleString()} behind</span>`:'';
+
+  tip.innerHTML=`<strong>Day ${rung} — ${date}</strong>Target: ${target.toLocaleString()} words${proj>0?`<br>At your pace: ${proj.toLocaleString()} words`:''}${status?`<br>${status}`:''}`;
+  tip.classList.add('visible');
+  moveScTooltip(e);
+}
+function moveScTooltip(e) {
+  const tip=document.getElementById('sc-tooltip');
+  if(!tip) return;
+  const tw=tip.offsetWidth||180;
+  const th=tip.offsetHeight||60;
+  let x=e.clientX+14;
+  let y=e.clientY-32;
+  // Clamp so tooltip never leaves viewport
+  if(x+tw>window.innerWidth-8) x=e.clientX-tw-14;
+  if(x<8) x=8;
+  if(y<8) y=e.clientY+14;
+  if(y+th>window.innerHeight-8) y=window.innerHeight-th-8;
+  tip.style.left=x+'px';
+  tip.style.top=y+'px';
+}
+function hideScTooltip() {
+  const tip=document.getElementById('sc-tooltip');
+  if(tip) tip.classList.remove('visible');
 }
 
 function renderHistory(){
@@ -2442,20 +3276,42 @@ function renderHistory(){
   el.innerHTML=entries.map(([d,w])=>`<div class="hist-entry"><span class="hist-date">${d}</span><span class="hist-wc">${w.toLocaleString()}</span></div>`).join('');
 }
 
-function renderHeatmap(){
-  const el=document.getElementById('heatmap-mini');
+function renderStreakCalendar(){
+  const el=document.getElementById('streak-calendar');
+  if(!el) return;
+  // Show 28 days (4 weeks), starting on Sunday
+  const todayD=new Date();
+  const dow=todayD.getDay(); // 0=Sun
+  // Go back to most recent Sunday
+  const startD=new Date(todayD);
+  startD.setDate(startD.getDate()-dow-21); // 4 weeks back from last Sunday
+  const str=streak();
+  const streakEl=document.getElementById('streak-label');
+  if(streakEl) streakEl.textContent=str+(str===1?' day':' days');
+
   el.innerHTML='';
-  const maxW=Math.max(...Object.values(state.daily).filter(Boolean),1);
-  for(let i=29;i>=0;i--){
-    const d=new Date();d.setDate(d.getDate()-i);
+  // Day labels
+  ['S','M','T','W','T','F','S'].forEach(d=>{
+    const lbl=document.createElement('div');
+    lbl.style.cssText='font-family:"JetBrains Mono",monospace;font-size:7px;color:var(--text3);text-align:center;margin-bottom:2px';
+    lbl.textContent=d;
+    el.appendChild(lbl);
+  });
+  for(let i=0;i<28;i++){
+    const d=new Date(startD);
+    d.setDate(d.getDate()+i);
     const k=d.toISOString().slice(0,10);
     const w=state.daily[k]||0;
-    const div=document.createElement('div');
-    div.className='hm';
-    if(w>0){div.style.background=accentHex;div.style.opacity=Math.max(0.2,w/maxW);}
-    el.appendChild(div);
+    const isToday=k===today();
+    const cell=document.createElement('div');
+    cell.className='streak-day '+(w>0?'wrote':'none')+(isToday?' today':'');
+    const dFmt=(d.getMonth()+1)+'/'+d.getDate();
+    cell.title=dFmt+': '+(w>0?w.toLocaleString()+' words':'no writing');
+    el.appendChild(cell);
   }
 }
+
+function renderHeatmap(){renderStreakCalendar();}
 
 const BADGES=[
   {icon:'✍',label:'First Words',check:()=>totalChapterWords()>=1},
@@ -2478,14 +3334,127 @@ function renderBadges(){
 }
 
 // ══════════════════════════════════════════════════
+// CUSTOM THEME BUILDER
+// ══════════════════════════════════════════════════
+function toggleCustomThemeBuilder() {
+  const el=document.getElementById('custom-theme-builder');
+  el.style.display=el.style.display==='none'?'block':'none';
+  if(el.style.display==='block') {
+    // Pre-fill with current CSS vars
+    const s=getComputedStyle(document.documentElement);
+    const trySet=(id,prop)=>{const v=s.getPropertyValue(prop).trim();if(v&&v.startsWith('#'))document.getElementById(id).value=v;};
+    trySet('ct-bg','--bg');trySet('ct-panel','--surface');
+    trySet('ct-sidebar','--sidebar-bg');trySet('ct-text','--text');
+    trySet('ct-text2','--text2');trySet('ct-surface','--surface2');
+  }
+}
+
+function hexToRgba(hex,a){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+function liveCustomTheme() {
+  // Preview in real time
+  applyCustomThemeVars();
+}
+
+function applyCustomThemeVars() {
+  const bg=document.getElementById('ct-bg').value;
+  const panel=document.getElementById('ct-panel').value;
+  const sidebar=document.getElementById('ct-sidebar').value;
+  const text=document.getElementById('ct-text').value;
+  const text2=document.getElementById('ct-text2').value;
+  const surface=document.getElementById('ct-surface').value;
+  const root=document.documentElement;
+  root.setAttribute('data-theme','');
+  const app=document.getElementById('app');
+  app.style.setProperty('--bg',bg);
+  app.style.setProperty('--panel-l',panel);
+  app.style.setProperty('--panel-m',bg);
+  app.style.setProperty('--panel-r',panel);
+  app.style.setProperty('--sidebar-bg',sidebar);
+  app.style.setProperty('--sidebar2',sidebar);
+  app.style.setProperty('--surface',panel);
+  app.style.setProperty('--surface2',surface);
+  app.style.setProperty('--surface3',surface);
+  app.style.setProperty('--text',text);
+  app.style.setProperty('--text2',text2);
+  app.style.setProperty('--text3',hexToRgba(text2,0.6));
+  app.style.setProperty('--s-text',text2);
+  app.style.setProperty('--s-text2',hexToRgba(text2,0.5));
+  app.style.setProperty('--s-text3',hexToRgba(text2,0.25));
+  app.style.setProperty('--border',hexToRgba(text,0.1));
+  app.style.setProperty('--border2',hexToRgba(text,0.06));
+  app.style.setProperty('--shadow',hexToRgba('#000000',0.25));
+  app.style.setProperty('--shadow2',hexToRgba('#000000',0.12));
+}
+
+function applyCustomTheme() {
+  applyCustomThemeVars();
+  state.theme='custom';
+  state.customTheme={
+    bg:document.getElementById('ct-bg').value,
+    panel:document.getElementById('ct-panel').value,
+    sidebar:document.getElementById('ct-sidebar').value,
+    text:document.getElementById('ct-text').value,
+    text2:document.getElementById('ct-text2').value,
+    surface:document.getElementById('ct-surface').value,
+  };
+  sv(state);
+  showToast('Custom Theme Applied ✦','Your palette is live.','🎨');
+}
+
+function resetCustomTheme() {
+  applyTheme(state.theme==='custom'?'dark':state.theme);
+  document.querySelectorAll('.theme-swatch').forEach(s=>s.classList.toggle('active',s.dataset.theme===(state.theme==='custom'?'dark':state.theme)));
+}
+
+// ══════════════════════════════════════════════════
+function renderGenreTags() {
+  const el = document.getElementById('genre-tags');
+  if (!el) return;
+  const genres = state.genres || (state.genre ? [state.genre] : ['Fantasy']);
+  el.innerHTML = genres.map((g,i) =>
+    `<span class="genre-tag">${escHtml(g)}<span class="genre-x" onclick="removeGenre(${i})" title="Remove">✕</span></span>`
+  ).join('');
+}
+
+function removeGenre(idx) {
+  if (!state.genres) state.genres = [state.genre || 'Fantasy'];
+  state.genres.splice(idx, 1);
+  if (!state.genres.length) state.genres = ['Other'];
+  sv(state); renderGenreTags();
+}
+
+function addGenreFromSelect() {
+  const sel = document.getElementById('genre-add-select');
+  const val = sel.value; if (!val) return;
+  if (!state.genres) state.genres = [state.genre || 'Fantasy'];
+  if (!state.genres.includes(val)) { state.genres.push(val); sv(state); }
+  sel.value = '';
+  renderGenreTags();
+}
+
+function addCustomGenre() {
+  const inp = document.getElementById('genre-custom-input');
+  const val = inp.value.trim(); if (!val) return;
+  if (!state.genres) state.genres = [state.genre || 'Fantasy'];
+  if (!state.genres.includes(val)) { state.genres.push(val); sv(state); }
+  inp.value = '';
+  renderGenreTags();
+}
+
+// ══════════════════════════════════════════════════
 // BOOK META
 // ══════════════════════════════════════════════════
 function onBookMetaChange(){
   state.title=document.getElementById('set-title').value||'My Novel';
   state.author=document.getElementById('set-author').value||'Author';
-  state.genre=document.getElementById('set-genre').value;
+  state.description=document.getElementById('set-description').value||'';
   state.goal=parseInt(document.getElementById('set-goal').value)||50000;
   state.days=parseInt(document.getElementById('set-days').value)||30;
+  // genres handled separately via renderGenreTags
   sv(state); updateAllStats(); buildCoverColor();
 }
 
@@ -2831,9 +3800,7 @@ const FIRSTLINES=[
   '"I have exactly seven days to stop the end of the world, and I\'ve already wasted one of them sleeping."',
 ];
 
-function genFirstLine(){
-  document.getElementById('firstline-text').textContent=FIRSTLINES[Math.floor(Math.random()*FIRSTLINES.length)];
-}
+// (genFirstLine defined with showGenResult above)
 
 // Names
 const NAMES={
@@ -2843,15 +3810,41 @@ const NAMES={
   scifi:{first:['Axon','Vera','Kylo','Sora','Dex','Nix','Rael','Zora','Cade','Lyris','Hex','Vex','Oryn','Stel','Kael'],last:['Voss','Darke','Cross','Mercer','Ashren','Strand','Fen','Vale','Thorn','Blaine']},
 };
 
+function showGenResult(tag, text) {
+  const card = document.getElementById('gen-result-card');
+  document.getElementById('gen-result-tag').textContent = tag;
+  document.getElementById('gen-result-text').textContent = text;
+  card.style.display = 'block';
+  card.classList.add('spark');
+  setTimeout(() => card.classList.remove('spark'), 600);
+}
+
+function insertGenResult() {
+  const text = document.getElementById('gen-result-text').textContent;
+  if (!text) return;
+  document.getElementById('writer').focus();
+  document.execCommand('insertHTML', false, `<br><em style="color:var(--text3);font-size:13px">[${escHtml(text)}]</em><br>`);
+}
+
 function genName(){
-  const style=document.getElementById('name-style').value||'fantasy';
+  const style=(document.getElementById('name-style')||{}).value||'fantasy';
   const set=NAMES[style]||NAMES.fantasy;
   const fn=set.first[Math.floor(Math.random()*set.first.length)];
   const ln=set.last[Math.floor(Math.random()*set.last.length)];
-  document.getElementById('char-name').textContent=fn+' '+ln;
+  showGenResult('Character Name', fn+' '+ln);
 }
 
-// Settings generator
+function genFirstLine(){
+  showGenResult('First Line', FIRSTLINES[Math.floor(Math.random()*FIRSTLINES.length)]);
+}
+
+function genSetting(){
+  showGenResult('Setting', SETTINGS[Math.floor(Math.random()*SETTINGS.length)]);
+}
+
+function genConflict(){
+  showGenResult('Conflict', CONFLICTS[Math.floor(Math.random()*CONFLICTS.length)]);
+}
 const SETTINGS=[
   'A lighthouse keeper\'s cottage perched on a sea cliff, where the fog never fully lifts.',
   'A grand hotel in the mountains, half-buried in snow, staffed by ghosts of its former glory.',
@@ -2870,11 +3863,7 @@ const SETTINGS=[
   'A research station at the magnetic pole, where compasses are useless and north is a lie.',
 ];
 
-function genSetting(){
-  document.getElementById('setting-text').textContent=SETTINGS[Math.floor(Math.random()*SETTINGS.length)];
-}
-
-// Conflict generator
+// Settings list (used by genSetting above)
 const CONFLICTS=[
   'Two people who love the same person must cooperate to save that person\'s life.',
   'The protagonist discovers their mentor has been feeding their work to a rival.',
@@ -2890,9 +3879,7 @@ const CONFLICTS=[
   'A character holds a secret that would free someone they hate and destroy someone they love.',
 ];
 
-function genConflict(){
-  document.getElementById('conflict-text').textContent=CONFLICTS[Math.floor(Math.random()*CONFLICTS.length)];
-}
+// (genConflict defined above with showGenResult)
 
 // ══════════════════════════════════════════════════
 // WRITER'S BLOCK SPARK EVENTS
@@ -3132,7 +4119,7 @@ if (!state._welcomed) {
 }
 
 window.addEventListener('beforeunload',saveCurrentContent);
-setInterval(()=>{updateTodayDaily();sv(state);updateAllStats();renderHeatmap();rotateStatsQuote();silentBackup();renderStaircase();},30000);
+setInterval(()=>{updateTodayDaily();sv(state);updateAllStats();renderStreakCalendar();rotateStatsQuote();silentBackup();renderStaircase();},30000);
 rotateStatsQuote();
 
 // Request notification permission for timer
