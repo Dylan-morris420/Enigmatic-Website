@@ -1614,32 +1614,84 @@ function updateProjection(avg,goal,total){const el=document.getElementById('proj
 function renderStaircase(){
   const el=document.getElementById('staircase-chart');if(!el)return;
   const total=totalChapterWords(),days=state.days,maxTarget=getCumulativeTarget(days),chartH=90,todayRung=Math.min(days,daysSinceStart());
-  const daysWritten=Math.max(1,Object.keys(state.daily).filter(k=>(state.daily[k]||0)>0).length),avg=daysWritten>0?Math.round(total/daysWritten):0;
   const minBarW=Math.max(4,Math.floor(Math.min(el.parentElement.offsetWidth||200,400)/days)-1);
   el.innerHTML='';
   const neededW=days*(minBarW+1);
   el.style.width=neededW>el.parentElement.offsetWidth?neededW+'px':'';
   el.style.gap='1px';
 
+  const pacePerDay=todayRung>0&&total>0?total/todayRung:0;
+  const projectedTotal=Math.round(pacePerDay*days);
+
   for(let i=0;i<days;i++){
     const rung=i+1,target=getCumulativeTarget(rung),barH=Math.max(2,Math.round((target/maxTarget)*chartH));
     const bar=document.createElement('div');bar.className='sc-bar';bar.style.height=barH+'px';bar.style.width=minBarW+'px';bar.style.flexShrink='0';
     const isToday=rung===todayRung,isPast=rung<todayRung,isAhead=total>=target&&(isPast||isToday);
     if(isToday)bar.classList.add('sc-current');else if(isAhead)bar.classList.add('sc-ahead');else if(isPast)bar.classList.add('sc-past');else bar.classList.add('sc-future');
-    bar.addEventListener('mouseenter',e=>showScTooltip(e,{rung,target,total,todayRung,avg}));bar.addEventListener('mousemove',moveScTooltip);bar.addEventListener('mouseleave',hideScTooltip);
+    const projectedAtRung=Math.round(pacePerDay*rung);
+    bar.addEventListener('mouseenter',e=>showScTooltip(e,{rung,target,total,todayRung,projectedAtRung}));
+    bar.addEventListener('mousemove',moveScTooltip);
+    bar.addEventListener('mouseleave',hideScTooltip);
     el.appendChild(bar);
   }
-  if(total>0){const line=document.createElement('div');line.className='sc-line';line.style.bottom=Math.round((Math.min(total,maxTarget)/maxTarget)*chartH)+'px';el.appendChild(line);}
-  if(todayRung>0){const paceTarget=getCumulativeTarget(todayRung);const paceY=Math.round((Math.min(paceTarget,maxTarget)/maxTarget)*chartH);const pace=document.createElement('div');pace.className='sc-pace-line';pace.style.bottom=paceY+'px';el.appendChild(pace);}
+
+  // Green line: actual total now
+  if(total>0){
+    const lineY=Math.round((Math.min(total,maxTarget)/maxTarget)*chartH);
+    const line=document.createElement('div');line.className='sc-line';line.style.bottom=lineY+'px';el.appendChild(line);
+    const lineLbl=document.createElement('div');
+    lineLbl.style.cssText=`position:absolute;left:2px;bottom:${lineY+3}px;font-family:'JetBrains Mono',monospace;font-size:7px;color:var(--green);opacity:0.9;white-space:nowrap;pointer-events:none;z-index:5`;
+    lineLbl.textContent=(total>=1000?(total/1000).toFixed(1)+'k':total)+' now';
+    el.appendChild(lineLbl);
+  }
+
+  // Red dashed line: projected final total at current pace
+  if(pacePerDay>0){
+    const paceY=Math.round((Math.min(projectedTotal,maxTarget)/maxTarget)*chartH);
+    const pace=document.createElement('div');pace.className='sc-pace-line';pace.style.bottom=paceY+'px';el.appendChild(pace);
+
+    // Label at end of pace line
+    const endLbl=document.createElement('div');
+    endLbl.style.cssText=`position:absolute;right:2px;bottom:${paceY+3}px;font-family:'JetBrains Mono',monospace;font-size:7px;color:var(--red);opacity:0.85;white-space:nowrap;pointer-events:none;z-index:5`;
+    endLbl.textContent=(projectedTotal>=1000?(projectedTotal/1000).toFixed(1)+'k':projectedTotal)+' projected';
+    el.appendChild(endLbl);
+
+    // Milestone dots + labels at future days along the pace trajectory
+    if(todayRung<days){
+      const milestones=new Set();
+      if(todayRung+1<=days)milestones.add(todayRung+1);
+      if(todayRung+7<=days)milestones.add(todayRung+7);
+      const midFuture=Math.round((todayRung+days)/2);
+      if(midFuture>todayRung+2&&midFuture<days-1)milestones.add(midFuture);
+
+      milestones.forEach(rung=>{
+        const proj=Math.round(pacePerDay*rung);
+        const projY=Math.round((Math.min(proj,maxTarget)/maxTarget)*chartH);
+        const barLeft=(rung-1)*(minBarW+1);
+        const dot=document.createElement('div');
+        dot.style.cssText=`position:absolute;left:${barLeft+Math.floor(minBarW/2)-2}px;bottom:${projY-2}px;width:4px;height:4px;border-radius:50%;background:var(--red);opacity:0.75;pointer-events:none;z-index:5`;
+        el.appendChild(dot);
+        const lbl=document.createElement('div');
+        lbl.style.cssText=`position:absolute;left:${Math.max(0,barLeft-6)}px;bottom:${projY+6}px;font-family:'JetBrains Mono',monospace;font-size:6px;color:var(--red);opacity:0.75;white-space:nowrap;pointer-events:none;z-index:5`;
+        lbl.textContent='D'+rung+': '+(proj>=1000?(proj/1000).toFixed(1)+'k':proj);
+        el.appendChild(lbl);
+      });
+    }
+  }
+
   const endEl=document.getElementById('sc-end-label'),midEl=document.getElementById('sc-mid-label'),dayEl=document.getElementById('sc-day-label');
-  if(endEl)endEl.textContent='Day '+days;if(midEl){const mid=Math.round(days/2);midEl.textContent=mid+'d · '+getCumulativeTarget(mid).toLocaleString()+'w';}if(dayEl)dayEl.textContent='Day '+todayRung+' / '+days+' · '+total.toLocaleString()+'w';
+  if(endEl)endEl.textContent='Day '+days;
+  if(midEl){const mid=Math.round(days/2);midEl.textContent=mid+'d · '+getCumulativeTarget(mid).toLocaleString()+'w';}
+  if(dayEl)dayEl.textContent='Day '+todayRung+' / '+days+' · '+total.toLocaleString()+'w';
 }
 
-function showScTooltip(e,{rung,target,total,todayRung,avg}){
+function showScTooltip(e,{rung,target,total,todayRung,projectedAtRung}){
   const tip=document.getElementById('sc-tooltip');if(!tip)return;
-  const onTrack=total>=target,diff=Math.abs(total-target),paceAtRung=getCumulativeTarget(rung);
-  let status='';if(rung<=todayRung){status=onTrack?`<span style="color:var(--green)">✓ +${diff.toLocaleString()} ahead</span>`:`<span style="color:var(--red)">↓ ${diff.toLocaleString()} behind</span>`;}
-  tip.innerHTML=`<strong>Day ${rung}</strong>Target: ${target.toLocaleString()} words${rung<=todayRung?`<br>Target by day ${rung}: ${paceAtRung.toLocaleString()}`:''}${rung<=todayRung?`<br>${status}`:''}`;
+  const onTrack=total>=target,diff=Math.abs(total-target);
+  let statusLine='';
+  if(rung<=todayRung){statusLine=onTrack?`<br><span style="color:var(--green)">✓ +${diff.toLocaleString()} ahead</span>`:`<br><span style="color:var(--red)">↓ ${diff.toLocaleString()} behind</span>`;}
+  const paceLine=rung>todayRung&&projectedAtRung>0?`<br><span style="color:var(--red)">At your pace → ${projectedAtRung.toLocaleString()}</span>`:'';
+  tip.innerHTML=`<strong>Day ${rung}</strong>Target: ${target.toLocaleString()} words${statusLine}${paceLine}`;
   tip.classList.add('visible');moveScTooltip(e);
 }
 function moveScTooltip(e){const tip=document.getElementById('sc-tooltip');if(!tip)return;const tw=tip.offsetWidth||180,th=tip.offsetHeight||60;let x=e.clientX+14,y=e.clientY-32;if(x+tw>window.innerWidth-8)x=e.clientX-tw-14;if(x<8)x=8;if(y<8)y=e.clientY+14;if(y+th>window.innerHeight-8)y=window.innerHeight-th-8;tip.style.left=x+'px';tip.style.top=y+'px';}
