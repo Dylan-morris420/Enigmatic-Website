@@ -808,6 +808,23 @@ input[type=color]{width:22px;height:22px;border-radius:50%;border:2px solid var(
           <div class="theme-swatch" data-theme="dusk" onclick="pickTheme(this)"><div class="ts-preview"><span style="background:#0e0c18"></span><span style="background:#1a1428"></span><span style="background:#a090d0"></span></div><div class="ts-name">Dusk</div></div>
           <div class="theme-swatch" data-theme="crimson" onclick="pickTheme(this)"><div class="ts-preview"><span style="background:#0c0404"></span><span style="background:#180808"></span><span style="background:#d04040"></span></div><div class="ts-name">Crimson</div></div>
           <div class="theme-swatch" data-theme="arctic" onclick="pickTheme(this)"><div class="ts-preview"><span style="background:#0c1828"></span><span style="background:#edf4fa"></span><span style="background:#f8fcff"></span></div><div class="ts-name">Arctic</div></div>
+          <div class="theme-swatch" data-theme="lab" onclick="pickTheme(this)"><div class="ts-preview"><span style="background:#1A1208"></span><span style="background:#F5EDD8"></span><span style="background:#FDF4E0"></span></div><div class="ts-name">Lab</div></div>
+          <div class="theme-swatch" data-theme="lab-dark" onclick="pickTheme(this)"><div class="ts-preview"><span style="background:#080604"></span><span style="background:#0D0A04"></span><span style="background:#151008"></span></div><div class="ts-name">Lab Dark</div></div>
+          <div class="theme-swatch" data-theme="bar" onclick="pickTheme(this)"><div class="ts-preview"><span style="background:#1E0E08"></span><span style="background:#F2E8D8"></span><span style="background:#FAF0E0"></span></div><div class="ts-name">Bar</div></div>
+          <div class="theme-swatch" data-theme="mountain-dawn" onclick="pickTheme(this)"><div class="ts-preview"><span style="background:#1A1420"></span><span style="background:#F0EAE0"></span><span style="background:#F8F2E8"></span></div><div class="ts-name">Mountain Dawn</div></div>
+          <div class="theme-swatch" data-theme="mountain-end" onclick="pickTheme(this)"><div class="ts-preview"><span style="background:#030205"></span><span style="background:#050308"></span><span style="background:#C040E8"></span></div><div class="ts-name">Mountain End</div></div>
+          <div class="theme-swatch" data-theme="evil-lab" onclick="pickTheme(this)"><div class="ts-preview"><span style="background:#080C14"></span><span style="background:#E8EEF4"></span><span style="background:#F0F6FC"></span></div><div class="ts-name">Evil Lab</div></div>
+          <div class="theme-swatch" data-theme="evil-lab-dark" onclick="pickTheme(this)"><div class="ts-preview"><span style="background:#040204"></span><span style="background:#080408"></span><span style="background:#800820"></span></div><div class="ts-name">Evil Lab Dark</div></div>
+          <div class="theme-swatch" data-theme="gas-station" onclick="pickTheme(this)"><div class="ts-preview"><span style="background:#0C1018"></span><span style="background:#ECEEF0"></span><span style="background:#F4F6F8"></span></div><div class="ts-name">Gas Station</div></div>
+          <div class="theme-swatch" data-theme="desert-day" onclick="pickTheme(this)"><div class="ts-preview"><span style="background:#1C1008"></span><span style="background:#F8F0DC"></span><span style="background:#FFF8EC"></span></div><div class="ts-name">Desert Day</div></div>
+          <div class="theme-swatch" data-theme="desert-night" onclick="pickTheme(this)"><div class="ts-preview"><span style="background:#040608"></span><span style="background:#080C14"></span><span style="background:#4060A8"></span></div><div class="ts-name">Desert Night</div></div>
+          <div class="theme-swatch" data-theme="shaggy" onclick="pickTheme(this)"><div class="ts-preview"><span style="background:#141E08"></span><span style="background:#EEF2E4"></span><span style="background:#F6FAF0"></span></div><div class="ts-name">Shaggy</div></div>
+          <div class="theme-swatch" data-theme="gromit" onclick="pickTheme(this)"><div class="ts-preview"><span style="background:#101418"></span><span style="background:#F2F4F6"></span><span style="background:#FAFBFC"></span></div><div class="ts-name">Gromit</div></div>
+          <div class="theme-swatch" data-theme="puss" onclick="pickTheme(this)"><div class="ts-preview"><span style="background:#1E1008"></span><span style="background:#F4EAD8"></span><span style="background:#FCF4E8"></span></div><div class="ts-name">Puss</div></div>
+          <div class="theme-swatch" data-theme="velma" onclick="pickTheme(this)"><div class="ts-preview"><span style="background:#180C04"></span><span style="background:#F8EEE0"></span><span style="background:#FFF6E8"></span></div><div class="ts-name">Velma</div></div>
+          <div class="theme-swatch" data-theme="evil-shaggy" onclick="pickTheme(this)"><div class="ts-preview"><span style="background:#050804"></span><span style="background:#0A0F08"></span><span style="background:#C02828"></span></div><div class="ts-name">Evil Shaggy</div></div>
+          <div class="theme-swatch" data-theme="scooby" onclick="pickTheme(this)"><div class="ts-preview"><span style="background:#1C1008"></span><span style="background:#F4EAD8"></span><span style="background:#FDF4E8"></span></div><div class="ts-name">Scooby</div></div>
+          <div class="theme-swatch" data-theme="pookie" onclick="pickTheme(this)"><div class="ts-preview"><span style="background:#1A0C10"></span><span style="background:#F5EEF0"></span><span style="background:#FDF6F8"></span></div><div class="ts-name">Pookie</div></div>
         </div>
 
         <!-- Saved custom theme presets (NEW) -->
@@ -1559,7 +1576,7 @@ function daysSinceStart(){return Math.max(1,Math.floor((new Date(today()+'T00:00
 function getCumulativeTarget(rung){return Math.ceil(state.goal/state.days*rung);}
 
 function updateAllStats(){
-  const DAILY=1500,total=totalChapterWords(),goal=state.goal,pct=Math.min(100,Math.round(total/goal*100));
+  const DAILY=Math.ceil(state.goal/state.days),total=totalChapterWords(),goal=state.goal,pct=Math.min(100,Math.round(total/goal*100));
   const todayWC=state.daily[today()]||0,str=streak(),chapters=state.items.filter(i=>i.type==='chapter').length,notes=state.items.filter(i=>i.type==='note').length;
   const daysWritten=Math.max(1,Object.keys(state.daily).filter(k=>(state.daily[k]||0)>0).length),avg=Math.round(total/daysWritten);
   const todayPct=Math.min(100,Math.round(todayWC/DAILY*100)),overflowWC=Math.max(0,todayWC-DAILY),overflowPct=overflowWC>0?Math.min(100,Math.round(overflowWC/DAILY*100)):0;
@@ -1586,7 +1603,7 @@ function updateAllStats(){
   document.getElementById('today-overflow-label').textContent=overflowWC>0?'+'+overflowWC.toLocaleString()+' ahead':'';
   document.getElementById('book-title-display').textContent=state.title;
   document.getElementById('book-author-display').textContent='by '+state.author;
-  if(todayWC>=DAILY&&!state._dailyDoneToday){state._dailyDoneToday=today();sv(state);showToast('Daily Goal ✦','1,500 words. Every single one earned.','🎉');}
+  if(todayWC>=DAILY&&!state._dailyDoneToday){state._dailyDoneToday=today();sv(state);showToast('Daily Goal ✦',DAILY.toLocaleString()+' words today — goal complete!','🎉');}
   if(state._dailyDoneToday&&state._dailyDoneToday!==today()){delete state._dailyDoneToday;sv(state);}
   updateProjection(avg,goal,total);checkMilestones(total);updateDailyFlavor(todayPct);renderHistory();renderBadges();renderStaircase();
 }
@@ -1613,16 +1630,16 @@ function renderStaircase(){
     el.appendChild(bar);
   }
   if(total>0){const line=document.createElement('div');line.className='sc-line';line.style.bottom=Math.round((Math.min(total,maxTarget)/maxTarget)*chartH)+'px';el.appendChild(line);}
-  if(avg>0){const paceTotal=avg*days;const paceY=Math.round((Math.min(paceTotal,maxTarget)/maxTarget)*chartH);const pace=document.createElement('div');pace.className='sc-pace-line';pace.style.bottom=paceY+'px';el.appendChild(pace);}
+  if(todayRung>0){const paceTarget=getCumulativeTarget(todayRung);const paceY=Math.round((Math.min(paceTarget,maxTarget)/maxTarget)*chartH);const pace=document.createElement('div');pace.className='sc-pace-line';pace.style.bottom=paceY+'px';el.appendChild(pace);}
   const endEl=document.getElementById('sc-end-label'),midEl=document.getElementById('sc-mid-label'),dayEl=document.getElementById('sc-day-label');
   if(endEl)endEl.textContent='Day '+days;if(midEl){const mid=Math.round(days/2);midEl.textContent=mid+'d · '+getCumulativeTarget(mid).toLocaleString()+'w';}if(dayEl)dayEl.textContent='Day '+todayRung+' / '+days+' · '+total.toLocaleString()+'w';
 }
 
 function showScTooltip(e,{rung,target,total,todayRung,avg}){
   const tip=document.getElementById('sc-tooltip');if(!tip)return;
-  const onTrack=total>=target,diff=Math.abs(total-target),paceAtRung=avg>0?avg*rung:0;
+  const onTrack=total>=target,diff=Math.abs(total-target),paceAtRung=getCumulativeTarget(rung);
   let status='';if(rung<=todayRung){status=onTrack?`<span style="color:var(--green)">✓ +${diff.toLocaleString()} ahead</span>`:`<span style="color:var(--red)">↓ ${diff.toLocaleString()} behind</span>`;}
-  tip.innerHTML=`<strong>Day ${rung}</strong>Target: ${target.toLocaleString()} words${paceAtRung>0?`<br>Your pace → ${paceAtRung.toLocaleString()}`:''}${rung<=todayRung?`<br>${status}`:''}`;
+  tip.innerHTML=`<strong>Day ${rung}</strong>Target: ${target.toLocaleString()} words${rung<=todayRung?`<br>Target by day ${rung}: ${paceAtRung.toLocaleString()}`:''}${rung<=todayRung?`<br>${status}`:''}`;
   tip.classList.add('visible');moveScTooltip(e);
 }
 function moveScTooltip(e){const tip=document.getElementById('sc-tooltip');if(!tip)return;const tw=tip.offsetWidth||180,th=tip.offsetHeight||60;let x=e.clientX+14,y=e.clientY-32;if(x+tw>window.innerWidth-8)x=e.clientX-tw-14;if(x<8)x=8;if(y<8)y=e.clientY+14;if(y+th>window.innerHeight-8)y=window.innerHeight-th-8;tip.style.left=x+'px';tip.style.top=y+'px';}
