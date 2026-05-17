@@ -1359,24 +1359,118 @@ input[type=color]{width:22px;height:22px;border-radius:50%;border:2px solid var(
   </div>
 </div>
 
-<!-- EXPORT MODAL (enhanced) -->
+<!-- EXPORT MODAL -->
 <div class="modal-backdrop" id="export-modal">
   <div class="modal" style="max-width:600px">
     <h2>Export your writing</h2>
-    <div class="modal-field"><label>What to export</label><select class="modal-input" id="export-scope"><option value="current">Current chapter only</option><option value="all">Full manuscript (all chapters)</option></select></div>
-    <div class="modal-field"><label>Format</label><select class="modal-input" id="export-format" onchange="toggleExportHtmlOptions()"><option value="txt">Plain Text (.txt)</option><option value="html">Rich HTML (.html)</option><option value="md">Markdown (.md)</option></select></div>
+    <div class="modal-field">
+      <label>What to export</label>
+      <select class="modal-input" id="export-scope">
+        <option value="current">Current chapter only</option>
+        <option value="all">Full manuscript (all chapters)</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>Format</label>
+      <select class="modal-input" id="export-format" onchange="toggleExportHtmlOptions()">
+        <option value="txt">Plain Text (.txt)</option>
+        <option value="html">Rich HTML (.html)</option>
+        <option value="md">Markdown (.md)</option>
+      </select>
+    </div>
     <div id="export-html-options" style="display:none">
       <div style="border-top:1px solid var(--border2);margin:12px 0 10px;padding-top:10px">
         <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">HTML Export Options</div>
-        <div class="modal-field"><label>Theme</label><select class="modal-input" id="export-html-theme"><option value="current">Match current Inkwell theme</option><option value="minimal">Clean Minimal (light)</option><option value="elegant">Elegant Dark</option><option value="print">Print-Ready (white)</option><option value="parchment">Parchment</option><option value="neon">Neon Dark</option></select></div>
-        <div class="modal-field"><label>Font Family</label><select class="modal-input" id="export-html-font"><option value="Georgia,serif">Georgia (classic)</option><option value="'Palatino Linotype',serif">Palatino (literary)</option><option value="'Times New Roman',serif">Times New Roman</option><option value="'Courier New',monospace">Courier New (typewriter)</option><option value="Arial,sans-serif">Arial (clean)</option></select></div>
+        <div class="modal-field">
+          <label>Theme</label>
+          <select class="modal-input" id="export-html-theme">
+            <option value="current">Match current Inkwell theme</option>
+            <option value="minimal">Clean Minimal (light)</option>
+            <option value="elegant">Elegant Dark</option>
+            <option value="print">Print-Ready (white)</option>
+            <option value="parchment">Parchment</option>
+            <option value="neon">Neon Dark</option>
+          </select>
+        </div>
+        <div class="modal-field">
+          <label>Font Family</label>
+          <select class="modal-input" id="export-html-font">
+            <optgroup label="— Literary Serif (Google Fonts)">
+              <option value="'Lora',serif">Lora (warm serif)</option>
+              <option value="'Playfair Display',serif">Playfair Display (elegant)</option>
+              <option value="'EB Garamond',serif">EB Garamond (classical)</option>
+              <option value="'Merriweather',serif">Merriweather (readable)</option>
+              <option value="'Crimson Pro',serif">Crimson Pro (literary)</option>
+              <option value="'Libre Baskerville',serif">Libre Baskerville (sturdy)</option>
+            </optgroup>
+            <optgroup label="— Classic Serif (System)">
+              <option value="Georgia,serif">Georgia (classic)</option>
+              <option value="'Palatino Linotype',serif">Palatino (literary)</option>
+              <option value="'Times New Roman',serif">Times New Roman</option>
+            </optgroup>
+            <optgroup label="— Sans-Serif">
+              <option value="'Nunito',sans-serif">Nunito (friendly)</option>
+              <option value="Arial,sans-serif">Arial (clean)</option>
+              <option value="Verdana,sans-serif">Verdana (clear)</option>
+            </optgroup>
+            <optgroup label="— Monospace">
+              <option value="'JetBrains Mono',monospace">JetBrains Mono</option>
+              <option value="'Space Mono',monospace">Space Mono</option>
+              <option value="'Courier New',monospace">Courier New (typewriter)</option>
+            </optgroup>
+          </select>
+        </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <div class="modal-field"><label>Page Width</label><select class="modal-input" id="export-html-width"><option value="480px">Narrow (480px)</option><option value="640px">Mid (640px)</option><option value="780px" selected>Wide (780px)</option><option value="1040px">XL (1040px)</option></select></div>
-          <div class="modal-field"><label>Font Size</label><select class="modal-input" id="export-html-size"><option value="15px">Small (15px)</option><option value="17px" selected>Medium (17px)</option><option value="19px">Large (19px)</option><option value="21px">XL (21px)</option></select></div>
-          <div class="modal-field"><label>Line Spacing</label><select class="modal-input" id="export-html-lh"><option value="1.6">Tight (1.6)</option><option value="1.8" selected>Comfortable (1.8)</option><option value="2.1">Spacious (2.1)</option></select></div>
-          <div class="modal-field"><label>Paragraph Indent</label><select class="modal-input" id="export-html-indent"><option value="0">None</option><option value="2em" selected>Standard (2em)</option><option value="3em">Wide (3em)</option></select></div>
-          <div class="modal-field"><label>Chapter Separator</label><select class="modal-input" id="export-html-sep"><option value="line">Horizontal line</option><option value="stars" selected>✦ ✦ ✦ Stars</option><option value="none">None</option></select></div>
-          <div class="modal-field"><label>Drop Cap</label><select class="modal-input" id="export-html-dropcap"><option value="none">None</option><option value="first">First chapter only</option><option value="all">All chapters</option></select></div>
+          <div class="modal-field">
+            <label>Page Width</label>
+            <select class="modal-input" id="export-html-width">
+              <option value="480px">Narrow (480px)</option>
+              <option value="640px">Mid (640px)</option>
+              <option value="780px" selected>Wide (780px)</option>
+              <option value="1040px">XL (1040px)</option>
+            </select>
+          </div>
+          <div class="modal-field">
+            <label>Font Size</label>
+            <select class="modal-input" id="export-html-size">
+              <option value="15px">Small (15px)</option>
+              <option value="17px" selected>Medium (17px)</option>
+              <option value="19px">Large (19px)</option>
+              <option value="21px">XL (21px)</option>
+            </select>
+          </div>
+          <div class="modal-field">
+            <label>Line Spacing</label>
+            <select class="modal-input" id="export-html-lh">
+              <option value="1.6">Tight (1.6)</option>
+              <option value="1.8" selected>Comfortable (1.8)</option>
+              <option value="2.1">Spacious (2.1)</option>
+            </select>
+          </div>
+          <div class="modal-field">
+            <label>Paragraph Indent</label>
+            <select class="modal-input" id="export-html-indent">
+              <option value="0">None</option>
+              <option value="2em" selected>Standard (2em)</option>
+              <option value="3em">Wide (3em)</option>
+            </select>
+          </div>
+          <div class="modal-field">
+            <label>Chapter Separator</label>
+            <select class="modal-input" id="export-html-sep">
+              <option value="line">Horizontal line</option>
+              <option value="stars" selected>✦ ✦ ✦ Stars</option>
+              <option value="none">None</option>
+            </select>
+          </div>
+          <div class="modal-field">
+            <label>Drop Cap</label>
+            <select class="modal-input" id="export-html-dropcap">
+              <option value="none">None</option>
+              <option value="first">First chapter only</option>
+              <option value="all">All chapters</option>
+            </select>
+          </div>
         </div>
         <div class="modal-field" style="margin-top:8px">
           <label>Include</label>
@@ -1392,7 +1486,10 @@ input[type=color]{width:22px;height:22px;border-radius:50%;border:2px solid var(
         </div>
       </div>
     </div>
-    <div class="modal-btns"><button class="modal-btn" onclick="closeModal('export-modal')">Cancel</button><button class="modal-btn primary" onclick="doExport()">Export ↓</button></div>
+    <div class="modal-btns">
+      <button class="modal-btn" onclick="closeModal('export-modal')">Cancel</button>
+      <button class="modal-btn primary" onclick="doExport()">Export ↓</button>
+    </div>
   </div>
 </div>
 
@@ -1879,9 +1976,25 @@ function toggleType(){if(!activeItem)return;activeItem.type=activeItem.type==='c
 // EXPORT — full rich HTML with cover, icons, colors, notes, dropcap, separator
 // ═══════════════════════════════════════════════════════
 function toggleExportHtmlOptions(){const fmt=document.getElementById('export-format').value;document.getElementById('export-html-options').style.display=fmt==='html'?'block':'none';}
-
+const EXPORT_FONT_LINKS={
+  "'Lora',serif":"https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,400&display=swap",
+  "'Playfair Display',serif":"https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&display=swap",
+  "'Merriweather',serif":"https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;1,300;1,400&display=swap",
+  "'EB Garamond',serif":"https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap",
+  "'Crimson Pro',serif":"https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,500;1,400&display=swap",
+  "'Libre Baskerville',serif":"https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;1,400&display=swap",
+  "'JetBrains Mono',monospace":"https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap",
+  "'Space Mono',monospace":"https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap",
+  "'Nunito',sans-serif":"https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap",
+  "Georgia,serif":null,
+  "'Palatino Linotype',serif":null,
+  "'Times New Roman',serif":null,
+  "'Courier New',monospace":null,
+  "Arial,sans-serif":null,
+  "Verdana,sans-serif":null,
+};
 const EXPORT_THEMES={current:null,minimal:{bg:'#fff',text:'#1a1a1a',text2:'#555',accent:'#2a6abc',border:'#e0e0e0',panel:'#f9f9f9',heading:'#111'},elegant:{bg:'#0f1117',text:'#d8e0eb',text2:'#8a9ab0',accent:'#6a9fd8',border:'rgba(255,255,255,0.1)',panel:'#161b24',heading:'#e8edf4'},print:{bg:'#ffffff',text:'#000000',text2:'#333',accent:'#000',border:'#ccc',panel:'#f5f5f5',heading:'#000'},parchment:{bg:'#f5efe0',text:'#2c1f0e',text2:'#5a4028',accent:'#8a5a28',border:'#d4c0a0',panel:'#fdf8f0',heading:'#1a0e00'},neon:{bg:'#0a0a0f',text:'#d0b0ff',text2:'#8050c0',accent:'#a040ff',border:'rgba(140,40,255,0.3)',panel:'#0e0e16',heading:'#e0c0ff'}};
-function getCurrentThemePalette(){const s=getComputedStyle(document.documentElement);return{bg:s.getPropertyValue('--bg').trim()||'#f0f4f8',text:s.getPropertyValue('--text').trim()||'#1a2333',text2:s.getPropertyValue('--text2').trim()||'#4a5568',accent:accentHex,border:s.getPropertyValue('--border').trim()||'rgba(0,0,0,0.07)',panel:s.getPropertyValue('--surface').trim()||'#fff',heading:s.getPropertyValue('--text').trim()||'#1a2333'};}
+function getCurrentThemePalette(){const s=getComputedStyle(document.getElementById('app'));return{bg:s.getPropertyValue('--bg').trim()||'#f0f4f8',text:s.getPropertyValue('--text').trim()||'#1a2333',text2:s.getPropertyValue('--text2').trim()||'#4a5568',accent:accentHex,border:s.getPropertyValue('--border').trim()||'rgba(0,0,0,0.07)',panel:s.getPropertyValue('--surface').trim()||'#fff',heading:s.getPropertyValue('--text').trim()||'#1a2333'};}
 
 function doExport(){
   const scope=document.getElementById('export-scope').value;
@@ -1918,7 +2031,9 @@ function buildHtmlExport(items){
   const getChapterIcon=ch=>{if(!doChapterIcons)return '';if(ch.customIconImg)return `<img src="${ch.customIconImg}" style="width:28px;height:28px;object-fit:cover;border-radius:4px;margin-right:8px;vertical-align:middle"/>`;const icon=ch.icon||'📄';if(icon==='📄')return '';return `<span style="font-size:1.3em;margin-right:8px;vertical-align:middle">${icon}</span>`;};
   const getChapterBorderStyle=ch=>{if(!doChapterIcons||!ch.color)return '';return `border-left:4px solid ${ch.color};padding-left:20px;margin-left:-20px;`;};
 
-  let html=`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>${escHtml(state.title)}</title><style>
+  const _fontLink=EXPORT_FONT_LINKS[font];
+  const _fontImport=_fontLink?`<link rel="preconnect" href="https://fonts.googleapis.com"/><link href="${_fontLink}" rel="stylesheet"/>`:'';
+  let html=`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>${escHtml(state.title)}</title>${_fontImport}<style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:${font};font-size:${size};line-height:${lh};color:${pal.text};background:${pal.bg};padding:0}
