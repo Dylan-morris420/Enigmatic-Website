@@ -2656,7 +2656,57 @@ function buildCoverColor(){
   if(spine)spine.style.background=`color-mix(in srgb, ${accentHex} 28%, black)`;
 }
 function triggerCoverUpload(){document.getElementById('cover-file-input').click();}
-function onCoverUpload(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=ev=>{state.cover=ev.target.result;sv(state);const img=document.getElementById('cover-img');const def=document.getElementById('cover-default');img.src=ev.target.result;img.style.display='block';def.style.display='none';e.target.value='';};reader.readAsDataURL(file);}
+function onCoverUpload(e){
+  const file=e.target.files[0];
+  if(!file)return;
+
+  const reader=new FileReader();
+
+  reader.onload=ev=>{
+    const imgObj=new Image();
+
+    imgObj.onload=()=>{
+      const canvas=document.createElement('canvas');
+      const ctx=canvas.getContext('2d');
+
+      let w=imgObj.width;
+      let h=imgObj.height;
+
+      const max=800;
+
+      if(w>h&&w>max){
+        h*=max/w;
+        w=max;
+      }else if(h>max){
+        w*=max/h;
+        h=max;
+      }
+
+      canvas.width=w;
+      canvas.height=h;
+
+      ctx.drawImage(imgObj,0,0,w,h);
+
+      const compressed=canvas.toDataURL('image/jpeg',0.7);
+
+      state.cover=compressed;
+      sv(state);
+
+      const img=document.getElementById('cover-img');
+      const def=document.getElementById('cover-default');
+
+      img.src=compressed;
+      img.style.display='block';
+      def.style.display='none';
+
+      e.target.value='';
+    };
+
+    imgObj.src=ev.target.result;
+  };
+
+  reader.readAsDataURL(file);
+}
 function setAccent(hex){accentHex=hex;state.accent=hex;sv(state);applyAccent(hex);renderStreakCalendar();buildCoverColor();}
 function applyAccent(hex){const root=document.getElementById('app');root.style.setProperty('--accent',hex);root.style.setProperty('--accent-l',hex+'22');root.style.setProperty('--accent-d',hex);const ring=document.getElementById('ring-fill');if(ring)ring.style.stroke=hex;}
 function pickSwatch(el){document.querySelectorAll('.sw').forEach(s=>s.classList.remove('sel'));el.classList.add('sel');setAccent(el.dataset.hex);document.getElementById('custom-color').value=el.dataset.hex;}
