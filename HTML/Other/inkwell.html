@@ -488,24 +488,29 @@
 .book-header:hover{background:rgba(255,255,255,0.03)}
 .book-cover-row{display:flex;gap:14px;align-items:center}
 /* 3D book */
-.book-3d-wrap{width:88px;height:110px;flex-shrink:0;perspective:600px;perspective-origin:55% 50%;cursor:pointer;position:relative}
-.book-3d{width:64px;height:96px;margin-left:10px;margin-top:4px;position:relative;transform-style:preserve-3d;transform:rotateX(-8deg) rotateY(-28deg);transition:transform 0.35s ease;filter:drop-shadow(3px 8px 16px rgba(0,0,0,0.6))}
-.book-3d-wrap:hover .book-3d{transform:rotateX(-6deg) rotateY(-14deg)}
+.book-3d-wrap{width:88px;height:120px;flex-shrink:0;perspective:600px;perspective-origin:55% 50%;cursor:pointer;position:relative;filter:drop-shadow(3px 10px 18px rgba(0,0,0,0.65))}
+.book-3d{width:64px;height:96px;margin-left:10px;margin-top:8px;position:relative;transform-style:preserve-3d;transform:rotateX(14deg) rotateY(-28deg);transition:transform 0.35s ease}
+.book-3d-wrap:hover .book-3d{transform:rotateX(10deg) rotateY(-14deg)}
 .book-face{width:64px;height:96px;position:absolute;inset:0;overflow:hidden;border-radius:1px 3px 3px 1px;transform:translateZ(0)}
 .book-face-img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
 .book-face-default{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:28px;background:linear-gradient(145deg,var(--accent) 0%,color-mix(in srgb,var(--accent) 50%,black) 100%)}
 .book-spine-3d{display:none}
-.book-pages-3d{position:absolute;top:0;left:64px;width:10px;height:96px;transform-origin:0% 50%;transform:rotateY(90deg);background:var(--bk-page-color,repeating-linear-gradient(to right,#ccc8b8 0,#ccc8b8 0.5px,#f0ece0 0.5px,#f0ece0 3px));border-radius:0 1px 1px 0}
-.book-bottom-3d{position:absolute;top:96px;left:0;width:64px;height:10px;transform-origin:50% 0%;transform:rotateX(-90deg);background:var(--bk-page-color,repeating-linear-gradient(to bottom,#ccc8b8 0,#ccc8b8 0.5px,#f0ece0 0.5px,#f0ece0 3px))}
-.book-tint-enchanted .book-face-default,.book-tint-enchanted .book-face-img{filter:hue-rotate(60deg) saturate(1.4)}
+.book-pages-3d{position:absolute;top:0;left:64px;width:14px;height:96px;transform-origin:0% 50%;transform:rotateY(90deg);background:var(--bk-page-color,repeating-linear-gradient(to right,#bbb8a8 0,#bbb8a8 0.5px,#ede9d8 0.5px,#ede9d8 3px));border-radius:0 1px 1px 0;backface-visibility:visible}
+.book-bottom-3d{position:absolute;top:96px;left:0;width:64px;height:14px;transform-origin:50% 0%;transform:rotateX(-90deg);background:var(--bk-page-color,repeating-linear-gradient(to bottom,#bbb8a8 0,#bbb8a8 0.5px,#ede9d8 0.5px,#ede9d8 3px));backface-visibility:visible}
+@keyframes tintEnchanted{0%,100%{filter:hue-rotate(60deg) saturate(1.4)}50%{filter:hue-rotate(90deg) saturate(1.8) brightness(1.08)}}
+@keyframes tintFire{0%,100%{filter:hue-rotate(-20deg) saturate(1.6) brightness(1.05)}50%{filter:hue-rotate(-30deg) saturate(2) brightness(1.15)}}
+@keyframes tintFrost{0%,100%{filter:hue-rotate(180deg) saturate(0.7) brightness(1.1)}50%{filter:hue-rotate(200deg) saturate(0.5) brightness(1.2)}}
+@keyframes tintGold{0%,100%{filter:sepia(0.5) saturate(1.8) brightness(1.05)}50%{filter:sepia(0.7) saturate(2.2) brightness(1.18)}}
+@keyframes tintVoid{0%,100%{filter:invert(0.15) saturate(0.5) brightness(0.8)}50%{filter:invert(0.2) saturate(0.2) brightness(0.6)}}
+.book-tint-enchanted .book-face-default,.book-tint-enchanted .book-face-img{animation:tintEnchanted 3s ease-in-out infinite}
 .book-tint-enchanted .book-pages-3d,.book-tint-enchanted .book-bottom-3d{background:repeating-linear-gradient(to right,#8ab8a0 0,#8ab8a0 0.5px,#c8f0d8 0.5px,#c8f0d8 3px)!important}
-.book-tint-fire .book-face-default,.book-tint-fire .book-face-img{filter:hue-rotate(-20deg) saturate(1.6) brightness(1.05)}
+.book-tint-fire .book-face-default,.book-tint-fire .book-face-img{animation:tintFire 2s ease-in-out infinite}
 .book-tint-fire .book-pages-3d,.book-tint-fire .book-bottom-3d{background:repeating-linear-gradient(to right,#d0886a 0,#d0886a 0.5px,#f8dbc0 0.5px,#f8dbc0 3px)!important}
-.book-tint-frost .book-face-default,.book-tint-frost .book-face-img{filter:hue-rotate(180deg) saturate(0.7) brightness(1.1)}
+.book-tint-frost .book-face-default,.book-tint-frost .book-face-img{animation:tintFrost 4s ease-in-out infinite}
 .book-tint-frost .book-pages-3d,.book-tint-frost .book-bottom-3d{background:repeating-linear-gradient(to right,#a0b8d0 0,#a0b8d0 0.5px,#d8ecf8 0.5px,#d8ecf8 3px)!important}
-.book-tint-gold .book-face-default,.book-tint-gold .book-face-img{filter:sepia(0.5) saturate(1.8) brightness(1.05)}
+.book-tint-gold .book-face-default,.book-tint-gold .book-face-img{animation:tintGold 2.5s ease-in-out infinite}
 .book-tint-gold .book-pages-3d,.book-tint-gold .book-bottom-3d{background:repeating-linear-gradient(to right,#c8a848 0,#c8a848 0.5px,#f8edd8 0.5px,#f8edd8 3px)!important}
-.book-tint-void .book-face-default,.book-tint-void .book-face-img{filter:invert(0.15) saturate(0.5) brightness(0.8)}
+.book-tint-void .book-face-default,.book-tint-void .book-face-img{animation:tintVoid 3.5s ease-in-out infinite}
 .book-tint-void .book-pages-3d,.book-tint-void .book-bottom-3d{background:repeating-linear-gradient(to right,#383838 0,#383838 0.5px,#585858 0.5px,#585858 3px)!important}
 .book-cover-overlay{position:absolute;inset:0;background:rgba(0,0,0,0);display:flex;align-items:center;justify-content:center;font-size:9px;font-family:'JetBrains Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;color:#fff;opacity:0;transition:all 0.2s;backdrop-filter:blur(0px);z-index:4;border-radius:0 3px 3px 0}
 .book-3d-wrap:hover .book-cover-overlay{opacity:1;background:rgba(0,0,0,0.45);backdrop-filter:blur(2px)}
@@ -1094,6 +1099,12 @@ input[type=color]{width:22px;height:22px;border-radius:50%;border:2px solid var(
   <div class="notes-side-banner" id="notes-side-banner">
     <span>🗒 Chapter Notes — personal back page for this chapter</span>
     <button onclick="toggleNotesSide()" style="background:none;border:none;color:var(--accent);cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:9px">← Back to chapter</button>
+  </div>
+
+  <div id="link-popover" style="display:none;position:absolute;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 10px;box-shadow:0 4px 16px var(--shadow);display:none;gap:6px;align-items:center">
+    <input id="link-url-input" type="text" placeholder="https://…" style="font-family:'JetBrains Mono',monospace;font-size:11px;border:1px solid var(--border);border-radius:5px;padding:4px 8px;background:var(--surface2);color:var(--text);width:220px;outline:none" onkeydown="if(event.key==='Enter')confirmLink();if(event.key==='Escape')closeLinkPopover()"/>
+    <button onclick="confirmLink()" style="background:var(--accent);color:#fff;border:none;border-radius:5px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:'JetBrains Mono',monospace">OK</button>
+    <button onclick="closeLinkPopover()" style="background:none;border:1px solid var(--border);border-radius:5px;padding:4px 8px;font-size:11px;cursor:pointer;color:var(--text2)">✕</button>
   </div>
 
   <div class="editor-area" id="editor-area">
@@ -2121,7 +2132,7 @@ let _savedRange=null;
 function saveSelection(){const sel=window.getSelection();if(sel&&sel.rangeCount>0)_savedRange=sel.getRangeAt(0).cloneRange();}
 function restoreSelection(){document.getElementById('writer').focus();if(_savedRange){const sel=window.getSelection();try{sel.removeAllRanges();sel.addRange(_savedRange);}catch(e){}}}
 document.getElementById('writer').addEventListener('mouseup',()=>{saveSelection();updateToolbarState();});
-document.getElementById('writer').addEventListener('keyup',()=>{saveSelection();updateToolbarState();});
+document.getElementById('writer').addEventListener('keyup',()=>{saveSelection();updateToolbarState();sprintLastTypeTime=Date.now();if(sprintState&&!sprintState.done){sprintWordLog.push({t:Date.now(),w:totalChapterWords()-sprintStartWords});if(sprintWordLog.length>200)sprintWordLog.shift();}});
 document.addEventListener('selectionchange',updateToolbarState);
 function updateToolbarState(){try{const map={'btn-bold':document.queryCommandState('bold'),'btn-italic':document.queryCommandState('italic'),'btn-underline':document.queryCommandState('underline'),'btn-strike':document.queryCommandState('strikeThrough'),'btn-ul':document.queryCommandState('insertUnorderedList'),'btn-ol':document.queryCommandState('insertOrderedList')};Object.entries(map).forEach(([id,on])=>{const el=document.getElementById(id);if(el)el.classList.toggle('active',on);});}catch(e){}}
 function fmtSafe(cmd){document.getElementById('writer').focus();document.execCommand(cmd,false,null);saveSelection();updateToolbarState();onWrite();}
@@ -2136,36 +2147,41 @@ function clearInlineStyles(){document.getElementById('writer').focus();document.
 
 // ── LINK INSERTION ──────────────────────────────────────────────────────────
 function insertLink(){
-  const sel=window.getSelection();
-  const selectedText=sel&&!sel.isCollapsed?sel.toString():'';
-  const url=prompt('Enter URL (or paste a YouTube/image link to embed):','https://');
+  saveSelection();
+  const btn=document.querySelector('button[onclick="insertLink()"]');
+  const pop=document.getElementById('link-popover');
+  if(!btn||!pop)return;
+  const r=btn.getBoundingClientRect();
+  pop.style.display='flex';
+  pop.style.top=(r.bottom+4)+'px';
+  pop.style.left=r.left+'px';
+  const inp=document.getElementById('link-url-input');
+  inp.value='https://';
+  setTimeout(()=>{inp.focus();inp.select();},30);
+}
+function closeLinkPopover(){
+  document.getElementById('link-popover').style.display='none';
+}
+function confirmLink(){
+  const url=document.getElementById('link-url-input').value.trim();
+  closeLinkPopover();
   if(!url||url==='https://')return;
-  // Check if it's an embeddable URL
   const ytMatch=url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
   const imgMatch=url.match(/\.(jpe?g|png|gif|webp|svg|avif)(\?.*)?$/i);
+  restoreSelection();
+  document.getElementById('writer').focus();
   if(ytMatch){
-    // YouTube embed
     const vid=ytMatch[1];
-    const embedHTML=`<div class="media-embed" contenteditable="false" style="margin:14px 0;border-radius:10px;overflow:hidden;max-width:100%;aspect-ratio:16/9;background:#000"><iframe src="https://www.youtube.com/embed/${vid}" style="width:100%;height:100%;border:none" allowfullscreen loading="lazy"></iframe></div><br>`;
-    document.getElementById('writer').focus();
-    document.execCommand('insertHTML',false,embedHTML);
+    document.execCommand('insertHTML',false,`<div class="media-embed" contenteditable="false" style="margin:14px 0;border-radius:10px;overflow:hidden;max-width:100%;aspect-ratio:16/9;background:#000"><iframe src="https://www.youtube.com/embed/${vid}" style="width:100%;height:100%;border:none" allowfullscreen loading="lazy"></iframe></div><br>`);
   } else if(imgMatch){
-    // Image embed
-    const alt=selectedText||'image';
-    const embedHTML=`<div class="media-embed" contenteditable="false" style="margin:14px 0;text-align:center"><img src="${url}" alt="${alt}" style="max-width:100%;border-radius:8px;display:inline-block"/></div><br>`;
-    document.getElementById('writer').focus();
-    document.execCommand('insertHTML',false,embedHTML);
+    document.execCommand('insertHTML',false,`<div class="media-embed" contenteditable="false" style="margin:14px 0;text-align:center"><img src="${url}" style="max-width:100%;border-radius:8px;display:inline-block"/></div><br>`);
   } else {
-    // Regular hyperlink
-    restoreSelection();
-    document.getElementById('writer').focus();
+    const sel=window.getSelection();
     if(sel&&!sel.isCollapsed){
       document.execCommand('createLink',false,url);
-      // Make link open in new tab
       document.getElementById('writer').querySelectorAll('a[href="'+url+'"]').forEach(a=>{a.target='_blank';a.rel='noopener noreferrer';});
     } else {
-      const linkHTML=`<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
-      document.execCommand('insertHTML',false,linkHTML);
+      document.execCommand('insertHTML',false,`<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
     }
   }
   saveSelection();onWrite();
@@ -3427,7 +3443,11 @@ document.addEventListener('keydown',e=>{
   if((e.ctrlKey||e.metaKey)&&e.key==='i'){e.preventDefault();fmtSafe('italic');}
   if((e.ctrlKey||e.metaKey)&&e.key==='u'){e.preventDefault();fmtSafe('underline');}
   if((e.ctrlKey||e.metaKey)&&e.key==='k'){e.preventDefault();insertLink();}
-  if(e.key==='Escape'){document.querySelectorAll('.modal-backdrop.open').forEach(m=>m.classList.remove('open'));document.getElementById('find-bar').classList.remove('show');if(focusModeOn)toggleFocusMode();}
+  if(e.key==='Escape'){document.querySelectorAll('.modal-backdrop.open').forEach(m=>m.classList.remove('open'));document.getElementById('find-bar').classList.remove('show');closeLinkPopover();if(focusModeOn)toggleFocusMode();}
+});
+document.addEventListener('mousedown',e=>{
+  const pop=document.getElementById('link-popover');
+  if(pop&&pop.style.display!=='none'&&!pop.contains(e.target)){closeLinkPopover();}
 });
 
 // ═══════════════════════════════════════════════════════
@@ -3587,22 +3607,19 @@ let sprintState=null;
 let sprintInterval=null;
 let sprintStartWords=0;
 let sprintStartTime=0;
+let sprintLastTypeTime=0;
+let sprintWordLog=[];// [{t:timestamp,w:wordCount}] rolling window for real wpm
+let sprintSlowSince=0;// timestamp when speed dropped below threshold (for speed demon)
 
 const BLITZ_MODIFIERS=[
-  'Write only in the present tense.',
-  'Every sentence must start with a different letter.',
-  'Your character cannot use their hands.',
-  'Include the word "thunder" at least once.',
-  "Write from the villain's perspective.",
-  'No dialogue allowed — pure action and description.',
-  'Each paragraph must be exactly 3 sentences.',
-  'Use a weather event somewhere in the scene.',
-  'Someone is lying about something.',
-  'A secret is almost revealed.',
-  "Write like it's the last page of the book.",
-  'Include an unexpected kindness.',
-  'Something ordinary becomes terrifying.',
-  'Begin with the last thing anyone expected.',
+  {label:'🔥 SUDDEN DEATH',desc:'If you pause for more than 8 seconds, the run ends.',type:'pause',val:8000},
+  {label:'⚡ LIGHTNING',desc:'You have 3 minutes MAX. Whatever you write is your score.',type:'timer',val:180},
+  {label:'🌊 FLOW STATE',desc:'First 30 seconds don\'t count — then your word count doubles.',type:'warmup',val:30},
+  {label:'🚂 MOMENTUM',desc:'Every 25 words, your target shrinks by 10. Keep the chain alive.',type:'bonus'},
+  {label:'🎲 MYSTERY TARGET',desc:'Your target is hidden. Keep writing — it reveals when you\'re close.',type:'mystery'},
+  {label:'⚡ SPEED DEMON',desc:'Drop below 20 WPM for 10 seconds straight and the run dies.',type:'speed',val:20},
+  {label:'🚩 CHECKPOINT',desc:'Hit 50 words every 60 seconds or the run ends. No ceiling — survive as long as you can.',type:'checkpoint'},
+  {label:'💣 BOMB',desc:'A random timer between 2–5 mins. You don\'t know when it blows.',type:'bomb'},
 ];
 
 function startSuperSprint(){
@@ -3618,7 +3635,7 @@ function setSuperSprintTarget(target){
 }
 function startWordBlitz(){
   cancelSprint();
-  const targets=[100,200,300,400,500,750,1000];
+  const targets=[100,200,300,400,500];
   const target=targets[Math.floor(Math.random()*targets.length)];
   const modifier=BLITZ_MODIFIERS[Math.floor(Math.random()*BLITZ_MODIFIERS.length)];
   activateSprint('blitz',target,modifier);
@@ -3626,39 +3643,103 @@ function startWordBlitz(){
 function activateSprint(mode,target,modifier){
   sprintStartWords=totalChapterWords();
   sprintStartTime=Date.now();
+  sprintLastTypeTime=Date.now();
+  sprintWordLog=[];
+  sprintSlowSince=0;
+  if(modifier&&modifier.type==='bomb'){modifier._bombLimit=120+Math.floor(Math.random()*180);}
+  if(modifier&&modifier.type==='bonus'){modifier._bonusReduction=0;}
+  if(modifier&&modifier.type==='checkpoint'){modifier._cpNext=50;modifier._cpDeadline=Date.now()+60000;}
   sprintState={mode,target,modifier,done:false};
   document.getElementById('sprint-active').style.display='block';
   document.getElementById('sprint-mode-label').textContent=mode==='super'?'🚀 SUPER SPRINT':'🎲 WORD BLITZ';
   const modEl=document.getElementById('sprint-modifier-display');
-  if(modifier){modEl.style.display='block';modEl.textContent='✦ Modifier: '+modifier;}
+  if(modifier){modEl.style.display='block';modEl.textContent=modifier.label+' — '+modifier.desc;}
   else{modEl.style.display='none';}
-  document.getElementById('sprint-target-label').textContent='/ '+target.toLocaleString()+' words';
+  const shownTarget=modifier&&modifier.type==='mystery'?'???':modifier&&modifier.type==='checkpoint'?'∞':target;
+  document.getElementById('sprint-target-label').textContent='/ '+(typeof shownTarget==='number'?shownTarget.toLocaleString():shownTarget)+' words';
   if(sprintInterval)clearInterval(sprintInterval);
   sprintInterval=setInterval(tickSprint,500);
-  showToast(mode==='super'?'Super Sprint!':'Word Blitz!',
-    modifier?'Write '+target+' words. Modifier: '+modifier.slice(0,40)+'…':'Race to '+target.toLocaleString()+' words!',
-    mode==='super'?'🚀':'🎲');
+  showToast(mode==='super'?'Super Sprint!':'Word Blitz — '+modifier.label,modifier?modifier.desc:'Race to '+target.toLocaleString()+' words!',mode==='super'?'🚀':'🎲');
+}
+function getRollingWpm(){
+  const now=Date.now();const window=30000;// 30s rolling window
+  const cutoff=now-window;
+  const recent=sprintWordLog.filter(e=>e.t>=cutoff);
+  if(recent.length<2)return 0;
+  const oldest=recent[0];const newest=recent[recent.length-1];
+  const secs=(newest.t-oldest.t)/1000;
+  if(secs<2)return 0;
+  return Math.round(((newest.w-oldest.w)/secs)*60);
 }
 function tickSprint(){
   if(!sprintState||sprintState.done)return;
   const cur=totalChapterWords();
   const written=Math.max(0,cur-sprintStartWords);
-  const target=sprintState.target;
+  const mod=sprintState.modifier;
   const elapsed=(Date.now()-sprintStartTime)/1000;
-  const wpm=elapsed>5?Math.round((written/elapsed)*60):0;
-  const pct=Math.min(100,Math.round(written/target*100));
-  document.getElementById('sprint-word-count').textContent=written.toLocaleString();
+  const wpm=getRollingWpm();
+  // checkpoint mode: update target label to show next checkpoint and time left
+  if(mod&&mod.type==='checkpoint'){
+    const secsLeft=Math.max(0,Math.round((mod._cpDeadline-Date.now())/1000));
+    document.getElementById('sprint-target-label').textContent='cp: '+mod._cpNext+' | ⏱'+secsLeft+'s';
+    if(written>=mod._cpNext){
+      mod._cpNext+=50;
+      mod._cpDeadline=Date.now()+60000;
+      showToast('🚩 Checkpoint!','Next: '+mod._cpNext+' words — 60s on the clock','⚡');
+    } else if(Date.now()>mod._cpDeadline&&!sprintState.done){
+      sprintState.done=true;clearInterval(sprintInterval);
+      document.getElementById('sprint-word-count').textContent=written.toLocaleString();
+      document.getElementById('sprint-active').classList.add('sprint-complete');
+      showToast('CHECKPOINT MISSED 🚩',written.toLocaleString()+' words — needed '+(mod._cpNext)+'.','💀');
+      setTimeout(()=>{if(sprintState&&sprintState.done)cancelSprint();},4000);return;
+    }
+  }
+  let realTarget=sprintState.target;
+  if(mod&&mod.type==='bonus'){
+    const milestones=Math.floor(written/25);
+    const newReduction=milestones*10;
+    if(newReduction>(mod._bonusReduction||0)){
+      mod._bonusReduction=newReduction;
+      showToast('🚂 Chain!','Target shrinks — '+(realTarget-newReduction)+' words to go','⚡');
+    }
+    realTarget=Math.max(written+5,realTarget-newReduction);
+    document.getElementById('sprint-target-label').textContent='/ '+realTarget.toLocaleString()+' words';
+  }
+  const pct=Math.min(100,Math.round(written/realTarget*100));
+  const wcEl=document.getElementById('sprint-word-count');
+  if(mod&&mod.type==='mystery'&&written<realTarget-20){wcEl.textContent='???';}
+  else{wcEl.textContent=written.toLocaleString();}
   document.getElementById('sprint-bar').style.width=pct+'%';
   document.getElementById('sprint-time-left').textContent=elapsed<60?Math.round(elapsed)+'s elapsed':Math.floor(elapsed/60)+'m '+Math.round(elapsed%60)+'s';
   document.getElementById('sprint-wpm').textContent=wpm>0?wpm+' wpm':'';
-  if(written>=target&&!sprintState.done){
-    sprintState.done=true;
-    clearInterval(sprintInterval);
+  function finish(title,msg){
+    sprintState.done=true;clearInterval(sprintInterval);
+    wcEl.textContent=written.toLocaleString();
     document.getElementById('sprint-active').classList.add('sprint-complete');
-    const mins=(elapsed/60).toFixed(1);
-    showToast('Sprint Complete! 🎉',written.toLocaleString()+' words in '+mins+' minutes — '+Math.round(wpm)+' wpm','✨');
+    showToast(title,msg,'✨');
     setTimeout(()=>{if(sprintState&&sprintState.done)cancelSprint();},4000);
   }
+  if(mod&&mod.type==='timer'&&elapsed>=mod.val&&!sprintState.done){finish('Time\'s Up! ⏱',written.toLocaleString()+' words in '+Math.round(elapsed)+'s — '+wpm+' wpm');return;}
+  if(mod&&mod.type==='bomb'&&elapsed>=mod._bombLimit&&!sprintState.done){finish('💣 BOOM!',written.toLocaleString()+' words before the bomb dropped. '+wpm+' wpm');return;}
+  if(mod&&mod.type==='pause'&&(Date.now()-sprintLastTypeTime)>mod.val&&written>0&&!sprintState.done){
+    sprintState.done=true;clearInterval(sprintInterval);
+    document.getElementById('sprint-active').classList.add('sprint-complete');
+    showToast('PAUSED — Run Over 💀',written.toLocaleString()+' words before the pause killed it.','💀');
+    setTimeout(()=>{if(sprintState&&sprintState.done)cancelSprint();},4000);return;
+  }
+  // speed demon: must sustain below threshold for 10 consecutive seconds before failing
+  if(mod&&mod.type==='speed'&&elapsed>15&&written>10){
+    if(wpm>0&&wpm<mod.val){
+      if(!sprintSlowSince)sprintSlowSince=Date.now();
+      if(Date.now()-sprintSlowSince>10000&&!sprintState.done){
+        sprintState.done=true;clearInterval(sprintInterval);
+        document.getElementById('sprint-active').classList.add('sprint-complete');
+        showToast('TOO SLOW 🐢',written.toLocaleString()+' words — pace fell to '+wpm+' wpm for 10s.','💀');
+        setTimeout(()=>{if(sprintState&&sprintState.done)cancelSprint();},4000);return;
+      }
+    } else {sprintSlowSince=0;}
+  }
+  if(written>=realTarget&&!sprintState.done){finish('Sprint Complete! 🎉',written.toLocaleString()+' words in '+(elapsed/60).toFixed(1)+' min — '+wpm+' wpm');}
 }
 function cancelSprint(){
   if(sprintInterval)clearInterval(sprintInterval);
