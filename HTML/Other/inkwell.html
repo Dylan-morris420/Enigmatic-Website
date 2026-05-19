@@ -2092,7 +2092,7 @@ function downloadFile(name,content,mime){const a=document.createElement('a');a.h
 // DATA SAFETY
 // ═══════════════════════════════════════════════════════
 function downloadBackup(){const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');const ts=new Date().toISOString().slice(0,16).replace('T','_').replace(':','-');a.href=URL.createObjectURL(blob);a.download=`inkwell_backup_${ts}.json`;a.click();URL.revokeObjectURL(a.href);state._lastBackup=new Date().toISOString();sv(state);updateLastBackupLabel();showToast('Backup saved ✦','Your manuscript is safe in that file.','💾');}
-function restoreBackup(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=ev=>{try{const restored=JSON.parse(ev.target.result);if(!restored.items)throw new Error();Object.assign(state,restored);sv(state);location.reload();}catch(err){showToast('Restore Failed','Could not read that file.','✕');}};reader.readAsText(file);}
+function restoreBackup(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=ev=>{try{const restored=JSON.parse(ev.target.result);if(typeof restored!=='object'||restored===null)throw new Error();Object.assign(state,restored);sv(state);location.reload();}catch(err){showToast('Restore Failed','Could not read that file.','✕');}};reader.readAsText(file);e.target.value='';}
 function updateLastBackupLabel(){const el=document.getElementById('last-backup-label');if(!el)return;if(state._lastBackup){const d=new Date(state._lastBackup);el.textContent='Last backup: '+d.toLocaleString();}else{el.textContent='No backup yet — download one!';el.style.color='var(--red)';}}
 
 // ═══════════════════════════════════════════════════════
@@ -2290,7 +2290,7 @@ function addGenreFromSelect(){const sel=document.getElementById('genre-add-selec
 function addCustomGenre(){const inp=document.getElementById('genre-custom-input');const val=inp.value.trim();if(!val)return;if(!state.genres)state.genres=[];if(!state.genres.includes(val)){state.genres.push(val);sv(state);}inp.value='';renderGenreTags();}
 
 // Reset
-function resetAll(){if(!confirm('Reset ALL data? This cannot be undone.'))return;localStorage.removeItem(KEY);location.reload();}
+function resetAll(){if(!confirm('Reset ALL data? This cannot be undone.'))return;localStorage.removeItem(KEY);localStorage.removeItem(KEY+'_bak');location.reload();}
 
 // ═══════════════════════════════════════════════════════
 // IDEAS — prompts, generators, sparks
