@@ -2267,8 +2267,9 @@ input[type=color]{width:22px;height:22px;border-radius:50%;border:2px solid var(
 // STATE & PERSISTENCE
 // ═══════════════════════════════════════════════════════
 const KEY='inkwell_pro_v2';
+let _reloading=false; // When true, sv() is a no-op so beforeunload can't overwrite data mid-reload
 const ld=()=>{try{const r=localStorage.getItem(KEY);return r?JSON.parse(r):null;}catch(e){return null;}};
-const sv=d=>{try{localStorage.setItem(KEY,JSON.stringify(d));try{localStorage.setItem(KEY+'_bak',JSON.stringify(d));}catch(e){}}catch(e){}};
+const sv=d=>{if(_reloading)return;try{localStorage.setItem(KEY,JSON.stringify(d));try{localStorage.setItem(KEY+'_bak',JSON.stringify(d));}catch(e){}}catch(e){}};
 const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
 
 // Recovery on boot
@@ -3031,7 +3032,10 @@ function downloadFile(name,content,mime){const a=document.createElement('a');a.h
 // DATA SAFETY
 // ═══════════════════════════════════════════════════════
 function downloadBackup(){const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');const ts=new Date().toISOString().slice(0,16).replace('T','_').replace(':','-');a.href=URL.createObjectURL(blob);a.download=`inkwell_backup_${ts}.json`;a.click();URL.revokeObjectURL(a.href);state._lastBackup=new Date().toISOString();sv(state);updateLastBackupLabel();showToast('Backup saved ✦','Your manuscript is safe in that file.','💾');}
-function restoreBackup(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=ev=>{try{const txt=ev.target.result;const restored=JSON.parse(txt);if(typeof restored!=='object'||restored===null||Array.isArray(restored))throw new Error('Not a valid Inkwell backup');if(!restored.title&&!restored.items)throw new Error('File does not look like an Inkwell backup');localStorage.setItem(KEY,JSON.stringify(restored));try{localStorage.setItem(KEY+'_bak',JSON.stringify(restored));}catch(e){}showToast('Restoring…','Reloading with your backup.','💾');setTimeout(()=>location.reload(),400);}catch(err){showToast('Restore Failed',err.message||'Could not read that file.','✕');}};reader.onerror=()=>showToast('Read Error','Could not read the file.','✕');reader.readAsText(file);e.target.value='';}
+function restoreBackup(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=ev=>{try{const txt=ev.target.result;const restored=JSON.parse(txt);if(typeof restored!=='object'||restored===null||Array.isArray(restored))throw new Error('Not a valid Inkwell backup');if(!restored.title&&!restored.items)throw new Error('File does not look like an Inkwell backup');// ── Clear ALL inkwell storage first to make room (quota fix) ──
+try{const toRm=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&(k.includes('inkwell')||k===KEY||k===KEY+'_bak'))toRm.push(k);}toRm.forEach(k=>localStorage.removeItem(k));[KEY,KEY+'_bak'].forEach(k=>{localStorage.removeItem(k);localStorage.removeItem(k+'_chunks');for(let i=0;i<30;i++)localStorage.removeItem(k+'_c'+i);});}catch(ce){console.warn('Inkwell: pre-clear error',ce);}// ── Now write the backup ──
+const json=JSON.stringify(restored);try{localStorage.setItem(KEY,json);}catch(qe){// Quota error even after clearing — data too large
+showToast('Storage Full','Backup is too large for browser storage. Try removing the cover image from the backup file, or use a browser with more storage space.','⚠');return;}try{localStorage.setItem(KEY+'_bak',json);}catch(e){}showToast('Restoring…','Reloading with your backup.','💾');_reloading=true;clearTimeout(writeDebounce);setTimeout(()=>location.reload(),400);}catch(err){showToast('Restore Failed',err.message||'Could not read that file.','✕');}};reader.onerror=()=>showToast('Read Error','Could not read the file.','✕');reader.readAsText(file);e.target.value='';}
 function updateLastBackupLabel(){const el=document.getElementById('last-backup-label');if(!el)return;if(state._lastBackup){const d=new Date(state._lastBackup);el.textContent='Last backup: '+d.toLocaleString();}else{el.textContent='No backup yet — download one!';el.style.color='var(--red)';}}
 
 // ═══════════════════════════════════════════════════════
@@ -3488,7 +3492,7 @@ function resetAll(){
         for(let i=0;i<30;i++)localStorage.removeItem(k+'_c'+i);
       });
     }catch(e){}
-    location.reload();
+    _reloading=true;clearTimeout(writeDebounce);location.reload();
   };
 }
 
