@@ -2053,14 +2053,15 @@ input[type=color]{width:22px;height:22px;border-radius:50%;border:2px solid var(
           <button class="set-btn" onclick="document.getElementById('restore-input').click()" style="margin-top:6px">↑ Restore from Backup</button>
           <input type="file" id="restore-input" accept=".json" style="display:none" onchange="restoreBackup(event)"/>
           <p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3);margin-top:8px" id="last-backup-label"></p>
+        </div>
       </div>
 
-      <!-- Danger Zone -->
       <div class="set-row">
         <div class="set-lbl" style="color:var(--red)">Danger Zone</div>
         <button class="set-btn danger" onclick="resetAll()">⚠ Wipe All Data</button>
       </div>
-</div>
+    </div>
+  </div>
 </div>
 
 <!-- TOOLTIP -->
