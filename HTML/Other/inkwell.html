@@ -3140,46 +3140,84 @@ function renderStaircase(){
   const pacePerDay=todayRung>0&&total>0?total/todayRung:0;
   const projectedTotal=Math.round(pacePerDay*days);
 
+  // Build cumulative words HAD per day (running total up through each rung's date)
+  const startDate=new Date(state.start+'T00:00:00');
+  const cumulativeByRung=[];
+  let runningTotal=0;
+  for(let i=0;i<days;i++){
+    const rung=i+1;
+    const rungDate=new Date(startDate);rungDate.setDate(startDate.getDate()+rung-1);
+    const rungKey=rungDate.getFullYear()+'-'+String(rungDate.getMonth()+1).padStart(2,'0')+'-'+String(rungDate.getDate()).padStart(2,'0');
+    if(rung<=todayRung){
+      runningTotal+=(state.daily[rungKey]||0);
+    }
+    cumulativeByRung.push(rung<=todayRung?runningTotal:null);
+  }
+
   for(let i=0;i<days;i++){
     const rung=i+1,target=getCumulativeTarget(rung),barH=Math.max(2,Math.round((target/maxTarget)*chartH));
     const bar=document.createElement('div');bar.className='sc-bar';bar.style.height=barH+'px';bar.style.width=minBarW+'px';bar.style.flexShrink='0';
     const isToday=rung===todayRung,isPast=rung<todayRung,isAhead=total>=target&&(isPast||isToday);
     if(isToday)bar.classList.add('sc-current');else if(isAhead)bar.classList.add('sc-ahead');else if(isPast)bar.classList.add('sc-past');else bar.classList.add('sc-future');
-    // Add fill bar showing actual progress within the step for past/today bars
-    if(isPast||isToday){
-      // For each past day, find how many words written on that day (state.daily[dateForRung])
-      // We compute the date for this rung
-      const startDate=new Date(state.start+'T00:00:00');
-      const rungDate=new Date(startDate);rungDate.setDate(startDate.getDate()+rung-1);
-      const rungKey=rungDate.getFullYear()+'-'+String(rungDate.getMonth()+1).padStart(2,'0')+'-'+String(rungDate.getDate()).padStart(2,'0');
-      const dayWritten=state.daily[rungKey]||0;
-      // Daily target for this step
-      const dayTarget=getCumulativeTarget(rung)-getCumulativeTarget(rung-1);
-      const fillPct=dayTarget>0?Math.min(1,dayWritten/dayTarget):0;
+    // Fill bar shows how many words you HAD (cumulative) vs the step's target height
+    if((isPast||isToday)&&cumulativeByRung[i]!==null){
+      const wordsHad=cumulativeByRung[i];
+      const fillPct=target>0?Math.min(1,wordsHad/target):0;
       if(fillPct>0||isToday){
         const fill=document.createElement('div');
         fill.className='sc-bar-fill';
-        // fill height as fraction of the bar height
         const fillH=Math.max(1,Math.round(fillPct*barH));
         fill.style.height=fillH+'px';
         bar.appendChild(fill);
       }
     }
     const projectedAtRung=Math.round(pacePerDay*rung);
-    bar.addEventListener('mouseenter',e=>showScTooltip(e,{rung,target,total,todayRung,projectedAtRung}));
+    const wordsHadAtRung=cumulativeByRung[i];
+    bar.addEventListener('mouseenter',e=>showScTooltip(e,{rung,target,total,todayRung,projectedAtRung,wordsHad:wordsHadAtRung}));
     bar.addEventListener('mousemove',moveScTooltip);
     bar.addEventListener('mouseleave',hideScTooltip);
     el.appendChild(bar);
   }
 
-  // Green line: actual total now
-  if(total>0){
-    const lineY=Math.round((Math.min(total,maxTarget)/maxTarget)*chartH);
-    const line=document.createElement('div');line.className='sc-line';line.style.bottom=lineY+'px';el.appendChild(line);
-    const lineLbl=document.createElement('div');
-    lineLbl.style.cssText=`position:absolute;left:2px;bottom:${lineY+3}px;font-family:'JetBrains Mono',monospace;font-size:7px;color:var(--green);opacity:0.9;white-space:nowrap;pointer-events:none;z-index:5`;
-    lineLbl.textContent=(total>=1000?(total/1000).toFixed(1)+'k':total)+' now';
-    el.appendChild(lineLbl);
+  // SVG progress line — plots cumulative words HAD across past days
+  const pointsWithWords=cumulativeByRung.map((w,i)=>w!==null&&w>0?{rung:i+1,words:w}:null).filter(Boolean);
+  if(pointsWithWords.length>0){
+    const totalW=days*(minBarW+1);
+    const svgNS='http://www.w3.org/2000/svg';
+    const svg=document.createElementNS(svgNS,'svg');
+    svg.setAttribute('width',totalW+'px');svg.setAttribute('height',chartH+'px');
+    svg.style.cssText=`position:absolute;left:0;bottom:0;pointer-events:none;z-index:6;overflow:visible`;
+    // Build polyline points
+    const pts=pointsWithWords.map(({rung,words})=>{
+      const x=(rung-1)*(minBarW+1)+Math.floor(minBarW/2);
+      const y=chartH-Math.round((Math.min(words,maxTarget)/maxTarget)*chartH);
+      return x+','+y;
+    }).join(' ');
+    const poly=document.createElementNS(svgNS,'polyline');
+    poly.setAttribute('points',pts);
+    poly.setAttribute('fill','none');
+    poly.setAttribute('stroke','var(--green)');
+    poly.setAttribute('stroke-width','1.5');
+    poly.setAttribute('stroke-linejoin','round');
+    poly.setAttribute('stroke-linecap','round');
+    poly.setAttribute('opacity','0.9');
+    svg.appendChild(poly);
+    // Dot at the last known point (today)
+    const last=pointsWithWords[pointsWithWords.length-1];
+    const lx=(last.rung-1)*(minBarW+1)+Math.floor(minBarW/2);
+    const ly=chartH-Math.round((Math.min(last.words,maxTarget)/maxTarget)*chartH);
+    const dot=document.createElementNS(svgNS,'circle');
+    dot.setAttribute('cx',lx);dot.setAttribute('cy',ly);dot.setAttribute('r','2.5');
+    dot.setAttribute('fill','var(--green)');dot.setAttribute('opacity','1');
+    svg.appendChild(dot);
+    // Label next to dot
+    const lbl=document.createElementNS(svgNS,'text');
+    lbl.setAttribute('x',lx+5);lbl.setAttribute('y',ly-3);
+    lbl.setAttribute('font-family',"'JetBrains Mono',monospace");lbl.setAttribute('font-size','7');
+    lbl.setAttribute('fill','var(--green)');lbl.setAttribute('opacity','0.95');
+    lbl.textContent=(last.words>=1000?(last.words/1000).toFixed(1)+'k':last.words)+' had';
+    svg.appendChild(lbl);
+    el.appendChild(svg);
   }
 
   // Red dashed line: projected final total at current pace
@@ -3222,11 +3260,15 @@ function renderStaircase(){
   if(dayEl)dayEl.textContent='Day '+todayRung+' / '+days+' · '+total.toLocaleString()+'w';
 }
 
-function showScTooltip(e,{rung,target,total,todayRung,projectedAtRung}){
+function showScTooltip(e,{rung,target,total,todayRung,projectedAtRung,wordsHad}){
   const tip=document.getElementById('sc-tooltip');if(!tip)return;
-  const onTrack=total>=target,diff=Math.abs(total-target);
+  const onTrack=wordsHad!=null?wordsHad>=target:total>=target;
+  const diff=wordsHad!=null?Math.abs(wordsHad-target):Math.abs(total-target);
   let statusLine='';
-  if(rung<=todayRung){statusLine=onTrack?`<br><span style="color:var(--green)">✓ +${diff.toLocaleString()} ahead</span>`:`<br><span style="color:var(--red)">↓ ${diff.toLocaleString()} behind</span>`;}
+  if(rung<=todayRung&&wordsHad!=null){
+    statusLine=`<br>Had: <span style="color:var(--accent)">${wordsHad.toLocaleString()} words</span>`;
+    statusLine+=onTrack?`<br><span style="color:var(--green)">✓ +${diff.toLocaleString()} ahead</span>`:`<br><span style="color:var(--red)">↓ ${diff.toLocaleString()} behind</span>`;
+  }
   const paceLine=rung>todayRung&&projectedAtRung>0?`<br><span style="color:var(--red)">At your pace → ${projectedAtRung.toLocaleString()}</span>`:'';
   tip.innerHTML=`<strong>Day ${rung}</strong>Target: ${target.toLocaleString()} words${statusLine}${paceLine}`;
   tip.classList.add('visible');moveScTooltip(e);
